@@ -1,0 +1,19 @@
+.pageHeader {
+	grid-area: header;
+}
+
+.pageFooter {
+	grid-area: footer;
+}
+
+.mainArticle {
+	grid-area: article;
+}
+
+.mainNav {
+	grid-area: nav;
+}
+
+.siteAds {
+	grid-area: ads;
+}

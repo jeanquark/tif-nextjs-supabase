@@ -1,0 +1,17 @@
+.container {
+    display: flex;
+}
+.parent {
+    display: flex;
+    flex-direction: row;
+    border: 1px dashed red;
+
+}
+.childLeft {
+    width: 50%;
+    border: 1px dashed green;
+}
+.childRight {
+    width: 50%;
+    border: 1px dashed purple;
+}
