@@ -13,31 +13,40 @@ interface Event {
 }
 
 export default function EventPage() {
-    // console.log('EventPage data: ', data)
-    // console.log('id: ', id)
     const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
 
     const [isLoading, setLoading] = useState(false)
     const [updateEvent, handleUpdateEvent] = useState(null)
+    const [clapCount, setClapCount] = useState(0)
 
     const router = useRouter()
     const { id } = router.query
     let subscriptionEvents = null
+    let subscriptionEventActions = null
 
-    const clap = () => {
+    const clap = async () => {
         console.log('clap')
+
+        // Increment clap count for this event
+        const { data, error } = await supabase.rpc('increment_clap_count_by_one', {
+            row_id: 1
+        })
+        console.log('data: ', data);
+        console.log('error: ', error);
     }
 
     useEffect(() => {
         console.log('[useEffect] id: ', id)
         if (id != undefined) {
-            getEventAndSubscribe(id)
+            getEventAndSubscribe(+id)
+            getEventActionsAndSubscribe(+id)
         }
         return () => {
             if (subscriptionEvents) {
                 console.log('removeSubscription: ', subscriptionEvents)
-                supabase.removeSubscription(subscriptionEvents)
+                // supabase.removeSubscription(subscriptionEvents)
+                supabase.removeAllSubscriptions()
             }
         }
     }, [id])
@@ -70,7 +79,17 @@ export default function EventPage() {
         setEvent(data[0])
     }
 
-    const getEventAndSubscribe = async (id) => {
+    const getInitialEventActions = async (id) => {
+        console.log('getInitialEventActions')
+        const { data, error } = await supabase
+            .from('event_actions2')
+            .select('*')
+            .eq('event_id', id)
+        console.log('data: ', data);
+        setClapCount(data[0].count)
+    }
+
+    const getEventAndSubscribe = async (id: number) => {
         console.log('getEventAndSubscribe. id: ', id)
         getInitialEvent(id)
         if (!subscriptionEvents) {
@@ -86,6 +105,29 @@ export default function EventPage() {
             supabase.removeSubscription(subscriptionEvents)
         }
     }
+    const getEventActionsAndSubscribe = async (id: number) => {
+        console.log('getEventActionsAndSubscribe. id: ', id);
+        getInitialEventActions(id)
+        if (!subscriptionEventActions) {
+        subscriptionEventActions = supabase
+            .from(`event_actions2:event_id=eq.${id}`)
+            .on('UPDATE', (payload) => {
+                console.log('UPDATE: ', payload)
+                setClapCount(payload.new.count)
+            })
+            .subscribe()
+        } else {
+            console.log('removeSubscription')
+            supabase.removeSubscription(subscriptionEventActions)
+        }
+
+        // const eventActions2 = supabase
+        //     .from('event_actions2')
+        //     .on('*', payload => {
+        //         console.log('Change received!', payload)
+        //     })
+        //     .subscribe()
+    }
 
 
     return (
@@ -100,7 +142,8 @@ export default function EventPage() {
                 </div>}
                 {event && <div className={styles.childRight}>
                     <h3>Actions</h3>
-                    <button onClick={clap}>Applaudir</button>
+                    <button onClick={clap}>Applaudir</button>&nbsp;
+                    ({clapCount})
                 </div>}
             </div>
         </>

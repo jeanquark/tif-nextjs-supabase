@@ -18,6 +18,7 @@ export async function getServerSideProps() {
 	const { data, error } = await supabase
 		.from('events')
 		.select('id, home_team_name, visitor_team_name')
+		.order('id', { ascending: true })
 		.limit(10)
 	console.log('error: ', error);
 	// console.log('data: ', data);
@@ -44,7 +45,7 @@ export default function HomePage({ data }) {
 				{data.map((event: Event) =>
 					<li key={event.id}>
 						<Link href={`/events/${event.id}`}>
-							<a>{ event.home_team_name} - {event.visitor_team_name}</a>
+							<a>{ event.home_team_name} - {event.visitor_team_name} ({event.id})</a>
 						</Link>
 					</li>
 				)}

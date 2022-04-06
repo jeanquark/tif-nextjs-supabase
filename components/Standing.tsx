@@ -20,7 +20,7 @@ function Standing() {
                 // const response = await fetch('api/players')
                 // console.log('response: ', response);
                 // const data = await response.json()
-                const { data } = await axios.get('api/players')
+                const { data } = await axios.get('/api/players')
                 console.log('data: ', data)
                 setLoading(false)
                 setData(data)
