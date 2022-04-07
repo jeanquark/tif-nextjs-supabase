@@ -7,14 +7,40 @@ import {
     setAuthUser,
     selectAuth
 } from '../features/auth/authSlice'
+import { Modal } from '../components/UI/Modal'
+import Login from '../components/Login'
+import Register from '../components/Register'
 
 const handleLogout = async() => {
     const { error } = await supabase.auth.signOut()
 }
 
-function Navbar() {
+
+export default function Navbar() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
+	const [modal, setModal] = useState<boolean>(false)
+    // const [login, setLogin] = useState(false)
+	const [loginModal, setLoginModal] = useState<boolean>(false)
+	// const [registerModal, setRegisterModal] = useState(false)
+
+    const openLoginModal = () => {
+        setLoginModal(true)
+        setModal(true)
+    }
+    const openRegisterModal = () => {
+        setLoginModal(false)
+        setModal(true)
+    }
+
+    const switchTo = (where: string) => {
+        console.log('switchTo')
+    }
+
+    const toggleModal = () => {
+        console.log('toggleModal')
+        setLoginModal(!loginModal)
+      }
 
     useEffect(() => {
         const session = supabase.auth.session()
@@ -49,11 +75,18 @@ function Navbar() {
             <Link href="/counter" >
                 <a>Counter</a>
             </Link>&nbsp;|&nbsp;
-            {auth.id ? 
+            {/* {auth.id ? 
                 <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <Link href="/login"><a>Login</a></Link>
+            } */}
+            {auth.id ? 
+                <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
+                : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
             }
+            <Modal show={modal} handleClose={() => setModal(false)}>
+				{/* <p>Modal</p> */}
+                {loginModal ? <Login toggleModal={toggleModal} /> : <Register toggleModal={toggleModal} />}
+			</Modal>
         </div>
     )
 }
-export default Navbar

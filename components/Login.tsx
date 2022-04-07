@@ -2,13 +2,16 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
 // import { useAppSelector, useAppDispatch } from '../app/hooks'
 
+type ChildProps = {
+    toggleModal: () => void;
+    // toggleState: (e: React.MouseEvent) => void;
+}
 
-export default function Auth() {
+export default function Login(props: ChildProps) {
     // const dispatch = useAppDispatch()
-
-    const [loading, setLoading] = useState(false)
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState<boolean>(false)
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
 
     // useEffect(() => {
     //     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
@@ -23,14 +26,14 @@ export default function Auth() {
     //         //     email: session?.user.email,
     //         //     role: session?.user.role
     //         // }))
-            
+
     //     })
     //     return () => {
     //         authListener.unsubscribe()
     //     }
     // }, [])
 
-    const handleLogin = async (email, password) => {
+    const handleLogin = async (email: string, password: string) => {
         console.log('handleLogin');
         try {
             setLoading(true)
@@ -49,6 +52,7 @@ export default function Auth() {
     return (
         <div className="row flex flex-center">
             <div className="col-6 form-widget">
+                <h2>Login</h2>
                 <div>
                     <input
                         className="inputField"
@@ -58,6 +62,7 @@ export default function Auth() {
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
+                <br />
                 <div>
                     <input
                         className="inputField"
@@ -67,6 +72,7 @@ export default function Auth() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
+                <br />
                 <div>
                     <button
                         onClick={(e) => {
@@ -77,8 +83,10 @@ export default function Auth() {
                         disabled={loading}
                     >
                         <span>{loading ? 'Loading' : 'Login'}</span>
-                    </button>
+                    </button>&nbsp;
+                    <button onClick={props.toggleModal}>Switch to Register</button>
                 </div>
+                <br />
             </div>
         </div>
     )
