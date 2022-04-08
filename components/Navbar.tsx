@@ -10,8 +10,9 @@ import {
 import { Modal } from '../components/UI/Modal'
 import Login from '../components/Login'
 import Register from '../components/Register'
+import { Modal2 } from '../components/UI/Modal2'
 
-const handleLogout = async() => {
+const handleLogout = async () => {
     const { error } = await supabase.auth.signOut()
 }
 
@@ -19,10 +20,11 @@ const handleLogout = async() => {
 export default function Navbar() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
-	const [modal, setModal] = useState<boolean>(false)
+    const [modal, setModal] = useState<boolean>(false)
     // const [login, setLogin] = useState(false)
-	const [loginModal, setLoginModal] = useState<boolean>(false)
-	// const [registerModal, setRegisterModal] = useState(false)
+    const [loginModal, setLoginModal] = useState<boolean>(false)
+    // const [registerModal, setRegisterModal] = useState(false)
+    const [showModal2, setShowModal2] = useState(false)
 
     const openLoginModal = () => {
         setLoginModal(true)
@@ -40,7 +42,14 @@ export default function Navbar() {
     const toggleModal = () => {
         console.log('toggleModal')
         setLoginModal(!loginModal)
-      }
+    }
+
+    const closeModal = () => {
+        console.log('closeModal')
+        setTimeout(() => {
+            setShowModal2(false)
+        }, 900)
+    }
 
     useEffect(() => {
         const session = supabase.auth.session()
@@ -53,7 +62,7 @@ export default function Navbar() {
                 role: authUser.role
             }))
         }
-    
+
         supabase.auth.onAuthStateChange((_event, session) => {
             console.log('[useEffect Navbar] onAuthStateChange session: ', session);
             dispatch(setAuthUser({
@@ -62,7 +71,7 @@ export default function Navbar() {
                 role: session?.user.role
             }))
         })
-      }, [])
+    }, [])
     return (
         <div>
             <img src="/logo.svg" alt="logo" style={{ maxWidth: 30 }} />
@@ -79,14 +88,19 @@ export default function Navbar() {
                 <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <Link href="/login"><a>Login</a></Link>
             } */}
-            {auth.id ? 
-                <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
+            {auth.id ?
+                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
-				{/* <p>Modal</p> */}
+                {/* <p>Modal</p> */}
                 {loginModal ? <Login toggleModal={toggleModal} /> : <Register toggleModal={toggleModal} />}
-			</Modal>
+            </Modal>
+            <br />
+            <div>
+                {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}
+                {showModal2 && <Modal2 handleClose={() => closeModal()}>Modal2</Modal2>}
+            </div>
         </div>
     )
 }
