@@ -7,9 +7,9 @@ import {
     setAuthUser,
     selectAuth
 } from '../features/auth/authSlice'
-import { Modal } from '../components/UI/Modal'
 import Login from '../components/Login'
 import Register from '../components/Register'
+import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
 
 const handleLogout = async () => {
@@ -40,12 +40,19 @@ export default function Navbar() {
     }
 
     const toggleModal = () => {
-        console.log('toggleModal')
+        setModal(!modal)
+    }
+    const closeModal = () => {
+        setModal(false)
+    }
+
+    const toggleLoginModal = () => {
+        console.log('toggleLoginModal')
         setLoginModal(!loginModal)
     }
 
-    const closeModal = () => {
-        console.log('closeModal')
+    const closeLoginModal = () => {
+        console.log('closeLoginModal')
         setTimeout(() => {
             setShowModal2(false)
         }, 900)
@@ -63,15 +70,19 @@ export default function Navbar() {
             }))
         }
 
-        supabase.auth.onAuthStateChange((_event, session) => {
-            console.log('[useEffect Navbar] onAuthStateChange session: ', session);
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('[useEffect Navbar] onAuthStateChange session: ', session, new Date());
             dispatch(setAuthUser({
                 id: session?.user.id,
                 email: session?.user.email,
                 role: session?.user.role
             }))
         })
+        return () => {
+            listener?.unsubscribe()
+        }
     }, [])
+    
     return (
         <div>
             <img src="/logo.svg" alt="logo" style={{ maxWidth: 30 }} />
@@ -98,8 +109,14 @@ export default function Navbar() {
             </Modal>
             <br />
             <div>
+                {/* <Modal show={modal} handleClose={closeModal}>
+				<p>Modal</p>
+			</Modal>
+			<button type="button" onClick={toggleModal}>Open modal</button> */}
+            </div>
+            <div>
                 {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}
-                {showModal2 && <Modal2 handleClose={() => closeModal()}>Modal2</Modal2>}
+                {showModal2 && <Modal2 handleClose={() => closeLoginModal()}>Modal2</Modal2>}
             </div>
         </div>
     )
