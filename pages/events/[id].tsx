@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState, useRef } from 'react'
 import { supabase } from '../../utils/supabaseClient'
 import Layout from '../../components/Layout'
 import NestedLayout from '../../components/LayoutFrontend'
@@ -23,11 +23,20 @@ interface Event {
     visitor_team_name: string
 }
 
+interface Action {
+    id: number,
+    name: string,
+    slug?: string,
+    image?: string
+}
+
 export default function EventPage() {
     const dispatch = useAppDispatch()
     const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
     const actions = useAppSelector(selectActions)
+    const actionsRef = useRef<Action[]>()
+    actionsRef.current = actions
 
     const [isLoading, setLoading] = useState<boolean>(false)
     const [updateEvent, handleUpdateEvent] = useState(null)
@@ -94,8 +103,11 @@ export default function EventPage() {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
-            .select('*')
+            .select('id, number_participants, participation_threshold, actions (name, image), events (home_team_name, visitor_team_name), users (id, username), inserted_at')
             .eq('event_id', id)
+            // .gt('expired_at', moment().utc())
+            .order('id', { ascending: false })
+
         console.log('event actions data: ', data)
         setEventActions(data)
     }
@@ -120,11 +132,26 @@ export default function EventPage() {
         console.log('getEventActionsAndSubscribe. id: ', id);
         getInitialEventActions(id)
         if (!subscriptionEventActions) {
+            console.log('Not subscribed to eventActions')
             subscriptionEventActions = supabase
                 .from(`event_actions:event_id=eq.${id}`)
+                .on('INSERT', payload => {
+                    console.log('[INSERT] newEventAction payload: ', payload.new)
+
+                    const action = actionsRef.current.find((action) => action.id == payload.new.action_id)
+                    console.log('action: ', action)
+                    const newEventAction = {
+                        actions: {
+                            name: action.name,
+                            image: action.image,
+                        },
+                        ...payload.new,
+                    }
+                    setEventActions((a) => [newEventAction, ...a])
+                })
                 .on('UPDATE', (payload) => {
                     console.log('UPDATE eventActions: ', payload)
-                    setClapCount(payload.new.count)
+                    // setClapCount(payload.new.count)
                 })
                 .subscribe()
         } else {
@@ -148,7 +175,7 @@ export default function EventPage() {
             if (error) {
                 throw error
             }
-            setEventActions([...eventActions, data[0]])
+            // setEventActions([...eventActions, data[0]])
         } catch (error) {
             console.log('error: ', error);
         }
@@ -203,9 +230,7 @@ export default function EventPage() {
             array.splice(index, 1);
             setEventActions(array);
         }
-
     }
-
 
     return (
         <>
@@ -219,19 +244,17 @@ export default function EventPage() {
                 </div>}
                 {event && <div className={styles.childRight}>
                     <h3>Actions</h3>
-                        {actions.map((action, index) => {
-                            return <Card key={index}>
-                                ID: {action.id}&nbsp;
-                                Name: {action.name}&nbsp;
-                                <button onClick={() => launchAction(action.id)}>Launch</button>
-                            </Card>
-                        })}
-                    {/* <button onClick={clap}>Applaudir</button>&nbsp; */}
-                    {/* ({clapCount})<br /> */}
-                    {/* <button onClick={() => launchAction('hola')}>Lancer holà</button> */}
+                    {actions.map((action, index) => {
+                        return <Card key={index}>
+                            ID: {action.id}&nbsp;
+                            {action.name}&nbsp;
+                            <button onClick={() => launchAction(action.id)}>Launch</button>
+                        </Card>
+                    })}
+                    <h4>List of actions</h4>
                     <ul>{eventActions.map((action, index) => {
                         return <li key={action.id}>
-                            ID: {action.id} - {action.name} - #participants: {action.number_participants} - date: {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                            ID: {action.id} - {action.actions?.name} - #participants: {action.number_participants} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             <button onClick={() => joinAction(action.id)}>Join</button>&nbsp;
                             <button onClick={() => deleteAction(action.id)}>Delete</button>
                         </li>
@@ -250,3 +273,4 @@ EventPage.getLayout = function getLayout(page: ReactElement) {
         </Layout>
     )
 }
+
