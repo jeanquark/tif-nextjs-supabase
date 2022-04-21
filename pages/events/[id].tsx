@@ -10,6 +10,7 @@ import moment from 'moment'
 
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
+import { selectAuth } from '../../features/auth/authSlice'
 import {
     selectActions,
     fetchActions
@@ -32,6 +33,7 @@ interface Action {
 
 export default function EventPage() {
     const dispatch = useAppDispatch()
+    const auth = useAppSelector(selectAuth)
     const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
     const actions = useAppSelector(selectActions)
@@ -40,8 +42,10 @@ export default function EventPage() {
 
     const [isLoading, setLoading] = useState<boolean>(false)
     const [updateEvent, handleUpdateEvent] = useState(null)
-    const [clapCount, setClapCount] = useState(0)
     const [eventActions, setEventActions] = useState([])
+    const eventActionsRef = useRef<any>()
+    eventActionsRef.current = eventActions
+    const [userActions, setUserActions] = useState([])
 
     const router = useRouter()
     const { id } = router.query
@@ -55,6 +59,7 @@ export default function EventPage() {
             getEventAndSubscribe(+id)
             getEventActionsAndSubscribe(+id)
         }
+
         return () => {
             if (subscriptionEvents) {
                 console.log('removeSubscription: ', subscriptionEvents)
@@ -72,6 +77,13 @@ export default function EventPage() {
     }, [id])
 
     useEffect(() => {
+        console.log('[useEffect] getInitialUserActions auth: ', auth)
+        if (auth && auth.id) {
+            getInitialUserActions(+auth.id)
+        }
+    }, [auth])
+
+    useEffect(() => {
         try {
             console.log('[useEffect] updateEvent: ', updateEvent)
             if (updateEvent) {
@@ -82,7 +94,7 @@ export default function EventPage() {
         }
     }, [updateEvent])
 
-    const getInitialEvent = async (id) => {
+    const getInitialEvent = async (id: number) => {
         console.log('getInitialEvent')
 
         const { data, error } = await supabase
@@ -99,7 +111,7 @@ export default function EventPage() {
         setEvent(data[0])
     }
 
-    const getInitialEventActions = async (id) => {
+    const getInitialEventActions = async (id: number) => {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
@@ -107,9 +119,26 @@ export default function EventPage() {
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })
-
+        if (error) {
+            return
+        }
         console.log('event actions data: ', data)
         setEventActions(data)
+    }
+
+    const getInitialUserActions = async (userId: number) => {
+        const { data, error } = await supabase
+            .from('event_actions_users')
+            .select('*')
+            .eq('user_id', userId)
+            .order('id', { ascending: false })
+        if (error) {
+            return
+        }
+        setUserActions(data)
+        // data.forEach((a) => {
+        //     setUserActions[a.id] = a
+        // })
     }
 
     const getEventAndSubscribe = async (id: number) => {
@@ -151,7 +180,23 @@ export default function EventPage() {
                 })
                 .on('UPDATE', (payload) => {
                     console.log('UPDATE eventActions: ', payload)
-                    // setClapCount(payload.new.count)
+                    console.log('eventActionsRef: ', eventActionsRef);
+                    console.log('payload.new.id: ', payload.new.id);
+
+                    const index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    console.log('index: ', index)
+                    // 1. Make a shallow copy of the items
+                    let items = [...eventActionsRef.current];
+                    // 2. Make a shallow copy of the item you want to mutate
+                    // let item = { ...items[index] };
+                    // 3. Replace the property you're intested in
+                    // item.name = 'newName';
+                    // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                    items[index]['number_participants'] = payload.new.number_participants;
+                    // items[index]['name'] = ''
+                    console.log('items: ', items);
+                    // 5. Set the state to our new copy
+                    setEventActions(items);
                 })
                 .subscribe()
         } else {
@@ -168,7 +213,8 @@ export default function EventPage() {
                 .insert([{
                     event_id: event.id,
                     action_id: id,
-                    user_id: 3,
+                    // user_id: 3,
+                    user_id: auth.id,
                     participation_threshold: 2
                 }])
             console.log('launchAction data: ', data);
@@ -181,36 +227,72 @@ export default function EventPage() {
         }
     }
 
-    const clap = async () => {
-        console.log('clap')
-
-        // Increment clap count for this event
-        const { data, error } = await supabase.rpc('increment_clap_count_by_one', {
-            row_id: 1
-        })
-        console.log('data: ', data);
-        console.log('error: ', error);
-    }
-
-    const joinAction = async (eventActionId: number) => {
+    const joinAction = async (eventAction: any) => {
         try {
+            console.log('joinAction: ', eventAction)
             // 1) Add auth user to event_actions_users table
-            const { error: errorInsert } = await supabase.from('event_actions_users').insert([
+            const { data, error: errorInsert } = await supabase.from('event_actions_users').insert(
                 {
-                    event_action_id: eventActionId,
-                    user_id: 3,
-                },
-            ])
+                    event_action_id: eventAction.id,
+                    user_id: auth.id,
+                }
+            )
             if (errorInsert) {
-                console.log('error1: ', errorInsert)
+                console.log('errorInsert: ', errorInsert)
                 throw errorInsert
             }
+            console.log('data: ', data);
 
             // 2) Increment counter
-            const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventActionId })
+            const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventAction.id })
             if (errorIncrement) {
                 console.log('errorIncrement: ', errorIncrement)
                 throw errorIncrement
+            }
+            const userAction = {
+                id: data[0].id,
+                user_id: auth.id,
+                event_action_id: eventAction.id,
+                inserted_at: data[0].inserted_at
+            }
+
+            // 3) Update local store
+            setUserActions(oldArray => [...oldArray, userAction]);
+
+
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    }
+
+    const unjoinAction = async (eventAction: any) => {
+        try {
+            console.log('unjoinAction: ', eventAction)
+
+            // 1) Remove auth user to event_actions_users table
+            const { data, error } = await supabase
+                .from('event_actions_users')
+                .delete()
+                .match({ id: eventAction.id })
+            if (error) {
+                console.log('error: ', error)
+                throw error
+            }
+
+            // 2) Decrement counter
+            const { data: abc, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action_id })
+            if (errorDecrement) {
+                console.log('errorDecrement: ', errorDecrement)
+                throw errorDecrement
+            }
+            console.log('abc: ', abc);
+
+            // 3) Update local state
+            let array = [...userActions]; // make a separate copy of the array
+            const index = array.findIndex(action => action.id === eventAction.id)
+            if (index !== -1) {
+                array.splice(index, 1);
+                setUserActions(array);
             }
         } catch (error) {
             console.log('error: ', error);
@@ -218,17 +300,23 @@ export default function EventPage() {
     }
 
     const deleteAction = async (eventActionId: number) => {
-        const { data, error } = await supabase
-            .from('event_actions')
-            .delete()
-            .match({ id: eventActionId })
-        console.log('error: ', error)
+        try {
+            const { data, error } = await supabase
+                .from('event_actions')
+                .delete()
+                .match({ id: eventActionId })
+            if (error) {
+                throw error
+            }
 
-        let array = [...eventActions]; // make a separate copy of the array
-        const index = array.findIndex(action => action.id === eventActionId)
-        if (index !== -1) {
-            array.splice(index, 1);
-            setEventActions(array);
+            let array = [...eventActions]; // make a separate copy of the array
+            const index = array.findIndex(action => action.id === eventActionId)
+            if (index !== -1) {
+                array.splice(index, 1);
+                setEventActions(array);
+            }
+        } catch (error) {
+            console.log('error: ', error);
         }
     }
 
@@ -251,12 +339,19 @@ export default function EventPage() {
                             <button onClick={() => launchAction(action.id)}>Launch</button>
                         </Card>
                     })}
-                    <h4>List of actions</h4>
+                    <h4>List of event actions</h4>
                     <ul>{eventActions.map((action, index) => {
                         return <li key={action.id}>
-                            ID: {action.id} - {action.actions?.name} - #participants: {action.number_participants} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                            <button onClick={() => joinAction(action.id)}>Join</button>&nbsp;
+                            ID: {action.id} - {action.actions?.name} - #participants: {action.number_participants}/{action.participation_threshold} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                            <button disabled={userActions.find(a => a.event_action_id == action.id)} onClick={() => joinAction(action)}>Join</button>&nbsp;
                             <button onClick={() => deleteAction(action.id)}>Delete</button>
+                        </li>
+                    })}</ul>
+                    <h4>List of user actions</h4>
+                    <ul>{userActions.map((action, index) => {
+                        return <li key={action.id}>
+                            ID: {action.id} - userId: {action.user_id} - eventActionId: {action.event_action_id} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                            <button onClick={() => unjoinAction(action)}>Unjoin</button>
                         </li>
                     })}</ul>
                 </div>}
