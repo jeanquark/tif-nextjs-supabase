@@ -274,4 +274,5 @@ $$ LANGUAGE plpgsql SECURITY definer;
 CREATE TRIGGER participation_threshold
     AFTER UPDATE OF number_participants ON event_actions
     FOR EACH ROW
+    -- [ WHEN ( condition ) ]
     EXECUTE PROCEDURE check_participation_threshold();

@@ -215,6 +215,7 @@ export default function EventPage() {
                     action_id: id,
                     // user_id: 3,
                     user_id: auth.id,
+                    number_participants: 0,
                     participation_threshold: 2
                 }])
             console.log('launchAction data: ', data);
@@ -222,6 +223,7 @@ export default function EventPage() {
                 throw error
             }
             // setEventActions([...eventActions, data[0]])
+            joinAction(data[0])
         } catch (error) {
             console.log('error: ', error);
         }
@@ -230,6 +232,7 @@ export default function EventPage() {
     const joinAction = async (eventAction: any) => {
         try {
             console.log('joinAction: ', eventAction)
+            
             // 1) Add auth user to event_actions_users table
             const { data, error: errorInsert } = await supabase.from('event_actions_users').insert(
                 {
@@ -242,13 +245,6 @@ export default function EventPage() {
                 throw errorInsert
             }
             console.log('data: ', data);
-
-            // 2) Increment counter
-            const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventAction.id })
-            if (errorIncrement) {
-                console.log('errorIncrement: ', errorIncrement)
-                throw errorIncrement
-            }
             const userAction = {
                 id: data[0].id,
                 user_id: auth.id,
@@ -256,9 +252,15 @@ export default function EventPage() {
                 inserted_at: data[0].inserted_at
             }
 
+            // 2) Increment counter
+            const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventAction.id })
+            if (errorIncrement) {
+                console.log('errorIncrement: ', errorIncrement)
+                throw errorIncrement
+            }
+
             // 3) Update local store
             setUserActions(oldArray => [...oldArray, userAction]);
-
 
         } catch (error) {
             console.log('error: ', error);
@@ -329,6 +331,8 @@ export default function EventPage() {
                 {event && <div className={styles.childLeft}>
                     {event.home_team_name} vs {event.visitor_team_name}<br />
                     {event.home_team_score} {event.visitor_team_score}
+                    <br />
+                    {moment(event.date).format('DD-MM-YYYY HH:mm')}
                 </div>}
                 {event && <div className={styles.childRight}>
                     <h3>Actions</h3>

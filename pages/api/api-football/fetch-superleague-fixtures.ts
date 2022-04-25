@@ -47,7 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         }
         // console.log('[api/api-football/fetchNextFixtures] array: ', array)
 
-        const { data, error } = await supabase.from('events').upsert(array, { onConflict: 'fixture_id'})
+        const { error } = await supabase.from('events').upsert(array, { onConflict: 'fixture_id'})
         
 
         return res.status(200).json({ success: true, length: response.length });

@@ -15,7 +15,8 @@ export default function LayoutFrontend({ children }) {
 				{/* <h1>LayoutFrontend</h1> */}
 				<header id="pageHeader" className={styles.pageHeader}><Navbar /></header>
 				<article id="mainArticle" className={styles.mainArticle}>{children}</article>
-				<nav id="mainNav" className={styles.mainNav}><Standing /></nav>
+				{/* <nav id="mainNav" className={styles.mainNav}><Standing /></nav> */}
+				<nav id="mainNav" className={styles.mainNav}>Standing</nav>
 				<div id="siteAds" className={styles.siteAds}>Ads</div>
 				<footer id="pageFooter" className={styles.pageFooter}>Footer</footer>
 			</div>
