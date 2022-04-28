@@ -57,10 +57,12 @@ CREATE TABLE events (
   date timestamp with time zone,
   timestamp INT,
   league_id INT,
+  season INT,
   round VARCHAR(60),
   group_name VARCHAR(60),
   inserted_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
-  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+  updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(fixture_id) 
 );
 
 CREATE UNIQUE INDEX fixture_idx ON events (fixture_id);

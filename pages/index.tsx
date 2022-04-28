@@ -19,6 +19,9 @@ export async function getServerSideProps() {
 	console.log('[getServerSideProps]', new Date());
 	const current_timestamp = Math.floor(Date.now() / 1000)
 	console.log('current_timestamp: ', current_timestamp - (12 * 60 * 60));
+	// const { data, error } = await supabase
+	// 	.from('events')
+	// 	.select('*')
 	const { data, error } = await supabase
 		.from('events')
 		.select('id, home_team_name, visitor_team_name, date, timestamp')
@@ -26,7 +29,8 @@ export async function getServerSideProps() {
 		.order('timestamp', { ascending: true })
 		.limit(10)
 	console.log('error: ', error);
-	// console.log('data: ', data);
+	console.log('data: ', data);
+	// const data = []
 
 	return {
 		props: { data }, // will be passed to the page component as props
@@ -42,7 +46,7 @@ export default function HomePage({ data }) {
 			<h1>Current & next games</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			<div className={styles.container}>
-				{data.map((event: Event) =>
+				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
 						<a style={{ textDecoration: 'none' }}>
 							<Card>
