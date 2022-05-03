@@ -2,7 +2,6 @@ import Navbar from './Navbar'
 // import '../styles/frontend-layout.css'
 // import '../styles/Layout.module.css'
 import styles from '../styles/Layout.module.css'
-import { Head } from "next/document";
 import Standing from './Standing'
 
 

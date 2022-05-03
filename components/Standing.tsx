@@ -46,7 +46,7 @@ function Standing() {
 
     return (
         <>
-            <h3>Player's Standing</h3>
+            <h3>Players Standing</h3>
             <ul>
                 {data.map((user: User) =>
                     <li key={user.id}>
