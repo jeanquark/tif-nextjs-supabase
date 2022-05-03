@@ -27,4 +27,8 @@ This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-
 [official doc](https://supabase.com/docs/guides/local-development)
 ![supabase_local_development_docker](public/supabase_local_development_docker.jpg)
 
-![supabase_pgadmin_connection_config](supabase_pgadmin_connection_config.jpg)
+![supabase_pgadmin_connection_config](public/supabase_pgadmin_connection_config.jpg)
+
+### Connect to DB with PgAdmin
+Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of PgAdmin password error. Here is a capture of the connection details:
+![disable_windows_postgres_service](public/disable_windows_postgres_service.jpg)
