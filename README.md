@@ -20,7 +20,7 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 ## State management
 
-This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-typescript) for its state management.
+This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-typescript) for state management.
 
 ## Supabase Docker Config
 
@@ -29,6 +29,6 @@ This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-
 
 ![supabase_pgadmin_connection_config](public/supabase_pgadmin_connection_config.jpg)
 
-### Connect to DB with PgAdmin
-Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of PgAdmin password error. Here is a capture of the connection details:
+### Connect to Docker DB with PgAdmin
+Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of PgAdmin password error. Here is a capture of the Windows services details:
 ![disable_windows_postgres_service](public/disable_windows_postgres_service.jpg)
