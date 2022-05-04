@@ -5,7 +5,8 @@ module.exports = {
 			exec_mode: 'cluster',
 			instances: 'max', // Or a number of instances
 			cwd: './',
-			script: 'npm',
+			// script: 'npm',
+			script: 'node_modules/next/dist/bin/next',
 			args: 'start'
 		}
 	]

@@ -1,0 +1,185 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Jelastic deployment
+
+# Controls when the action will run.
+on:
+    push:
+        branches: [main]
+        tags:
+        - '*'
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+    # This workflow contains two jobs: bump-version and build_and_deploy_to_jelastic
+    bump_version:
+        name: Update version number
+        runs-on: ubuntu-latest
+        steps:
+          - name: "Checkout source code"
+            uses: "actions/checkout@v1"
+            with:
+              ref: ${{ github.ref }}
+          - name: "cat package.json"
+            run: cat ./package.json
+          - name: "Setup Node.js"
+            uses: "actions/setup-node@v1"
+            with:
+              node-version: 16.13.2
+          - name: "Automated Version Bump"
+            id: version-bump
+            uses: "phips28/gh-action-bump-version@master"
+            with:
+              tag-prefix: ''
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          - name: "cat package.json"
+            run: cat ./package.json
+          - name: 'Output Step'
+            env:
+              NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+            run: echo "new tag $NEW_TAG"
+    build_and_deploy_to_jelastic:
+        name: Build and deploy to Jelastic
+        runs-on: ubuntu-latest
+        needs: [bump_version] # Run after 1st job is completed
+        steps:
+            - name: 🚚 Get latest code
+              uses: actions/checkout@v2
+            - name: 💻 Setup Node.js
+              uses: actions/setup-node@v1
+              with:
+                node-version: 14.15.3
+            - name: 📦 Get NPM version
+              id: package-version
+              uses: martinbeentjes/npm-get-version-action@main
+            - name: 🚅 Get last version
+              id: last_version
+              run: echo ::set-output name=value::${{ steps.package-version.outputs.current-version }}
+            - name: 🚝 Get current version
+              id: current_version
+              run: |
+                v=${{ steps.last_version.outputs.value }}
+                echo ::set-output name=value::"${v%.*}.$((${v##*.}+1))"
+            - name: 🚂 Get 3rd last version
+              id: third_last_version
+              run: | 
+                v=${{ steps.last_version.outputs.value }}
+                echo ::set-output name=value::"${v%.*}.$((${v##*.}-3))"
+            - name: 🎯 Define target path
+              id: target_path
+              run: echo ::set-output name=value::/home/jelastic/ROOT/releases/${{ steps.current_version.outputs.value }}
+            - name: 🚧 Create new folder with version number as a name
+              env:
+                THIRD_LAST_RELEASE_VERSION: ${{ steps.third_last_version.outputs.value }}
+                LAST_RELEASE_VERSION: ${{ steps.last_version.outputs.value }}
+                CURRENT_RELEASE_VERSION: ${{ steps.current_version.outputs.value }}
+              run: |
+                echo "THIRD_LAST_RELEASE_VERSION:" $THIRD_LAST_RELEASE_VERSION
+                echo "LAST_RELEASE_VERSION:" $LAST_RELEASE_VERSION
+                echo "CURRENT_RELEASE_VERSION:" $CURRENT_RELEASE_VERSION
+                mkdir -p releases/$CURRENT_RELEASE_VERSION
+            - name: 📂 List files
+              run: | 
+               ls -la
+            - name: ✍ Update version number in package.json file
+              env:
+                CURRENT_RELEASE_VERSION: ${{ steps.current_version.outputs.value }}
+              run: |
+                CURRENT_DATE=$(date +%s)
+                echo "CURRENT_DATE:" $CURRENT_DATE
+                echo "CURRENT_RELEASE_VERSION:" $CURRENT_RELEASE_VERSION
+                rm public/last_build_info.json
+                cat <<EOF > public/last_build_info.json
+                {
+                  "date": $CURRENT_DATE,
+                  "version": "$CURRENT_RELEASE_VERSION"
+                }
+                EOF
+            - name: 💾 Install
+              run: npm install
+            - name: 🔨 Build
+              run: npm run build
+            - name: 🐆 Deploy new releases version folder to server
+              uses: easingthemes/ssh-deploy@v2.1.5
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+                  REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+                  REMOTE_PORT: 3022
+                  SOURCE: './releases/'
+                  TARGET: '/home/jelastic/ROOT/releases/'
+                  ARGS: '-rltgoDzvO --exclude .git --exclude .github --exclude node_modules --exclude ecosystem.config.js'
+            - name: 🐢 Deploy files and folders (except node_modules) to new releases version folder
+              uses: easingthemes/ssh-deploy@v2.1.5
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+                  REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+                  REMOTE_PORT: 3022
+                  SOURCE: './'
+                  TARGET: ${{ steps.target_path.outputs.value }}
+                  ARGS: '-rltgoDzvO --exclude .git --exclude .github --exclude node_modules --exclude ecosystem.config.js --exclude releases'
+            - name: 🐢 Deploy node_modules folder to ROOT directory
+              uses: easingthemes/ssh-deploy@v2.1.5
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+                  REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+                  REMOTE_PORT: 3022
+                  SOURCE: './node_modules'
+                  TARGET: '/home/jelastic/ROOT/'
+                  ARGS: '-rltgoDzvO'
+            - name: 🐢 Deploy package.json file to ROOT directory
+              uses: easingthemes/ssh-deploy@v2.1.5
+              env:
+                  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+                  REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+                  REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+                  REMOTE_PORT: 3022
+                  SOURCE: './package.json'
+                  TARGET: '/home/jelastic/ROOT/'
+                  ARGS: '-rltgoDzvO'
+            - name: Set env name
+              id: env_name
+              run: echo ::set-output name=value::test-thisisfan
+            - name: Set app server node ID
+              id: app_server_node_id
+              run: echo ::set-output name=value::94699
+            - name: ✍ Update symbolic link and remove 3rd last version
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 3022
+                  script: |
+                    cd ROOT
+                    ls -al
+                    last_version=${{ steps.last_version.outputs.value }}
+                    third_last_version=${{ steps.third_last_version.outputs.value }}
+                    current_version=${{ steps.current_version.outputs.value }}
+                    echo App server node ID: ${{ steps.app_server_node_id.outputs.value }}
+                    echo Env name: ${{ steps.env_name.outputs.value }}
+                    echo Last version: ${last_version}
+                    echo Third last version: ${third_last_version}
+                    echo Current version: ${current_version}
+                    rm -rf ./current
+                    ln -nsf ./releases/${current_version} ./current
+                    ls -al
+                    rm -rf ./releases/${third_last_version}
+                    pm2 list
+                    pm2 restart all
+            - name: ✍ Update version number in package.json file
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.SERVER_HOST }}
+                  username: ${{ secrets.SERVER_USERNAME }}
+                  key: ${{ secrets.SSH_PRIVATE_KEY }}
+                  port: 3022
+                  script: |
+                    cd ROOT/current
+                    current_version=${{ steps.current_version.outputs.value }}
+                    cp package.json temp.json
+                    node -p "JSON.stringify({...require('./temp.json'), version: '${current_version}'}, null, 2)" > ./package.json
+                    rm temp.json
