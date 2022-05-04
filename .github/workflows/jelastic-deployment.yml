@@ -99,6 +99,9 @@ jobs:
             - name: 💾 Install
               run: npm install
             - name: 🔨 Build
+              env:
+                  NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+                  NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
               run: npm run build
             - name: 🐆 Deploy new releases version folder to server
               uses: easingthemes/ssh-deploy@v2.1.5
