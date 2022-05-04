@@ -45,6 +45,7 @@ export default function HomePage({ data }) {
 		<>
 			<h1>Current & next games</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
+			{Date()}
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
