@@ -19,6 +19,8 @@ export async function getServerSideProps() {
 	console.log('[getServerSideProps]', new Date());
 	const current_timestamp = Math.floor(Date.now() / 1000)
 	console.log('current_timestamp: ', current_timestamp - (12 * 60 * 60));
+	console.log('Supabase url: ', process.env.NEXT_PUBLIC_SUPABASE_URL)
+	console.log('Supabase anon key: ', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
 	// const { data, error } = await supabase
 	// 	.from('events')
 	// 	.select('*')
@@ -46,7 +48,7 @@ export default function HomePage({ data }) {
 			<h1>Current & next games</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
-			Last deployment: Thursday, 17:23.
+			Last deployment: Thursday, 23:11.
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
