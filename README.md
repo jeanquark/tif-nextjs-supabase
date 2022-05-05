@@ -40,4 +40,4 @@ Make sure [windows postgres service](https://github.com/sameersbn/docker-postgre
 Make sure to set up an [external connection](https://jelastic.com/blog/how-to-connect-to-your-docker-container-inside-jelastic-cloud/).
 ![jelastic_docker_external_connection](public/jelastic_docker_external_connection.jpg)
 
-![jelastic_docker_pgadmin_connection_config](public/jelastic_docker_pgadmin_connection_config.jpg)
+![jelastic_docker_pgadmin_connection_config](public/jelastic_docker_pgadmin_connection_configuration.jpg)
