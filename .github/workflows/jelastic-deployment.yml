@@ -145,10 +145,10 @@ jobs:
                   ARGS: '-rltgoDzvO'
             - name: Set env name
               id: env_name
-              run: echo ::set-output name=value::test-thisisfan
+              run: echo ::set-output name=value::thisisfan-test
             - name: Set app server node ID
               id: app_server_node_id
-              run: echo ::set-output name=value::94699
+              run: echo ::set-output name=value::94921
             - name: ✍ Update symbolic link and remove 3rd last version
               uses: appleboy/ssh-action@master
               with:
