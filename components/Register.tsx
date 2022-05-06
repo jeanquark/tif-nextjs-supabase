@@ -50,6 +50,7 @@ const Register: React.FC<ChildProps> = (props) => {
             console.log('session: ', session)
             // alert('Successful login!')
         } catch (error) {
+            console.log('error: ', error);
             alert(error.error_description || error.message)
         } finally {
             setLoading(false)

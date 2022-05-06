@@ -20,7 +20,8 @@ export async function getServerSideProps() {
 	const current_timestamp = Math.floor(Date.now() / 1000)
 	console.log('current_timestamp: ', current_timestamp - (12 * 60 * 60));
 	console.log('Supabase url: ', process.env.NEXT_PUBLIC_SUPABASE_URL)
-	console.log('Supabase anon key: ', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+	// console.log('Supabase anon key: ', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+	console.log('API_FOOTBALL_KEY: ', process.env.API_FOOTBALL_KEY)
 	// const { data, error } = await supabase
 	// 	.from('events')
 	// 	.select('*')

@@ -32,12 +32,16 @@ This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-
 ### Connect to Docker Postgres DB with client PgAdmin
 
 ## Local
-Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of PgAdmin password error. Here is a capture of the Windows services details:
+Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of pgAdmin password error. Here is a capture of the Windows services details:
 ![disable_windows_postgres_service](public/disable_windows_postgres_service.jpg)
 
 ## Distant
 
-Make sure to set up an [external connection](https://jelastic.com/blog/how-to-connect-to-your-docker-container-inside-jelastic-cloud/).
+Make sure to set up an [external connection endpoint](https://jelastic.com/blog/how-to-connect-to-your-docker-container-inside-jelastic-cloud/). Pay attention to the private port (5433).
 ![jelastic_docker_external_connection](public/jelastic_docker_external_connection.jpg)
 
+Create a new server in pgAdmin with the following data:
 ![jelastic_docker_pgadmin_connection_config](public/jelastic_docker_pgadmin_connection_configuration.jpg)
+
+All Supabase active containers on the server (docker ps command):
+![jelastic_docker_list_supabase_containers](public/jelastic_docker_list_supabase_containers.jpg)

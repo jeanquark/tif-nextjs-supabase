@@ -67,12 +67,13 @@ export default function Navbar() {
             const fetchUser = async () => {
                 const { data } = await supabase.from('users').select('*').eq('auth_user_id', authUser.id).limit(1).single()
                 console.log('data2: ', data)
-
-                dispatch(setAuthUser({
-                    id: data.id,
-                    email: authUser.email,
-                    role: authUser.role
-                }))
+                if (data) {
+                    dispatch(setAuthUser({
+                        id: data.id,
+                        email: authUser.email,
+                        role: authUser.role
+                    }))
+                }
             }
             fetchUser()
 
