@@ -4,11 +4,12 @@ import { supabase } from '../utils/supabaseClient'
 
 
 type ChildProps = {
+    handleClose: () => void;
     toggleModal: () => void;
 }
 
 // export default function Register(props: ChildProps) {
-const Register: React.FC<ChildProps> = (props) => {
+const Register: React.FC<ChildProps> = (props: ChildProps) => {
     // export default Register: React.FC<ChildProps> = (props) => {
     // const dispatch = useAppDispatch()
 
@@ -48,6 +49,8 @@ const Register: React.FC<ChildProps> = (props) => {
             if (error) throw error
             console.log('user: ', user)
             console.log('session: ', session)
+            // Close modal
+           props.handleClose()
             // alert('Successful login!')
         } catch (error) {
             console.log('error: ', error);

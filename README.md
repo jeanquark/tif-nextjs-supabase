@@ -24,14 +24,26 @@ This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-
 
 ## Supabase Docker Config
 
-[official doc](https://supabase.com/docs/guides/local-development)
+Navigate to `/docker` folder. Run `docker-compose up -d` in terminal. The following services should be up and running:
+
 ![supabase_local_development_docker](public/supabase_local_development_docker.jpg)
 
-![supabase_pgadmin_connection_config](public/supabase_pgadmin_connection_config.jpg)
+Display running containers:
+`docker ps`
+
+SSH into running container:
+`docker exec -it <container name> /bin/bash`
+
+Remove postgres volume:
+`rm -r /var/lib/data`
+
+[official doc](https://supabase.com/docs/guides/local-development)
 
 ### Connect to Docker Postgres DB with client PgAdmin
 
 ## Local
+![supabase_pgadmin_connection_config](public/supabase_pgadmin_connection_config.jpg)
+
 Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of pgAdmin password error. Here is a capture of the Windows services details:
 ![disable_windows_postgres_service](public/disable_windows_postgres_service.jpg)
 

@@ -12,10 +12,6 @@ import Register from '../components/Register'
 import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
 
-const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut()
-}
-
 
 export default function Navbar() {
     const dispatch = useAppDispatch()
@@ -58,41 +54,54 @@ export default function Navbar() {
         }, 900)
     }
 
+    const fetchUser = async (authUser) => {
+        const { data } = await supabase.from('users').select('*').eq('auth_user_id', authUser.id).limit(1).single()
+        console.log('data2: ', data)
+        if (data) {
+            dispatch(setAuthUser({
+                id: data.id,
+                email: authUser.email,
+                role: authUser.role
+            }))
+        }
+    }
+
+
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut()
+        if (error) {
+            return error
+        }
+        dispatch(setAuthUser({
+            id: null,
+            email: null,
+            role: null
+        }))
+    }
+
     useEffect(() => {
         const session = supabase.auth.session()
         console.log('[useEffect Navbar] session: ', session)
         const authUser = session?.user
 
         if (authUser) {
-            const fetchUser = async () => {
-                const { data } = await supabase.from('users').select('*').eq('auth_user_id', authUser.id).limit(1).single()
-                console.log('data2: ', data)
-                if (data) {
-                    dispatch(setAuthUser({
-                        id: data.id,
-                        email: authUser.email,
-                        role: authUser.role
-                    }))
-                }
-            }
-            fetchUser()
+            
+            fetchUser(authUser)
 
             
             
         }
 
-        // const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-        //     console.log('[useEffect Navbar] onAuthStateChange session: ', session, new Date());
-
-        //     dispatch(setAuthUser({
-        //         id: session?.user.id,
-        //         email: session?.user.email,
-        //         role: session?.user.role
-        //     }))
-        // })
-        // return () => {
-        //     listener?.unsubscribe()
-        // }
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log('[useEffect Navbar] onAuthStateChange session: ', session, new Date());
+            
+            if (session && session.user) {
+                fetchUser(session.user)
+            }
+        })
+        return () => {
+            listener?.unsubscribe()
+        }
     }, [])
     
     return (
@@ -118,7 +127,7 @@ export default function Navbar() {
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
                 {/* <p>Modal</p> */}
-                {loginModal ? <Login toggleModal={toggleModal} /> : <Register toggleModal={toggleModal} />}
+                {loginModal ? <Login toggleModal={toggleModal} handleClose={closeModal} /> : <Register toggleModal={toggleModal} handleClose={closeModal} />}
             </Modal>
             <br />
             <div>

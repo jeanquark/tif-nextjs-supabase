@@ -1,14 +1,24 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
-// import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { useAppDispatch } from '../app/hooks'
+import { setAuthUser } from '../features/auth/authSlice';
+// import { Router } from 'next/router';
+// import { useRouter } from 'next/router'
+// import Router from 'next/router'
+import { useRouter } from 'next/router'
+
+
 
 type ChildProps = {
+    handleClose: () => void;
     toggleModal: () => void;
     // toggleState: (e: React.MouseEvent) => void;
 }
 
 export default function Login(props: ChildProps) {
-    // const dispatch = useAppDispatch()
+    // const router = useRouter()
+    const router = useRouter()
+    const dispatch = useAppDispatch()
     const [loading, setLoading] = useState<boolean>(false)
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
@@ -40,13 +50,44 @@ export default function Login(props: ChildProps) {
             const { user, error } = await supabase.auth.signIn({ email, password })
             if (error) throw error
             console.log('user: ', user)
-            // alert('Successful login!')
+            console.log('Successful login!')
+            // Fetch user
+            const { data } = await supabase.from('users').select('*').eq('auth_user_id', user.id).limit(1).single()
+            console.log('data2: ', data)
+            if (data) {
+                dispatch(setAuthUser({
+                    id: data.id,
+                    email: user.email,
+                    role: user.role
+                }))
+            }
+            props.handleClose()
         } catch (error) {
             alert(error.error_description || error.message)
         } finally {
             setLoading(false)
         }
         // dispatch(loginUser(email, password));
+    }
+
+    const handleOAuthLogin = async (provider: string) => {
+        const { user, session, error } = await supabase.auth.signIn({
+            // provider can be 'github', 'google', 'gitlab', and more
+            provider: 'google'
+        })
+        console.log('user: ', user)
+        console.log('session: ', session)
+        if (error) {
+            console.log('error: ', error)
+            return
+        }
+        // router.reload(window.location.pathname)
+        // Router.push('/')
+        if (typeof window !== 'undefined') {
+            console.log('redirect')
+            router.push('/')
+            return
+        }
     }
 
     return (
@@ -85,6 +126,12 @@ export default function Login(props: ChildProps) {
                         <span>{loading ? 'Loading' : 'Login'}</span>
                     </button>&nbsp;
                     <button onClick={props.toggleModal}>Switch to Register</button>
+                </div>
+                <div>
+                    <button onClick={(e) => {
+                        e.preventDefault()
+                        handleOAuthLogin('google')
+                    }}>Google OAuth</button>
                 </div>
                 <br />
             </div>
