@@ -12,6 +12,9 @@ import { useRouter } from 'next/router'
 type ChildProps = {
     handleClose: () => void;
     toggleModal: () => void;
+    // switchTo: (modalName: string) => {};
+    switchTo: (params: any) => any;
+    // { toggleModal = () => {} }: toggleModal
     // toggleState: (e: React.MouseEvent) => void;
 }
 
@@ -70,10 +73,10 @@ export default function Login(props: ChildProps) {
         // dispatch(loginUser(email, password));
     }
 
-    const handleOAuthLogin = async (provider: string) => {
+    const handleOAuthLogin = async (OAuthProvider: any) => {
         const { user, session, error } = await supabase.auth.signIn({
             // provider can be 'github', 'google', 'gitlab', and more
-            provider: 'google'
+            provider: OAuthProvider
         })
         console.log('user: ', user)
         console.log('session: ', session)
@@ -83,11 +86,11 @@ export default function Login(props: ChildProps) {
         }
         // router.reload(window.location.pathname)
         // Router.push('/')
-        if (typeof window !== 'undefined') {
-            console.log('redirect')
-            router.push('/')
-            return
-        }
+        // if (typeof window !== 'undefined') {
+        //     console.log('redirect')
+        //     router.push('/')
+        //     return
+        // }
     }
 
     return (
@@ -125,13 +128,19 @@ export default function Login(props: ChildProps) {
                     >
                         <span>{loading ? 'Loading' : 'Login'}</span>
                     </button>&nbsp;
-                    <button onClick={props.toggleModal}>Switch to Register</button>
+                    <button onClick={() => props.switchTo('register')}>Switch to Register</button>
                 </div>
                 <div>
                     <button onClick={(e) => {
                         e.preventDefault()
                         handleOAuthLogin('google')
                     }}>Google OAuth</button>
+                </div>
+                <div>
+                <button onClick={(e) => {
+                        e.preventDefault()
+                        handleOAuthLogin('facebook')
+                    }}>Facebook OAuth</button>
                 </div>
                 <br />
             </div>

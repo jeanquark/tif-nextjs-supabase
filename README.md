@@ -28,16 +28,13 @@ Navigate to `/docker` folder. Run `docker-compose up -d` in terminal. The follow
 
 ![supabase_local_development_docker](public/supabase_local_development_docker.jpg)
 
-Display running containers:
-`docker ps`
+`docker ps` : Display running containers.
 
-SSH into running container:
-`docker exec -it <container name> /bin/bash`
+`docker exec -it <container name> /bin/bash` : SSH into running container.
 
-Remove postgres volume:
-`rm -r /var/lib/data`
+`rm -r /var/lib/data` : Remove postgres volume,
 
-[official doc](https://supabase.com/docs/guides/local-development)
+[Official doc](https://supabase.com/docs/guides/local-development).
 
 ### Connect to Docker Postgres DB with client PgAdmin
 

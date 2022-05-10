@@ -6,6 +6,7 @@ import { supabase } from '../utils/supabaseClient'
 type ChildProps = {
     handleClose: () => void;
     toggleModal: () => void;
+    switchTo: (params: any) => any;
 }
 
 // export default function Register(props: ChildProps) {
@@ -95,7 +96,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                             disabled={loading}
                         >
                             <span>{loading ? 'Loading' : 'Register'}</span>
-                        </button>&nbsp;<button onClick={props.toggleModal}>Switch to Login</button>
+                        </button>&nbsp;<button onClick={() => props.switchTo('login')}>Switch to Login</button>
                     </div>
                 </form>
                 <br />

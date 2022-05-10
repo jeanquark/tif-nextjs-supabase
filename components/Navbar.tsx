@@ -31,8 +31,21 @@ export default function Navbar() {
         setModal(true)
     }
 
-    const switchTo = (where: string) => {
-        console.log('switchTo')
+    const switchTo = (modalName: string) => {
+        console.log('switchTo: ', modalName)
+        switch (modalName) {
+            case 'register':
+                openRegisterModal()
+                break;
+            case 'login':
+                openLoginModal()
+                break;
+            default:
+                openRegisterModal()
+        }
+    }
+    const abc = () => {
+        console.log('abc')
     }
 
     const toggleModal = () => {
@@ -85,11 +98,7 @@ export default function Navbar() {
         const authUser = session?.user
 
         if (authUser) {
-            
-            fetchUser(authUser)
-
-            
-            
+            fetchUser(authUser)            
         }
 
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -127,7 +136,7 @@ export default function Navbar() {
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
                 {/* <p>Modal</p> */}
-                {loginModal ? <Login toggleModal={toggleModal} handleClose={closeModal} /> : <Register toggleModal={toggleModal} handleClose={closeModal} />}
+                {loginModal ? <Login toggleModal={toggleModal} switchTo={switchTo} handleClose={closeModal} /> : <Register toggleModal={toggleModal} switchTo={switchTo} handleClose={closeModal} />}
             </Modal>
             <br />
             <div>
