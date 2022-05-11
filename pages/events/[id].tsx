@@ -115,7 +115,7 @@ export default function EventPage() {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
-            .select('id, number_participants, participation_threshold, actions (name, image), events (home_team_name, visitor_team_name), users (id, username), inserted_at')
+            .select(`id, number_participants, participation_threshold, action:actions (name, image), event:events (home_team_name, visitor_team_name), user:users (id, username), inserted_at`)
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })
@@ -163,7 +163,11 @@ export default function EventPage() {
         if (!subscriptionEventActions) {
             console.log('Not subscribed to eventActions')
             subscriptionEventActions = supabase
+                // .from('event_actions')
                 .from(`event_actions:event_id=eq.${id}`)
+                // .on('*', payload => {
+                //     console.log('Changed received!', payload)
+                // }).subscribe()
                 .on('INSERT', payload => {
                     console.log('[INSERT] newEventAction payload: ', payload.new)
 
@@ -179,7 +183,7 @@ export default function EventPage() {
                     setEventActions((a) => [newEventAction, ...a])
                 })
                 .on('UPDATE', (payload) => {
-                    console.log('UPDATE eventActions: ', payload)
+                    console.log('[UPDATE] eventActions: ', payload)
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
 
@@ -198,6 +202,17 @@ export default function EventPage() {
                     // 5. Set the state to our new copy
                     setEventActions(items);
                 })
+                .on('DELETE', (payload) => {
+                    console.log('[DELETE] eventActions: ', payload)
+                    const index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
+                    console.log('index: ', index)
+                    if (index > -1) {
+                        let items = [...eventActionsRef.current];
+                        console.log('items: ', items)
+                        items.splice(index, 1)
+                        setEventActions(items)
+                    }
+                })
                 .subscribe()
         } else {
             console.log('removeSubscription')
@@ -205,15 +220,20 @@ export default function EventPage() {
         }
     }
 
-    const launchAction = async (id: number) => {
+    const launchAction = async (action: Action) => {
         try {
-            console.log('lauchAction: ', id)
+            console.log('lauchAction: ', action)
+            if (!auth.id) {
+                alert('You are not authenticated. Please login first.')
+                throw 'not authenticated'
+            }
+            // throw 'not_auth'
+
             const { data, error } = await supabase
                 .from('event_actions')
                 .insert([{
                     event_id: event.id,
-                    action_id: id,
-                    // user_id: 3,
+                    action_id: action.id,
                     user_id: auth.id,
                     number_participants: 0,
                     participation_threshold: 2
@@ -222,7 +242,11 @@ export default function EventPage() {
             if (error) {
                 throw error
             }
-            // setEventActions([...eventActions, data[0]])
+            data[0]['number_participants'] = 1
+            // setEventActions([...eventActions, { action: {
+            //     name: action.name,
+            //     image: action.image,
+            // }, user: { id: auth.id, username: auth.username }, ...data[0] }])
             joinAction(data[0])
         } catch (error) {
             console.log('error: ', error);
@@ -232,6 +256,11 @@ export default function EventPage() {
     const joinAction = async (eventAction: any) => {
         try {
             console.log('joinAction: ', eventAction)
+
+            if (!auth.id) {
+                alert('You are not authenticated. Please login first.')
+                throw 'not authenticated'
+            }
             
             // 1) Add auth user to event_actions_users table
             const { data, error: errorInsert } = await supabase.from('event_actions_users').insert(
@@ -260,6 +289,7 @@ export default function EventPage() {
             }
 
             // 3) Update local store
+            // setEventActions(oldArray => [...oldArray])
             setUserActions(oldArray => [...oldArray, userAction]);
 
         } catch (error) {
@@ -270,6 +300,10 @@ export default function EventPage() {
     const unjoinAction = async (eventAction: any) => {
         try {
             console.log('unjoinAction: ', eventAction)
+            if (!auth.id) {
+                alert('You are not authenticated. Please login first.')
+                throw 'not authenticated'
+            }
 
             // 1) Remove auth user to event_actions_users table
             const { data, error } = await supabase
@@ -282,16 +316,23 @@ export default function EventPage() {
             }
 
             // 2) Decrement counter
-            const { data: abc, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action_id })
+            const { data: dataDecrement, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action_id })
             if (errorDecrement) {
                 console.log('errorDecrement: ', errorDecrement)
                 throw errorDecrement
             }
-            console.log('abc: ', abc);
+            console.log('dataDecrement: ', dataDecrement);
 
             // 3) Update local state
+            // let array = [...eventActions] // make separate copy of the array
+            // let index = array.findIndex(action => action.id === eventAction.id)
+            // console.log('index: ', index);
+            // if (index !== -1) {
+            //     array.splice(index, 1);
+            //     setUserActions(array);
+            // }
             let array = [...userActions]; // make a separate copy of the array
-            const index = array.findIndex(action => action.id === eventAction.id)
+            let index = array.findIndex(action => action.id === eventAction.id)
             if (index !== -1) {
                 array.splice(index, 1);
                 setUserActions(array);
@@ -301,22 +342,35 @@ export default function EventPage() {
         }
     }
 
-    const deleteAction = async (eventActionId: number) => {
+    const deleteAction = async (eventAction: any) => {
         try {
+            console.log('deleteAction eventAction: ', eventAction);
+            if (!auth.id) {
+                alert('You are not authenticated. Please login first.')
+                throw 'not_authenticated'
+            }
+            if (eventAction.user.id !== auth.id) {
+                alert('You are not the creator of this action')
+                throw 'not_your_action'
+            }
             const { data, error } = await supabase
                 .from('event_actions')
                 .delete()
-                .match({ id: eventActionId })
+                .match({ id: eventAction.id })
+            // const { data, error } = await supabase
+            //     .from(`event_actions:id=eq.${eventActionId}`)
+            //     .delete()
+            console.log('data: ', data);
             if (error) {
                 throw error
             }
 
-            let array = [...eventActions]; // make a separate copy of the array
-            const index = array.findIndex(action => action.id === eventActionId)
-            if (index !== -1) {
-                array.splice(index, 1);
-                setEventActions(array);
-            }
+            // let array = [...eventActions]; // make a separate copy of the array
+            // const index = array.findIndex(action => action.id === eventActionId)
+            // if (index !== -1) {
+            //     array.splice(index, 1);
+            //     setEventActions(array);
+            // }
         } catch (error) {
             console.log('error: ', error);
         }
@@ -338,23 +392,26 @@ export default function EventPage() {
                     <h3>Actions</h3>
                     {actions.map((action, index) => {
                         return <Card key={index}>
-                            ID: {action.id}&nbsp;
+                            Id: {action.id}&nbsp;
                             {action.name}&nbsp;
-                            <button onClick={() => launchAction(action.id)}>Launch</button>
+                            <button onClick={() => launchAction(action)}>Launch</button>
                         </Card>
                     })}
                     <h4>List of event actions</h4>
                     <ul>{eventActions.map((action, index) => {
-                        return <li key={action.id}>
-                            ID: {action.id} - {action.actions?.name} - #participants: {action.number_participants}/{action.participation_threshold} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                        return <li key={action.id} style={{border: '1px solid black'}}>
+                            Id: {action.id} - Name: {action.action?.name}<br />
+                            Number participants: {action.number_participants}/{action.participation_threshold}<br />
+                            Launched by: {action.user?.username}<br />
+                            Created at: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             <button disabled={userActions.find(a => a.event_action_id == action.id)} onClick={() => joinAction(action)}>Join</button>&nbsp;
-                            <button onClick={() => deleteAction(action.id)}>Delete</button>
+                            <button onClick={() => deleteAction(action)}>Delete</button>
                         </li>
                     })}</ul>
                     <h4>List of user actions</h4>
                     <ul>{userActions.map((action, index) => {
                         return <li key={action.id}>
-                            ID: {action.id} - userId: {action.user_id} - eventActionId: {action.event_action_id} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                            Id: {action.id} - userId: {action.user_id} - eventActionId: {action.event_action_id} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             <button onClick={() => unjoinAction(action)}>Unjoin</button>
                         </li>
                     })}</ul>

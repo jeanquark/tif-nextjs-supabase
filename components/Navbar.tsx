@@ -9,6 +9,7 @@ import {
 } from '../features/auth/authSlice'
 import Login from '../components/Login'
 import Register from '../components/Register'
+import ForgotPassword from '../components/ForgotPassword'
 import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
 
@@ -17,47 +18,56 @@ export default function Navbar() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
     const [modal, setModal] = useState<boolean>(false)
+    const [modalType, setModalType] = useState<string>('')
+    // const [modal, setModal] = useState<string>('')
     // const [login, setLogin] = useState(false)
     const [loginModal, setLoginModal] = useState<boolean>(false)
+    const [registerModal, setRegisterModal] = useState<boolean>(false)
+    const [forgotPasswordModal, setForgotPasswordModal] = useState<boolean>(false)
     // const [registerModal, setRegisterModal] = useState(false)
     const [showModal2, setShowModal2] = useState(false)
 
     const openLoginModal = () => {
-        setLoginModal(true)
         setModal(true)
+        setModalType('login')
     }
     const openRegisterModal = () => {
-        setLoginModal(false)
         setModal(true)
+        setModalType('register')
+    }
+    const openForgotPasswordModal = () => {
+        setModal(true)
+        setModalType('forgot-password')
     }
 
     const switchTo = (modalName: string) => {
         console.log('switchTo: ', modalName)
         switch (modalName) {
             case 'register':
-                openRegisterModal()
+                // openRegisterModal()
+                setModal(true)
+                setModalType('register')
                 break;
             case 'login':
-                openLoginModal()
+                // openLoginModal()
+                setModal(true)
+                setModalType('login')
+                break;
+            case 'forgot-password':
+                // openForgotPasswordModal()
+                setModal(true)
+                setModalType('forgot-password')
                 break;
             default:
                 openRegisterModal()
         }
     }
-    const abc = () => {
-        console.log('abc')
-    }
 
-    const toggleModal = () => {
-        setModal(!modal)
-    }
+    // const toggleModal = () => {
+    //     setModal(!modal)
+    // }
     const closeModal = () => {
         setModal(false)
-    }
-
-    const toggleLoginModal = () => {
-        console.log('toggleLoginModal')
-        setLoginModal(!loginModal)
     }
 
     const closeLoginModal = () => {
@@ -74,11 +84,11 @@ export default function Navbar() {
             dispatch(setAuthUser({
                 id: data.id,
                 email: authUser.email,
+                username: data.username,
                 role: authUser.role
             }))
         }
     }
-
 
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -88,6 +98,7 @@ export default function Navbar() {
         dispatch(setAuthUser({
             id: null,
             email: null,
+            username: null,
             role: null
         }))
     }
@@ -98,12 +109,12 @@ export default function Navbar() {
         const authUser = session?.user
 
         if (authUser) {
-            fetchUser(authUser)            
+            fetchUser(authUser)
         }
 
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
             console.log('[useEffect Navbar] onAuthStateChange session: ', session, new Date());
-            
+
             if (session && session.user) {
                 fetchUser(session.user)
             }
@@ -112,7 +123,7 @@ export default function Navbar() {
             listener?.unsubscribe()
         }
     }, [])
-    
+
     return (
         <div>
             <img src="/logo.svg" alt="logo" style={{ maxWidth: 30 }} />
@@ -129,14 +140,19 @@ export default function Navbar() {
                 <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <Link href="/login"><a>Login</a></Link>
             } */}
-            auth.id: {auth.id}
+            auth.id: {auth.id}, 
+            auth.username: {auth.username}
+            {/* modal: {modal} */}
+            {/* modalType: {modalType} */}
             {auth.id ?
                 <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
                 {/* <p>Modal</p> */}
-                {loginModal ? <Login toggleModal={toggleModal} switchTo={switchTo} handleClose={closeModal} /> : <Register toggleModal={toggleModal} switchTo={switchTo} handleClose={closeModal} />}
+                {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
+                {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
+                {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
             </Modal>
             <br />
             <div>

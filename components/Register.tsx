@@ -5,7 +5,7 @@ import { supabase } from '../utils/supabaseClient'
 
 type ChildProps = {
     handleClose: () => void;
-    toggleModal: () => void;
+    // toggleModal: () => void;
     switchTo: (params: any) => any;
 }
 
@@ -52,7 +52,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
             console.log('session: ', session)
             // Close modal
            props.handleClose()
-            // alert('Successful login!')
+            alert('User was successfully created. Check your inbox for the confirmation message!')
         } catch (error) {
             console.log('error: ', error);
             alert(error.error_description || error.message)

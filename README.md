@@ -22,6 +22,10 @@ The `pages/api` directory is mapped to `/api/*`. Files in this directory are tre
 
 This project uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-with-typescript) for state management.
 
+## Realtime management
+
+By default realtime is disabled on the database. You need to activate it on a table by table approach. More [info](https://supabase.com/docs/guides/api#managing-realtime).
+
 ## Supabase Docker Config
 
 Navigate to `/docker` folder. Run `docker-compose up -d` in terminal. The following services should be up and running:

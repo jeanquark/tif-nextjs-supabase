@@ -237,7 +237,7 @@ CREATE TRIGGER on_auth_user_created
   EXECUTE PROCEDURE public.handle_new_user();
 
 
-/* Increment by one function */ 
+/* Increment participation by one function */ 
 CREATE OR REPLACE FUNCTION increment_participation_count_by_one (row_id INT) 
 RETURNS void AS
 $$
@@ -247,7 +247,7 @@ $$
 $$ 
 LANGUAGE SQL volatile;
 
-/* Decrement by one function */
+/* Decrement participation by one function */
 CREATE OR REPLACE FUNCTION decrement_participation_count_by_one (row_id INT) 
 RETURNS void AS
 $$
@@ -280,3 +280,12 @@ CREATE TRIGGER participation_threshold
     FOR EACH ROW
     -- [ WHEN ( condition ) ]
     EXECUTE PROCEDURE check_participation_threshold();
+
+
+/* Activate replica set on selected tables to enable realtime */
+alter table events replica identity full;
+alter table event_actions replica identity full;
+alter table event_actions_users replica identity full;
+alter table event_users replica identity full;
+-- alter table standings replica identity full;
+-- alter table users replica identity full;

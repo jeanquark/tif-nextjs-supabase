@@ -11,7 +11,7 @@ import { useRouter } from 'next/router'
 
 type ChildProps = {
     handleClose: () => void;
-    toggleModal: () => void;
+    // toggleModal: () => void;
     // switchTo: (modalName: string) => {};
     switchTo: (params: any) => any;
     // { toggleModal = () => {} }: toggleModal
@@ -26,29 +26,9 @@ export default function Login(props: ChildProps) {
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
 
-    // useEffect(() => {
-    //     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-    //         console.log('[Login] onAuthStateChange event: ', event)
-    //         console.log('[Login] onAuthStateChange session: ', session)
-    //         const session2 = supabase.auth.session()
-    //         console.log('session2: ', session2);
-    //         // Send session to /api/auth route to set the auth cookie.
-    //         // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
-    //         // dispatch(setAuthUser({
-    //         //     id: session?.user.id,
-    //         //     email: session?.user.email,
-    //         //     role: session?.user.role
-    //         // }))
-
-    //     })
-    //     return () => {
-    //         authListener.unsubscribe()
-    //     }
-    // }, [])
-
     const handleLogin = async (email: string, password: string) => {
-        console.log('handleLogin');
         try {
+            console.log('handleLogin');
             setLoading(true)
             const { user, error } = await supabase.auth.signIn({ email, password })
             if (error) throw error
@@ -61,6 +41,7 @@ export default function Login(props: ChildProps) {
                 dispatch(setAuthUser({
                     id: data.id,
                     email: user.email,
+                    username: data.username,
                     role: user.role
                 }))
             }
@@ -74,15 +55,18 @@ export default function Login(props: ChildProps) {
     }
 
     const handleOAuthLogin = async (OAuthProvider: any) => {
-        const { user, session, error } = await supabase.auth.signIn({
-            // provider can be 'github', 'google', 'gitlab', and more
-            provider: OAuthProvider
-        })
-        console.log('user: ', user)
-        console.log('session: ', session)
-        if (error) {
-            console.log('error: ', error)
-            return
+        try {
+            const { user, session, error } = await supabase.auth.signIn({
+                // provider can be 'github', 'google', 'gitlab', and more
+                provider: OAuthProvider
+            })
+            console.log('user: ', user)
+            console.log('session: ', session)
+            if (error) {
+                throw error
+            }
+        } catch (error) {
+            console.log('error: ', error);
         }
         // router.reload(window.location.pathname)
         // Router.push('/')
@@ -92,6 +76,7 @@ export default function Login(props: ChildProps) {
         //     return
         // }
     }
+
 
     return (
         <div className="row flex flex-center">
@@ -130,19 +115,21 @@ export default function Login(props: ChildProps) {
                     </button>&nbsp;
                     <button onClick={() => props.switchTo('register')}>Switch to Register</button>
                 </div>
+                <br />
                 <div>
                     <button onClick={(e) => {
                         e.preventDefault()
                         handleOAuthLogin('google')
-                    }}>Google OAuth</button>
-                </div>
-                <div>
-                <button onClick={(e) => {
+                    }}>Google OAuth</button>&nbsp;
+                    <button onClick={(e) => {
                         e.preventDefault()
                         handleOAuthLogin('facebook')
                     }}>Facebook OAuth</button>
                 </div>
                 <br />
+                <button onClick={(e) => {
+                    props.switchTo('forgot-password')
+                }}>Forgot Password</button>
             </div>
         </div>
     )

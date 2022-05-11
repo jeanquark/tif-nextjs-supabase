@@ -8,6 +8,7 @@ import type { AppState, AppThunk } from '../../app/store'
 export interface AuthState {
     id: string
     email: string
+    username: string
     role: string
     // value: {
     //     id: string
@@ -25,7 +26,8 @@ interface loginInfo {
 const initialState: AuthState = {
     id: undefined,
     email: undefined,
-    role: undefined
+    username: undefined,
+    role: undefined,
 }
 // const initialState: AuthState = null
 
@@ -65,6 +67,7 @@ export const authSlice = createSlice({
             // state = action.payload
             state.id = action.payload.id
             state.email = action.payload.email
+            state.username = action.payload.username
             state.role = action.payload.role
             // state = {
             //     id: action.payload.id,

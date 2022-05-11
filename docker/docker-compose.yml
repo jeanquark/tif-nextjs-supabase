@@ -88,6 +88,9 @@ services:
       GOTRUE_EXTERNAL_FACEBOOK_REDIRECT_URI: ${OAUTH_REDIRECT_URI}
       #GOTRUE_EXTERNAL_FACEBOOK_URL: ${FACEBOOK_URL}
 
+      API_EXTERNAL_URL: http://localhost:${KONG_HTTP_PORT}
+
+
   rest:
     container_name: supabase-rest
     image: postgrest/postgrest:v9.0.0
