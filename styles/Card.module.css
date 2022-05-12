@@ -7,6 +7,6 @@
 }
 
 .card:hover {
-    cursor: pointer;
+    /* cursor: pointer; */
     background-color: lightgray;
 }

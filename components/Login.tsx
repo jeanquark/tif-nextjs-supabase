@@ -42,7 +42,8 @@ export default function Login(props: ChildProps) {
                     id: data.id,
                     email: user.email,
                     username: data.username,
-                    role: user.role
+                    role: user.role,
+                    points: data.points
                 }))
             }
             props.handleClose()

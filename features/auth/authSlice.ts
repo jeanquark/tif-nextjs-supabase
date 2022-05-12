@@ -9,7 +9,8 @@ export interface AuthState {
     id: string
     email: string
     username: string
-    role: string
+    role: string,
+    points: number
     // value: {
     //     id: string
     //     email: string
@@ -28,6 +29,7 @@ const initialState: AuthState = {
     email: undefined,
     username: undefined,
     role: undefined,
+    points: undefined
 }
 // const initialState: AuthState = null
 
@@ -69,6 +71,7 @@ export const authSlice = createSlice({
             state.email = action.payload.email
             state.username = action.payload.username
             state.role = action.payload.role
+            state.points = action.payload.points
             // state = {
             //     id: action.payload.id,
             //     email: action.payload.email,
@@ -84,6 +87,9 @@ export const authSlice = createSlice({
             //     email: action.payload.email,
             //     role: action.payload.role
             // }
+        },
+        incrementPoints: (state, action: PayloadAction<number>) => {
+            state.points += action.payload
         }
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -92,7 +98,7 @@ export const authSlice = createSlice({
     },
 })
 
-export const { setAuthUser } = authSlice.actions
+export const { setAuthUser, incrementPoints } = authSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

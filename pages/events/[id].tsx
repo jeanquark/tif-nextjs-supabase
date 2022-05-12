@@ -1,21 +1,19 @@
 import { ReactElement, useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/router'
+import moment from 'moment'
+
 import { supabase } from '../../utils/supabaseClient'
 import Layout from '../../components/Layout'
 import NestedLayout from '../../components/LayoutFrontend'
-import axios from 'axios'
-import { useRouter } from 'next/router'
+import { Card } from '../../components/UI/Card'
 import styles from '../../styles/Event.module.css'
-import Counter from '../../features/counter/Counter'
-import moment from 'moment'
-
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
-import { selectAuth } from '../../features/auth/authSlice'
+import { selectAuth, incrementPoints } from '../../features/auth/authSlice'
 import {
     selectActions,
     fetchActions
 } from '../../features/actions/actionsSlice'
-import { Card } from '../../components/UI/Card'
 
 
 interface Event {
@@ -34,6 +32,8 @@ interface Action {
 export default function EventPage() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
+    const router = useRouter()
+    const { id } = router.query
     const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
     const actions = useAppSelector(selectActions)
@@ -47,8 +47,6 @@ export default function EventPage() {
     eventActionsRef.current = eventActions
     const [userActions, setUserActions] = useState([])
 
-    const router = useRouter()
-    const { id } = router.query
     let subscriptionEvents = null
     let subscriptionEventActions = null
 
@@ -115,7 +113,7 @@ export default function EventPage() {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
-            .select(`id, number_participants, participation_threshold, action:actions (name, image), event:events (home_team_name, visitor_team_name), user:users (id, username), inserted_at`)
+            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), user:users (id, username), inserted_at`)
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })
@@ -174,7 +172,7 @@ export default function EventPage() {
                     const action = actionsRef.current.find((action) => action.id == payload.new.action_id)
                     console.log('action: ', action)
                     const newEventAction = {
-                        actions: {
+                        action: {
                             name: action.name,
                             image: action.image,
                         },
@@ -187,6 +185,12 @@ export default function EventPage() {
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
 
+                    if (payload.new.is_completed) {
+                        console.log('Action is completed!!!')
+                        // Update user points
+                        dispatch(incrementPoints(payload.new.points))
+                    }
+
                     const index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
                     console.log('index: ', index)
                     // 1. Make a shallow copy of the items
@@ -197,6 +201,7 @@ export default function EventPage() {
                     // item.name = 'newName';
                     // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
                     items[index]['number_participants'] = payload.new.number_participants;
+                    items[index]['is_completed'] = payload.new.is_completed
                     // items[index]['name'] = ''
                     console.log('items: ', items);
                     // 5. Set the state to our new copy
@@ -235,8 +240,10 @@ export default function EventPage() {
                     event_id: event.id,
                     action_id: action.id,
                     user_id: auth.id,
+                    username: auth.username,
                     number_participants: 0,
-                    participation_threshold: 2
+                    participation_threshold: 2,
+                    points: 100
                 }])
             console.log('launchAction data: ', data);
             if (error) {
@@ -277,6 +284,9 @@ export default function EventPage() {
             const userAction = {
                 id: data[0].id,
                 user_id: auth.id,
+                // user: {
+
+                // },
                 event_action_id: eventAction.id,
                 inserted_at: data[0].inserted_at
             }
@@ -349,10 +359,10 @@ export default function EventPage() {
                 alert('You are not authenticated. Please login first.')
                 throw 'not_authenticated'
             }
-            if (eventAction.user.id !== auth.id) {
-                alert('You are not the creator of this action')
-                throw 'not_your_action'
-            }
+            // if (eventAction.user.id !== auth.id) {
+            //     alert('You are not the creator of this action')
+            //     throw 'not_your_action'
+            // }
             const { data, error } = await supabase
                 .from('event_actions')
                 .delete()
@@ -394,25 +404,27 @@ export default function EventPage() {
                         return <Card key={index}>
                             Id: {action.id}&nbsp;
                             {action.name}&nbsp;
-                            <button onClick={() => launchAction(action)}>Launch</button>
+                            <button onClick={() => launchAction(action)} className={styles.btn}>Launch</button>
                         </Card>
                     })}
                     <h4>List of event actions</h4>
                     <ul>{eventActions.map((action, index) => {
-                        return <li key={action.id} style={{border: '1px solid black'}}>
+                        return <li key={action.id} style={{border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id} - Name: {action.action?.name}<br />
+                            Launched by: {action.username}<br />
                             Number participants: {action.number_participants}/{action.participation_threshold}<br />
-                            Launched by: {action.user?.username}<br />
                             Created at: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                            <button disabled={userActions.find(a => a.event_action_id == action.id)} onClick={() => joinAction(action)}>Join</button>&nbsp;
-                            <button onClick={() => deleteAction(action)}>Delete</button>
+                            {action.is_completed ? <span style={{ color: 'lightgreen' }}>Action completed!</span> : <>
+                                <button disabled={userActions.find(a => a.event_action_id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>Join</button>
+                            </>}&nbsp;
+                            <button className={styles.btn} onClick={() => deleteAction(action)}>Delete</button>
                         </li>
                     })}</ul>
                     <h4>List of user actions</h4>
                     <ul>{userActions.map((action, index) => {
                         return <li key={action.id}>
                             Id: {action.id} - userId: {action.user_id} - eventActionId: {action.event_action_id} - {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                            <button onClick={() => unjoinAction(action)}>Unjoin</button>
+                            <button className={styles.btn} onClick={() => unjoinAction(action)}>Unjoin</button>
                         </li>
                     })}</ul>
                 </div>}

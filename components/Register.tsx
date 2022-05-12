@@ -68,7 +68,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                     <h2>Register</h2>
                     <label htmlFor="name">Email</label>
                     <input id="email" type="email" placeholder="Your email" required onChange={(e) => setEmail(e.target.value)} />
-                    <br />
+                    <br /><br />
                     <label htmlFor="password">Password</label>
                     <input
                         id="password"
@@ -77,7 +77,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                         required
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <br />
+                    <br /><br />
                     <label htmlFor="password_confirmation">Password confirmation</label>
                     <input
                         id="password_confirmation"
@@ -86,7 +86,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                         required
                         onChange={(e) => setPasswordConfirmation(e.target.value)}
                     />
-                    <br /><br />
+                    <br /><br /><br />
                     <div>
                         <button
                             onClick={(e) => {

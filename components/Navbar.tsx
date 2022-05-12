@@ -85,7 +85,8 @@ export default function Navbar() {
                 id: data.id,
                 email: authUser.email,
                 username: data.username,
-                role: authUser.role
+                role: authUser.role,
+                points: data.points
             }))
         }
     }
@@ -99,7 +100,8 @@ export default function Navbar() {
             id: null,
             email: null,
             username: null,
-            role: null
+            role: null,
+            points: 0
         }))
     }
 
@@ -126,7 +128,7 @@ export default function Navbar() {
 
     return (
         <div>
-            <img src="/logo.svg" alt="logo" style={{ maxWidth: 30 }} />
+            <img src="/logo.png" alt="logo" style={{ maxWidth: 50, display: 'inline-block', verticalAlign: 'middle' }} />
             <Link href="/">
                 <a>Home</a>
             </Link>&nbsp;|&nbsp;
@@ -140,8 +142,7 @@ export default function Navbar() {
                 <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
                 : <Link href="/login"><a>Login</a></Link>
             } */}
-            auth.id: {auth.id}, 
-            auth.username: {auth.username}
+
             {/* modal: {modal} */}
             {/* modalType: {modalType} */}
             {auth.id ?
@@ -155,6 +156,11 @@ export default function Navbar() {
                 {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
             </Modal>
             <br />
+            <div>
+                auth.id: {auth.id}&nbsp;
+                auth.username: {auth.username}&nbsp;
+                auth.points: {auth.points}
+            </div>
             <div>
                 {/* <Modal show={modal} handleClose={closeModal}>
 				<p>Modal</p>
