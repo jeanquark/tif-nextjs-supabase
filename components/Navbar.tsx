@@ -161,16 +161,10 @@ export default function Navbar() {
                 auth.username: {auth.username}&nbsp;
                 auth.points: {auth.points}
             </div>
-            <div>
-                {/* <Modal show={modal} handleClose={closeModal}>
-				<p>Modal</p>
-			</Modal>
-			<button type="button" onClick={toggleModal}>Open modal</button> */}
-            </div>
-            <div>
+            {/* <div>
                 {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}
                 {showModal2 && <Modal2 handleClose={() => closeLoginModal()}>Modal2</Modal2>}
-            </div>
+            </div> */}
         </div>
     )
 }

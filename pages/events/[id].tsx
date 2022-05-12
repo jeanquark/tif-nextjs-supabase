@@ -46,6 +46,8 @@ export default function EventPage() {
     const eventActionsRef = useRef<any>()
     eventActionsRef.current = eventActions
     const [userActions, setUserActions] = useState([])
+    const userActionsRef = useRef<any[]>()
+    userActionsRef.current = userActions
 
     let subscriptionEvents = null
     let subscriptionEventActions = null
@@ -184,14 +186,21 @@ export default function EventPage() {
                     console.log('[UPDATE] eventActions: ', payload)
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
-
+                    console.log('userActionsRef: ', userActionsRef);
+                    
+                    let index
                     if (payload.new.is_completed) {
                         console.log('Action is completed!!!')
-                        // Update user points
-                        dispatch(incrementPoints(payload.new.points))
+                        
+                        index = userActionsRef.current.findIndex(action => action.event_action_id == payload.new.id)
+                        console.log('index: ', index);
+                        if (index > -1) {
+                            // Update user points
+                            dispatch(incrementPoints(payload.new.points))
+                        }
                     }
 
-                    const index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
                     console.log('index: ', index)
                     // 1. Make a shallow copy of the items
                     let items = [...eventActionsRef.current];
@@ -412,7 +421,7 @@ export default function EventPage() {
                         return <li key={action.id} style={{border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id} - Name: {action.action?.name}<br />
                             Launched by: {action.username}<br />
-                            Number participants: {action.number_participants}/{action.participation_threshold}<br />
+                            Number participants: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
                             Created at: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             {action.is_completed ? <span style={{ color: 'lightgreen' }}>Action completed!</span> : <>
                                 <button disabled={userActions.find(a => a.event_action_id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>Join</button>

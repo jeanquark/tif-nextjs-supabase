@@ -7,20 +7,20 @@
 version: "3.8"
 
 services:
-  studio:
-    container_name: supabase-studio
-    image: supabase/studio:latest
-    restart: unless-stopped
-    ports:
-      - ${STUDIO_PORT}:3000/tcp
-    environment:
-      STUDIO_PG_META_URL: http://meta:8080
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #studio:
+  #  container_name: supabase-studio
+  #  image: supabase/studio:latest
+  #  restart: unless-stopped
+  #  ports:
+  #    - ${STUDIO_PORT}:3000/tcp
+  #  environment:
+  #    STUDIO_PG_META_URL: http://meta:8080
+  #    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
-      SUPABASE_URL: http://kong:8000
-      SUPABASE_REST_URL: ${PUBLIC_REST_URL}
-      SUPABASE_ANON_KEY: ${ANON_KEY}
-      SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+  #    SUPABASE_URL: http://kong:8000
+  #    SUPABASE_REST_URL: ${PUBLIC_REST_URL}
+  #    SUPABASE_ANON_KEY: ${ANON_KEY}
+  #    SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
 
   kong:
     container_name: supabase-kong
