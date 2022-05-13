@@ -71,7 +71,7 @@ export default function EventPage() {
 
     useEffect(() => {
         console.log('[useEffect] fetchActions id: ', id)
-        if (actions.length < 1) {
+        if (actions && actions.length < 1) {
             dispatch(fetchActions());
         }
     }, [id])
@@ -399,6 +399,7 @@ export default function EventPage() {
         <>
             <div>
                 <h1>Event page {event && event.id}</h1>
+                <p>Event id: {event.id}</p>
             </div>
             <div className={styles.parent}>
                 {event && <div className={styles.childLeft}>
