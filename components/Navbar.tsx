@@ -146,7 +146,7 @@ export default function Navbar() {
             {/* modal: {modal} */}
             {/* modalType: {modalType} */}
             {auth.id ?
-                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
+                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;Welcome, {auth.email}&nbsp;<Link href="/account"><a>Account</a></Link></div>
                 : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>

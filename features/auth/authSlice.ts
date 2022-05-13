@@ -88,6 +88,9 @@ export const authSlice = createSlice({
             //     role: action.payload.role
             // }
         },
+        setUsername: (state, action: PayloadAction<string>) => {
+            state.username = action.payload
+        },
         incrementPoints: (state, action: PayloadAction<number>) => {
             state.points += action.payload
         }
@@ -98,7 +101,7 @@ export const authSlice = createSlice({
     },
 })
 
-export const { setAuthUser, incrementPoints } = authSlice.actions
+export const { setAuthUser, setUsername, incrementPoints } = authSlice.actions
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

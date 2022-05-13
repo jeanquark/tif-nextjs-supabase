@@ -118,7 +118,7 @@ CREATE TABLE actions (
 INSERT INTO actions(name, slug, image, description)
 VALUES 
   ('Hola', 'hola', 'hola.jpg', 'Lancer une hola'),
-  ('Vuvuzela', 'vuvuzela', 'vuvzela.jpg', 'Souffler dans une vuvuzela');
+  ('Vuvuzela', 'vuvuzela', 'vuvzela.jpg', 'Souffler dans une vuvuzela'),
   ('Clapping', 'clapping', 'clapping.jpg', 'Applaudissements en groupe chorégraphiés');
 
 CREATE TABLE event_users (
