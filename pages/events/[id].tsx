@@ -399,7 +399,7 @@ export default function EventPage() {
         <>
             <div>
                 <h1>Event page {event && event.id}</h1>
-                <p>Event id: {event.id}</p>
+                <p>Event id: {event && event.id}</p>
             </div>
             <div className={styles.parent}>
                 {event && <div className={styles.childLeft}>
