@@ -56,5 +56,5 @@ Make sure to set up an [external connection endpoint](https://jelastic.com/blog/
 Create a new server in pgAdmin with the following data:
 ![jelastic_docker_pgadmin_connection_config](public/jelastic_docker_pgadmin_connection_configuration.jpg)
 
-All Supabase active containers on the server (docker ps command):
+All Supabase active containers on the server (`docker ps`):
 ![jelastic_docker_list_supabase_containers](public/jelastic_docker_list_supabase_containers.jpg)

@@ -291,9 +291,9 @@ ALTER publication supabase_realtime ADD TABLE event_actions;
 ALTER publication supabase_realtime ADD TABLE event_actions_users;
 
 /* Listen to DELETE operations in Postgres */
-alter table events replica identity full;
+ALTER TABLE events REPLICA IDENTITY full;
 ALTER TABLE event_users REPLICA IDENTITY full;
 ALTER TABLE event_actions REPLICA IDENTITY full;
-alter table event_actions_users replica identity full;
+ALTER TABLE event_actions_users REPLICA IDENTITY full;
 -- alter table standings replica identity full;
 -- alter table users replica identity full;

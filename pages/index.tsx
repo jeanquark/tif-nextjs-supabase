@@ -1,5 +1,7 @@
 import { ReactElement, useState } from 'react'
 import Link from 'next/link'
+import moment from 'moment'
+
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
 import axios from 'axios'
@@ -11,7 +13,8 @@ import styles from '../styles/Home.module.css'
 interface Event {
 	id: number,
 	home_team_name: string,
-	visitor_team_name: string
+	visitor_team_name: string,
+	date: string
 }
 
 export async function getServerSideProps() {
@@ -49,14 +52,14 @@ export default function HomePage({ data }) {
 			<h1>Current & next games</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
-			Last deployment: Friday, 19:32.
+			Last deployment: Saturday, 22:06.
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
 						<a style={{ textDecoration: 'none' }}>
-							<Card>
-								{event.home_team_name} - {event.visitor_team_name}<br />
-								id: {event.id}
+							<Card >
+								<p style={{ textAlign: 'center' }}>{event.home_team_name} - {event.visitor_team_name}</p>
+								<p style={{ textAlign: 'center' }}>{moment(event.date).format('DD MMM HH:mm')}</p>
 							</Card>
 						</a>
 					</Link>
