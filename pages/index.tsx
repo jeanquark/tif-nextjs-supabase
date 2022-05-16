@@ -1,6 +1,8 @@
 import { ReactElement, useState } from 'react'
 import Link from 'next/link'
 import moment from 'moment'
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
@@ -17,7 +19,7 @@ interface Event {
 	date: string
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ locale }) {
 	// Run on the server everytime the page is visited
 	console.log('[getServerSideProps]', new Date());
 	const current_timestamp = Math.floor(Date.now() / 1000)
@@ -28,6 +30,7 @@ export async function getServerSideProps() {
 	// const { data, error } = await supabase
 	// 	.from('events')
 	// 	.select('*')
+
 	const { data, error } = await supabase
 		.from('events')
 		.select('id, home_team_name, visitor_team_name, date, timestamp')
@@ -39,20 +42,33 @@ export async function getServerSideProps() {
 	// const data = []
 
 	return {
-		props: { data }, // will be passed to the page component as props
+		props: { 
+			data, 
+			...(await serverSideTranslations(locale, ['common', 'home']))
+		}, // will be passed to the page component as props
 	}
 }
 
+// export async function getStaticProps({ locale }) {
+// 	return {
+// 	  props: {
+// 		...(await serverSideTranslations(locale, ['common', 'home'])),
+// 		// Will be passed to the page component as props
+// 	  },
+// 	};
+//   }
+
 export default function HomePage({ data }) {
 	const router = useRouter()
-
+	const { t } = useTranslation(['home']);
 
 	return (
 		<>
-			<h1>Current & next games</h1>
+			<h1>{t('current_and_next_games')}</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
 			Last deployment: Saturday, 22:06.
+			{t('greeting')}
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>

@@ -1,0 +1,16 @@
+{
+    "home": "Home",
+    "about": "About",
+    "account": "Account",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "welcome": "Welcome",
+    "current_and_next_games": "Current & next games",
+    "standing": "Standing",
+    "footer": "Footer",
+    "ads": "Ads",
+    "update_username": "Update username",
+    "loading": "Loading",
+    "update": "Update"
+}

@@ -1,0 +1,16 @@
+{
+    "home": "Accueil",
+    "about": "A propos",
+    "account": "Mon Compte",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "welcome": "Bienvenue",
+    "current_and_next_games": "Matchs en cours et prochains événements",
+    "standing": "Classement",
+    "footer": "Pied de page",
+    "ads": "Publicité",
+    "update_username": "Modifier nom d'utilisateur",
+    "loading": "Chargement",
+    "update": "Modifier"
+}

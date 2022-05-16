@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
+
 import { supabase } from '../utils/supabaseClient'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import {
@@ -12,11 +15,21 @@ import Register from '../components/Register'
 import ForgotPassword from '../components/ForgotPassword'
 import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
+import { useRouter } from 'next/router'
 
+// export async function getServerSideProps({ locale }) {
+//     return {
+//         props: {
+//             ...(await serverSideTranslations(locale, ["common", "home"])),
+//             // Will be passed to the page component as props
+//         },
+//     };
+// }
 
 export default function Navbar() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
+    const router = useRouter();
     const [modal, setModal] = useState<boolean>(false)
     const [modalType, setModalType] = useState<string>('')
     // const [modal, setModal] = useState<string>('')
@@ -26,6 +39,17 @@ export default function Navbar() {
     const [forgotPasswordModal, setForgotPasswordModal] = useState<boolean>(false)
     // const [registerModal, setRegisterModal] = useState(false)
     const [showModal2, setShowModal2] = useState(false)
+    const { t } = useTranslation(['home']);
+
+
+    const handleLocaleChange = (event) => {
+        const value = event.target.value;
+
+        router.push(router.route, router.asPath, {
+            locale: value,
+        });
+    };
+
 
     const openLoginModal = () => {
         setModal(true)
@@ -146,10 +170,10 @@ export default function Navbar() {
         <div>
             <img src="/logo.png" alt="logo" style={{ maxWidth: 50, display: 'inline-block', verticalAlign: 'middle' }} />
             <Link href="/">
-                <a>Home</a>
+                <a>{t('home')}</a>
             </Link>&nbsp;|&nbsp;
             <Link href="/about">
-                <a>About</a>
+                <a>{t('about')}</a>
             </Link>&nbsp;|&nbsp;
             <Link href="/counter">
                 <a>Counter</a>
@@ -162,9 +186,9 @@ export default function Navbar() {
             {/* modal: {modal} */}
             {/* modalType: {modalType} */}
             {auth.id ?
-                <><Link href="/account"><a>Account</a></Link>&nbsp;|&nbsp;
-                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;Welcome, {auth.email}&nbsp;</div></>
-                : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
+                <><Link href="/account"><a>{t('account')}</a></Link>&nbsp;|&nbsp;
+                    <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>{t('logout')}</button>&nbsp;Welcome, {auth.email}&nbsp;</div></>
+                : <><button onClick={openLoginModal}>{t('login')}</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>{t('register')}</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
                 {/* <p>Modal</p> */}
@@ -172,12 +196,16 @@ export default function Navbar() {
                 {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
                 {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
             </Modal>
+            <select onChange={handleLocaleChange} value={router.locale}>
+                <option value="en">🇺🇸 English</option>
+                <option value="fr">FR Français</option>
+            </select>
             <br />
             <div>
                 auth.id: {auth.id}&nbsp;
                 auth.username: {auth.username}&nbsp;
                 auth.points: {auth.points}&nbsp;
-                {auth.points > 0 && <button onClick={resetPoints}>Reset</button>}
+                {auth.points > 0 && <button onClick={resetPoints}>{t('reset')}</button>}
             </div>
             {/* <div>
                 {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}

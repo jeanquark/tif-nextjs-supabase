@@ -31,6 +31,7 @@ import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
+import { appWithTranslation } from "next-i18next"
 import store from '../app/store'
 import '../styles/globals.css'
 
@@ -43,10 +44,12 @@ type AppPropsWithLayout = AppProps & {
 	Component: NextPageWithLayout
 }
 
-export default function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+const MyApp = ({ Component, pageProps }: AppPropsWithLayout) => {
 	// Use the layout defined at the page level, if available
 	const getLayout = Component.getLayout ?? ((page) => page)
 
 	//   return getLayout(<Component {...pageProps} />)
 	return <Provider store={store}>{getLayout(<Component {...pageProps} />)}</Provider>
 }
+
+export default appWithTranslation(MyApp)

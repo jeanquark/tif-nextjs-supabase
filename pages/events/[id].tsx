@@ -1,6 +1,8 @@
 import { ReactElement, useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import moment from 'moment'
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import { useTranslation } from "next-i18next";
 
 import { supabase } from '../../utils/supabaseClient'
 import Layout from '../../components/Layout'
@@ -29,6 +31,15 @@ interface Action {
     image?: string
 }
 
+export async function getServerSideProps({ locale }) {
+    return {
+        props: {
+            ...(await serverSideTranslations(locale, ["common", "home"])),
+            // Will be passed to the page component as props
+        },
+    };
+}
+
 export default function EventPage() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
@@ -51,6 +62,9 @@ export default function EventPage() {
 
     let subscriptionEvents = null
     let subscriptionEventActions = null
+
+    const { t } = useTranslation('common');
+
 
 
     useEffect(() => {
@@ -187,11 +201,11 @@ export default function EventPage() {
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
                     console.log('userActionsRef: ', userActionsRef);
-                    
+
                     let index
                     if (payload.new.is_completed) {
                         console.log('Action is completed!!!')
-                        
+
                         index = userActionsRef.current.findIndex(action => action.event_action_id == payload.new.id)
                         console.log('index: ', index);
                         if (index > -1) {
@@ -277,7 +291,7 @@ export default function EventPage() {
                 alert('You are not authenticated. Please login first.')
                 throw 'not authenticated'
             }
-            
+
             // 1) Add auth user to event_actions_users table
             const { data, error: errorInsert } = await supabase.from('event_actions_users').insert(
                 {
@@ -419,7 +433,7 @@ export default function EventPage() {
                     })}
                     <h4>List of event actions</h4>
                     <ul>{eventActions.map((action, index) => {
-                        return <li key={action.id} style={{border: '1px solid black', marginBottom: '10px' }}>
+                        return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id} - Name: {action.action?.name}<br />
                             Launched by: {action.username}<br />
                             Number participants: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />

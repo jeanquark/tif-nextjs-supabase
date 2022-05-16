@@ -1,0 +1,12 @@
+{
+    "actions": "Actions",
+    "list_of_actions": "Liste des actions",
+    "name": "Nom",
+    "launched_by": "Lancé par",
+    "number_participants": "Nb de participants",
+    "created_at": "Créé le",
+    "join": "Rejoindre",
+    "delete": "Supprimer",
+    "action_completed": "Action complète!",
+    "list_of_user_actions": "Liste des actions de l'utilisateur"
+}

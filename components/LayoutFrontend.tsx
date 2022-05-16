@@ -3,10 +3,11 @@ import Navbar from './Navbar'
 // import '../styles/Layout.module.css'
 import styles from '../styles/Layout.module.css'
 import Standing from './Standing'
+import { useTranslation } from "next-i18next";
 
 
 export default function LayoutFrontend({ children }) {
-
+	const { t } = useTranslation(['home']);
 
 	return (
 		<>
@@ -15,9 +16,9 @@ export default function LayoutFrontend({ children }) {
 				<header id="pageHeader" className={styles.pageHeader}><Navbar /></header>
 				<article id="mainArticle" className={styles.mainArticle}>{children}</article>
 				{/* <nav id="mainNav" className={styles.mainNav}><Standing /></nav> */}
-				<nav id="mainNav" className={styles.mainNav}>Standing</nav>
-				<div id="siteAds" className={styles.siteAds}>Ads</div>
-				<footer id="pageFooter" className={styles.pageFooter}>Footer</footer>
+				<nav id="mainNav" className={styles.mainNav}>{t('standing')}</nav>
+				<div id="siteAds" className={styles.siteAds}>{t('ads')}</div>
+				<footer id="pageFooter" className={styles.pageFooter}>{t('footer')}</footer>
 			</div>
 		</>
 	)
