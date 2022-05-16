@@ -63,9 +63,25 @@ export default function Navbar() {
         }
     }
 
-    // const toggleModal = () => {
-    //     setModal(!modal)
-    // }
+    const resetPoints = async () => {
+        try {
+            console.log('resetPoints')
+            const { data, error } = await supabase
+                .from('users')
+                .update({ points: 0 })
+                .match({ id: auth.id })
+            console.log('data: ', data)
+            const session = supabase.auth.session()
+            const authUser = session.user
+            fetchUser(authUser)
+            if (error) {
+                throw error
+            }
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    }
+
     const closeModal = () => {
         setModal(false)
     }
@@ -77,7 +93,7 @@ export default function Navbar() {
         }, 900)
     }
 
-    const fetchUser = async (authUser) => {
+    const fetchUser = async (authUser: any) => {
         const { data } = await supabase.from('users').select('*').eq('auth_user_id', authUser.id).limit(1).single()
         console.log('data2: ', data)
         if (data) {
@@ -132,10 +148,10 @@ export default function Navbar() {
             <Link href="/">
                 <a>Home</a>
             </Link>&nbsp;|&nbsp;
-            <Link href="/about" >
+            <Link href="/about">
                 <a>About</a>
             </Link>&nbsp;|&nbsp;
-            <Link href="/counter" >
+            <Link href="/counter">
                 <a>Counter</a>
             </Link>&nbsp;|&nbsp;
             {/* {auth.id ? 
@@ -146,7 +162,8 @@ export default function Navbar() {
             {/* modal: {modal} */}
             {/* modalType: {modalType} */}
             {auth.id ?
-                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;Welcome, {auth.email}&nbsp;<Link href="/account"><a>Account</a></Link></div>
+                <><Link href="/account"><a>Account</a></Link>&nbsp;|&nbsp;
+                <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>Logout</button>&nbsp;Welcome, {auth.email}&nbsp;</div></>
                 : <><button onClick={openLoginModal}>Login</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>Register</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
@@ -159,7 +176,8 @@ export default function Navbar() {
             <div>
                 auth.id: {auth.id}&nbsp;
                 auth.username: {auth.username}&nbsp;
-                auth.points: {auth.points}
+                auth.points: {auth.points}&nbsp;
+                {auth.points > 0 && <button onClick={resetPoints}>Reset</button>}
             </div>
             {/* <div>
                 {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}
