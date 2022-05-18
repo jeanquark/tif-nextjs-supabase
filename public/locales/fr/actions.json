@@ -1,12 +1,17 @@
 {
     "actions": "Actions",
-    "list_of_actions": "Liste des actions",
     "name": "Nom",
     "launched_by": "Lancé par",
     "number_participants": "Nb de participants",
-    "created_at": "Créé le",
+    "created_at": "Créé à",
+    "joined_at": "Rejoint à",
     "join": "Rejoindre",
+    "unjoin": "Quitter",
     "delete": "Supprimer",
     "action_completed": "Action complète!",
-    "list_of_user_actions": "Liste des actions de l'utilisateur"
+    "event_page": "Page des événements",
+    "list_of_actions": "Liste des actions",
+    "list_of_event_users": "Liste des joueurs connectés",
+    "list_of_event_actions": "Liste des actions de l'événement",
+    "list_of_user_actions": "Liste des actions du joueur"
 }

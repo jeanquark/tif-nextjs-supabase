@@ -17,6 +17,8 @@ import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
 import { useRouter } from 'next/router'
 
+import styles from '../styles/Navbar.module.css'
+
 // export async function getServerSideProps({ locale }) {
 //     return {
 //         props: {
@@ -167,8 +169,8 @@ export default function Navbar() {
     }, [])
 
     return (
-        <div>
-            <img src="/logo.png" alt="logo" style={{ maxWidth: 50, display: 'inline-block', verticalAlign: 'middle' }} />
+        <>
+            {/* <img src="/logo.png" alt="logo" style={{ maxWidth: 50, display: 'inline-block', verticalAlign: 'middle' }} />
             <Link href="/">
                 <a>{t('home')}</a>
             </Link>&nbsp;|&nbsp;
@@ -178,20 +180,12 @@ export default function Navbar() {
             <Link href="/counter">
                 <a>Counter</a>
             </Link>&nbsp;|&nbsp;
-            {/* {auth.id ? 
-                <div style={{ display: 'inline-block'}}><button onClick={() => handleLogout()}>Logout</button>&nbsp;<span>{auth.email}</span></div>
-                : <Link href="/login"><a>Login</a></Link>
-            } */}
-
-            {/* modal: {modal} */}
-            {/* modalType: {modalType} */}
             {auth.id ?
                 <><Link href="/account"><a>{t('account')}</a></Link>&nbsp;|&nbsp;
                     <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>{t('logout')}</button>&nbsp;Welcome, {auth.email}&nbsp;</div></>
                 : <><button onClick={openLoginModal}>{t('login')}</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>{t('register')}</button></>
             }
             <Modal show={modal} handleClose={() => setModal(false)}>
-                {/* <p>Modal</p> */}
                 {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
                 {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
                 {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
@@ -200,6 +194,7 @@ export default function Navbar() {
                 <option value="en">🇺🇸 English</option>
                 <option value="fr">FR Français</option>
             </select>
+            <button style={{ float: 'right' }}>Right</button>
             <br />
             <div>
                 auth.id: {auth.id}&nbsp;
@@ -207,10 +202,89 @@ export default function Navbar() {
                 auth.points: {auth.points}&nbsp;
                 {auth.points > 0 && <button onClick={resetPoints}>{t('reset')}</button>}
             </div>
-            {/* <div>
-                {showModal2 ? <button onClick={() => setShowModal2(false)}>Close modal2</button> : <button onClick={() => setShowModal2(true)}>Open modal2</button>}
-                {showModal2 && <Modal2 handleClose={() => closeLoginModal()}>Modal2</Modal2>}
+
+
+            <div className={styles.topnav}>
+                <div className={styles.topnavLeft}>
+                    <img src="/logo.png" alt="logo" style={{ float: 'left', maxWidth: 50, verticalAlign: 'middle' }} />
+                    <Link href="/">
+                        <a>{t('home')}</a>
+                    </Link>
+                    <Link href="/about">
+                        <a>{t('about')}</a>
+                    </Link>
+                    {auth.id ?
+                        <>
+                            <Link href="/account"><a>{t('account')}</a></Link>
+                            <button className={styles.btn} onClick={() => handleLogout()}>{t('logout')}</button>
+                            <span>Welcome, {auth.email}</span>
+                        </>
+                        : 
+                        <>
+                            <button onClick={openLoginModal}>{t('login')}</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>{t('register')}</button>
+                        </>
+                    }
+                </div>
+
+                <div className={styles.topnavRight}>
+                    <a href="#search">Search</a>
+                    <a href="#about">About</a>
+                </div>
             </div> */}
-        </div>
+
+
+
+            <header className={styles.topbar}>
+                <div className={styles.logo}>
+                    <img src="/logo.png" alt="logo" style={{ float: 'left', maxWidth: 50, verticalAlign: 'middle' }} />
+                </div>
+                <nav className={styles.navigation}>
+                    <ul className={styles.navigationUl}>
+                        <li className={styles.navigationLi}><Link href="/">
+                            <a>{t('home')}</a>
+                        </Link></li>
+                        <li className={styles.navigationLi}><Link href="/about">
+                            <a>{t('about')}</a>
+                        </Link></li>
+                        <li className={styles.navigationLi}>
+                            <select onChange={handleLocaleChange} value={router.locale}>
+                                <option value="en">🇺🇸 English</option>
+                                <option value="fr">FR Français</option>
+                            </select>
+                        </li>
+                        {auth.points > 0 &&
+                            <>
+                                <li className={styles.navigationLi}><b>{auth.points}&nbsp;points</b></li>
+                                <li className={styles.navigationLi}>
+                                    <button onClick={resetPoints}>{t('reset')}</button>
+                                </li>
+                            </>
+                        }
+                    </ul>
+                </nav>
+                <nav className={styles.user}>
+                    {auth.id ?
+                        <>
+                            <ul className={styles.navigationUl}>
+                                <li className={styles.navigationLi}>{t('welcome')}, {auth.email}!</li>
+                                <li className={styles.navigationLi}><Link href="/account"><a>{t('account')}</a></Link></li>
+                                <li className={styles.navigationLi}><button onClick={() => handleLogout()}>{t('logout')}</button>
+                                </li>
+                            </ul>
+                        </>
+                        :
+                        <ul>
+                            <li className={styles.navigationLi}><button onClick={openLoginModal}>{t('login')}</button></li>
+                            <li className={styles.navigationLi}><button onClick={openRegisterModal}>{t('register')}</button></li>
+                        </ul>
+                    }
+                </nav>
+            </header>
+            <Modal show={modal} handleClose={() => setModal(false)}>
+                {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
+                {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
+                {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
+            </Modal>
+        </>
     )
 }

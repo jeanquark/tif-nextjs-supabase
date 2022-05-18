@@ -1,0 +1,41 @@
+header.topbar {
+    position: relative;
+    display: block;
+    float: left;
+    width: 100%;
+}
+.logo {
+    position: relative;
+    display: block;
+    float: left;
+}
+nav.navigation {
+    position: relative;
+    display: block;
+    float: left;
+}
+nav.user {
+    position: relative;
+    display: block;
+    float: right;
+}
+.navigationUl {
+    position: relative;
+    display: block;
+    float: left;
+    list-style: none;
+    font-size: 1.1em;
+}
+.navigationLi {
+    position: relative;
+    display: block;
+    float: left;
+    margin: 0px 8px;
+}
+.navigationLi a {
+    color: #000;
+    text-decoration: none;
+}
+.navigationLi a:hover {
+    color: orangered;
+}

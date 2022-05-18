@@ -68,7 +68,6 @@ export default function HomePage({ data }) {
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
 			Last deployment: Saturday, 22:06.
-			{t('greeting')}
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>

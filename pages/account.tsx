@@ -40,8 +40,7 @@ export default function Account() {
 
     return (
         <>
-            <h2>{t('update_username')}</h2>
-            {auth.username}
+            <h2>{t('update_username')} {auth.username} </h2>
             <div>
                 <input className="inputField" type="text" placeholder="Your username" value={username} onChange={(e) => setUsername2(e.target.value)} />
             </div>

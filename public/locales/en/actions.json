@@ -1,12 +1,17 @@
 {
     "actions": "Actions",
-    "list_of_actions": "List of actions",
     "name": "Name",
     "launched_by": "Launched by",
     "number_participants": "Number of participants",
     "created_at": "Created at",
+    "joined_at": "Joined at",
     "join": "Join",
+    "unjoin": "Unjoin",
     "delete": "Delete",
     "action_completed": "Action completed!",
+    "event_page": "Event page",
+    "list_of_actions": "List of actions",
+    "list_of_event_users": "List of event users",
+    "list_of_event_actions": "List of event actions",
     "list_of_user_actions": "List of user actions"
 }

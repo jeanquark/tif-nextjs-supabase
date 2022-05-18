@@ -45,7 +45,7 @@ Navigate to `/docker` folder. Run `docker-compose up -d` in terminal. The follow
 ## Local
 ![supabase_pgadmin_connection_config](public/supabase_pgadmin_connection_config.jpg)
 
-Make sure [windows postgres service](https://github.com/sameersbn/docker-postgresql/issues/112) is disabled in case of pgAdmin password error. Here is a capture of the Windows services details:
+Make sure [windows postgres services](https://github.com/sameersbn/docker-postgresql/issues/112) are disabled in case of pgAdmin password error. Here is a capture of the Windows services details (type `services` in search bar):
 ![disable_windows_postgres_service](public/disable_windows_postgres_service.jpg)
 
 ## Distant
