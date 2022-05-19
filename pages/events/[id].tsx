@@ -1,8 +1,8 @@
 import { ReactElement, useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import moment from 'moment'
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
 
 import { supabase } from '../../utils/supabaseClient'
 import Layout from '../../components/Layout'
@@ -37,7 +37,7 @@ type EffectCallback = () => (void | (() => void | undefined));
 export async function getServerSideProps({ locale }) {
     return {
         props: {
-            ...(await serverSideTranslations(locale, ["actions", "common", "home"])),
+            ...(await serverSideTranslations(locale, ['actions', 'common', 'home'])),
             // Will be passed to the page component as props
         },
     };
@@ -536,7 +536,7 @@ export default function EventPage() {
                     <br />
                     <p style={{ textAlign: 'center' }}>{moment(event.date).format('ddd DD MMM HH:mm')}</p>
                     <h4>{t('list_of_event_users')}</h4>
-                    <p>Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée "presence", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de <a target="_blank" href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>.</p>
+                    <p>{"Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée \"presence\", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de "}<a href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>{"."}</p>
                     {/* <ul>{eventUsers && eventUsers.map((user, index) => {
                         return <li key={user.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {user.id}<br />
