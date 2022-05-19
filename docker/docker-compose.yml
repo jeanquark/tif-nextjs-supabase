@@ -89,6 +89,7 @@ services:
       #GOTRUE_EXTERNAL_FACEBOOK_URL: ${FACEBOOK_URL}
 
       API_EXTERNAL_URL: http://localhost:${KONG_HTTP_PORT}
+      #API_EXTERNAL_URL: https://thisisfan.com:${KONG_HTTP_PORT}
 
 
   rest:

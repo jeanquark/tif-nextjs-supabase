@@ -317,13 +317,26 @@ export default function EventPage() {
                 })
                 .on('DELETE', (payload) => {
                     console.log('[DELETE] subscriptionEventActions payload: ', payload)
-                    const index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
-                    console.log('index: ', index)
+
+                    // 1) Delete eventActions
+                    let index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
+                    console.log('index1: ', index)
                     if (index > -1) {
                         let items = [...eventActionsRef.current];
                         console.log('items: ', items)
                         items.splice(index, 1)
                         setEventActions(items)
+                    }
+
+                    // 2) Delete userActions
+                    console.log('userActionsRef.current: ', userActionsRef.current);
+                    index = userActionsRef.current.findIndex(action => action.event_action.id == payload.old.id)
+                    console.log('index2: ', index)
+                    if (index > -1) {
+                        let items = [...userActionsRef.current];
+                        console.log('items: ', items)
+                        items.splice(index, 1)
+                        setUserActions(items)
                     }
                 })
                 .subscribe()
@@ -534,7 +547,7 @@ export default function EventPage() {
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_name} vs {event.visitor_team_name}</h3>
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_score}&nbsp;-&nbsp;{event.visitor_team_score}</h3>
                     <br />
-                    <p style={{ textAlign: 'center' }}>{moment(event.date).format('ddd DD MMM HH:mm')}</p>
+                    <p style={{ textAlign: 'center' }}>{moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}</p>
                     <h4>{t('list_of_event_users')}</h4>
                     <p>{"Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée \"presence\", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de "}<a href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>{"."}</p>
                     {/* <ul>{eventUsers && eventUsers.map((user, index) => {

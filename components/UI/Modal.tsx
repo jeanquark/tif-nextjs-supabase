@@ -1,5 +1,6 @@
 import { MutableRefObject, useRef } from 'react'
 import styles from '../../styles/Modal.module.css'
+import { useTranslation } from 'next-i18next'
 
 type ModalProps = {
 	handleClose: () => void
@@ -21,6 +22,9 @@ export const Modal = ({ handleClose, show, children }: ModalProps) => {
 		}
 	}
 
+    const { t } = useTranslation(['common']);
+
+
 
 	return (
 		<div className={showHideClassName} onClick={handleClick}>
@@ -29,7 +33,7 @@ export const Modal = ({ handleClose, show, children }: ModalProps) => {
 
 				<div style={{ margin: '20px 0px', textAlign: 'center' }}>
 					<button type="button" onClick={handleClose}>
-						Close
+						{t('close')}
 					</button>
 				</div>
 			</section>

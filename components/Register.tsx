@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../utils/supabaseClient'
 // import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { useTranslation } from 'next-i18next'
 
 
 type ChildProps = {
@@ -39,20 +40,23 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
     //     }
     // }, [])
 
+    const { t } = useTranslation(['common']);
+
     const handleSubmit = async (e) => {
         try {
             e.preventDefault()
             console.log('registerUser');
             setLoading(true)
-            console.log('email: ', email);
-            console.log('password: ', password);
+            // console.log('email: ', email);
+            // console.log('password: ', password);
             const { user, session, error } = await supabase.auth.signUp({ email, password })
             if (error) throw error
             console.log('user: ', user)
             console.log('session: ', session)
             // Close modal
            props.handleClose()
-            alert('User was successfully created. Check your inbox for the confirmation message!')
+            // alert('User was successfully created. Check your inbox for the confirmation message!')
+            alert(t('user_create_success'))
         } catch (error) {
             console.log('error: ', error);
             alert(error.error_description || error.message)
@@ -65,11 +69,11 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
         <div className="row flex flex-center">
             <div className="col-6 form-widget">
                 <form onSubmit={handleSubmit}>
-                    <h2>Register</h2>
-                    <label htmlFor="name">Email</label>
+                    <h2>{t('register')}</h2>
+                    <label htmlFor="name">{t('email')}</label>
                     <input id="email" type="email" placeholder="Your email" required onChange={(e) => setEmail(e.target.value)} />
                     <br /><br />
-                    <label htmlFor="password">Password</label>
+                    <label htmlFor="password">{t('password')}</label>
                     <input
                         id="password"
                         type="password"
@@ -78,7 +82,7 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                     <br /><br />
-                    <label htmlFor="password_confirmation">Password confirmation</label>
+                    <label htmlFor="password_confirmation">{t('password_confirmation')}</label>
                     <input
                         id="password_confirmation"
                         type="password"
@@ -95,8 +99,8 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
                             className=""
                             disabled={loading}
                         >
-                            <span>{loading ? 'Loading' : 'Register'}</span>
-                        </button>&nbsp;<button onClick={() => props.switchTo('login')}>Switch to Login</button>
+                            <span>{loading ? t('loading') : t('register')}</span>
+                        </button>&nbsp;<button onClick={() => props.switchTo('login')}>{t('switch_to_login')}</button>
                     </div>
                 </form>
                 <br />

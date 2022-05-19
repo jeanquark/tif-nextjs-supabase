@@ -6,6 +6,7 @@ import { setAuthUser } from '../features/auth/authSlice';
 // import { useRouter } from 'next/router'
 // import Router from 'next/router'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'next-i18next'
 
 
 
@@ -25,6 +26,8 @@ export default function Login(props: ChildProps) {
     const [loading, setLoading] = useState<boolean>(false)
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
+
+    const { t } = useTranslation(['common']);
 
     const handleLogin = async (email: string, password: string) => {
         try {
@@ -87,7 +90,7 @@ export default function Login(props: ChildProps) {
                     <input
                         className="inputField"
                         type="email"
-                        placeholder="Your email"
+                        placeholder={t('your_email')}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -97,7 +100,7 @@ export default function Login(props: ChildProps) {
                     <input
                         className="inputField"
                         type="password"
-                        placeholder="Your password"
+                        placeholder={t('your_password')}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -112,9 +115,9 @@ export default function Login(props: ChildProps) {
                         className="button block"
                         disabled={loading}
                     >
-                        <span>{loading ? 'Loading' : 'Login'}</span>
+                        <span>{loading ? t('loading') : t('login')}</span>
                     </button>&nbsp;
-                    <button onClick={() => props.switchTo('register')}>Switch to Register</button>
+                    <button onClick={() => props.switchTo('register')}>{t('switch_to_register')}</button>
                 </div>
                 <br />
                 <div>
@@ -130,7 +133,7 @@ export default function Login(props: ChildProps) {
                 <br />
                 <button onClick={(e) => {
                     props.switchTo('forgot-password')
-                }}>Forgot Password</button>
+                }}>{t('forgot_password')}</button>
             </div>
         </div>
     )

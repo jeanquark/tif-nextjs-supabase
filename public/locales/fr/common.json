@@ -1,4 +1,16 @@
 {
     "greeting": "Bonjour le monde!",
-	"not_authenticated": "Vous n'êtes pas connecté. Veuillez vous d'abord vous loguer."
+	"not_authenticated": "Vous n'êtes pas connecté. Veuillez vous d'abord vous loguer.",
+    "close": "Fermer",
+    "loading": "Chargement",
+	"register": "Enregistrement",
+	"email": "E-mail",
+	"password": "Mot de passe",
+	"your_email": "Votre e-mail",
+	"your_password": "Votre mot de passe",
+	"password_confirmation": "Confirmation mot de passe",
+	"forgot_password": "Mot de passe oublié",
+	"switch_to_login": "Aller au login",
+	"switch_to_register": "Aller à l'enregistrement",
+	"user_create_success": "Utilisateur créé avec succès. Consultez votre boîte de messagerie pour le message de vérification!"
 }

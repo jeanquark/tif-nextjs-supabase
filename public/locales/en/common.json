@@ -1,4 +1,16 @@
 {
 	"greeting": "Hello world!",
-	"not_authenticated": "You are not authenticated, please sign in first."
+	"not_authenticated": "You are not authenticated, please sign in first.",
+	"loading": "Loading",
+	"close": "Close",
+	"register": "Register",
+	"email": "Email",
+	"password": "Password",
+	"your_email": "Your email",
+	"your_password": "Your password",
+	"password_confirmation": "Password confirmation",
+	"forgot_password": "Forgot password",
+	"switch_to_login": "Switch to Login",
+	"switch_to_register": "Switch to Register",
+	"user_create_success": "User was successfully created. Check your inbox for the confirmation message!"
 }
