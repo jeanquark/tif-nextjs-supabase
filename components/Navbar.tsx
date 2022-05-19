@@ -252,7 +252,7 @@ export default function Navbar() {
                                 <option value="fr">FR Français</option>
                             </select>
                         </li>
-                        {auth.points > 0 &&
+                        {auth &&
                             <>
                                 <li className={styles.navigationLi}><b>{auth.points}&nbsp;points</b></li>
                                 <li className={styles.navigationLi}>

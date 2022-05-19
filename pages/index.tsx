@@ -67,7 +67,7 @@ export default function HomePage({ data }) {
 			<h1>{t('current_and_next_games')}</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
-			Last deployment: Saturday, 22:06.
+			{/* Last deployment: Saturday, 22:06. */}
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>

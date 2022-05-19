@@ -80,8 +80,9 @@ export default function EventPage() {
     useEffect((): ReturnType<EffectCallback> => {
         console.log('[useEffect] subscribeToEvents id: ', id, auth)
         if (id != undefined) {
+            const username = auth.username ? auth.username : auth.email
             getEventAndSubscribe(+id)
-            getEventUsersAndSubscribe(+id, +auth.id, auth.username)
+            getEventUsersAndSubscribe(+id, +auth.id, username)
             getEventActionsAndSubscribe(+id)
         }
 
@@ -144,7 +145,7 @@ export default function EventPage() {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
-            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), user:users (id, username), inserted_at`)
+            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), user_id, username, inserted_at`)
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })
@@ -181,11 +182,12 @@ export default function EventPage() {
     const getInitialUserActions = async (userId: number) => {
         const { data, error } = await supabase
             .from('event_actions_users')
-            .select('*')
+            // .select('*')
             .select(`
                 id,
                 inserted_at,
-                event_actions (
+                event_action:event_actions (
+                    id,
                     is_completed,
                     action:actions(
                         name
@@ -251,19 +253,6 @@ export default function EventPage() {
                         setEventUsers(users)
                     }
                 })
-                // .on('INSERT', payload => {
-                //     console.log('[INSERT] eventUser payload: ', payload)
-                //     const newEventUser = payload.new
-                //     setEventUsers((a) => [newEventUser, ...a])
-                // })
-                // .on('UPDATE', payload => {
-                //     console.log('[UPDATE] eventUser payload: ', payload)
-                //     const abc = eventUsersRef.current
-                //     console.log('abc: ', abc);
-                //     const user = eventUsersRef.current.find((user) => user.user_id == payload.new.user_id)
-                //     console.log('user: ', user)
-
-                // })
                 .subscribe()
         }
     }
@@ -279,7 +268,7 @@ export default function EventPage() {
                 //     console.log('Changed received!', payload)
                 // }).subscribe()
                 .on('INSERT', payload => {
-                    console.log('[INSERT] newEventAction payload: ', payload.new)
+                    console.log('[INSERT] subscriptionEventActions payload: ', payload.new)
 
                     const action = actionsRef.current.find((action) => action.id == payload.new.action_id)
                     console.log('action: ', action)
@@ -293,7 +282,7 @@ export default function EventPage() {
                     setEventActions((a) => [newEventAction, ...a])
                 })
                 .on('UPDATE', (payload) => {
-                    console.log('[UPDATE] eventActions: ', payload)
+                    console.log('[UPDATE] subscriptionEventActions payload: ', payload)
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
                     console.log('userActionsRef: ', userActionsRef);
@@ -302,7 +291,7 @@ export default function EventPage() {
                     if (payload.new.is_completed) {
                         console.log('Action is completed!!!')
 
-                        index = userActionsRef.current.findIndex(action => action.event_action_id == payload.new.id)
+                        index = userActionsRef.current.findIndex(action => action.event_action.id == payload.new.id)
                         console.log('index: ', index);
                         if (index > -1) {
                             // Update user points
@@ -327,7 +316,7 @@ export default function EventPage() {
                     setEventActions(items);
                 })
                 .on('DELETE', (payload) => {
-                    console.log('[DELETE] eventActions: ', payload)
+                    console.log('[DELETE] subscriptionEventActions payload: ', payload)
                     const index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
                     console.log('index: ', index)
                     if (index > -1) {
@@ -348,7 +337,8 @@ export default function EventPage() {
         try {
             console.log('lauchAction: ', action)
             if (!auth.id) {
-                alert('You are not authenticated. Please login first.')
+                // alert('You are not authenticated. Please login first.')
+                alert(t('common:not_authenticated'))
                 throw 'not authenticated'
             }
             // throw 'not_auth'
@@ -359,7 +349,7 @@ export default function EventPage() {
                     event_id: event.id,
                     action_id: action.id,
                     user_id: auth.id,
-                    username: auth.username ? auth.username : auth.email,
+                    username: auth.username ? auth.username : auth.id,
                     number_participants: 0,
                     participation_threshold: 2,
                     points: 100
@@ -369,6 +359,7 @@ export default function EventPage() {
                 throw error
             }
             data[0]['number_participants'] = 1
+            data[0]['name'] = action.name
             // setEventActions([...eventActions, { action: {
             //     name: action.name,
             //     image: action.image,
@@ -384,7 +375,8 @@ export default function EventPage() {
             console.log('joinAction: ', eventAction)
 
             if (!auth.id) {
-                alert('You are not authenticated. Please login first.')
+                // alert('You are not authenticated. Please login first.')
+                alert(t('common:not_authenticated'))
                 throw 'not authenticated'
             }
 
@@ -400,13 +392,14 @@ export default function EventPage() {
                 throw errorInsert
             }
             console.log('data: ', data);
+
             const userAction = {
                 id: data[0].id,
                 user_id: auth.id,
-                // user: {
-
-                // },
-                event_action_id: eventAction.id,
+                name: eventAction.name,
+                event_action: {
+                    id: eventAction.id
+                },
                 inserted_at: data[0].inserted_at
             }
 
@@ -430,7 +423,8 @@ export default function EventPage() {
         try {
             console.log('unjoinAction: ', eventAction)
             if (!auth.id) {
-                alert('You are not authenticated. Please login first.')
+                // alert('You are not authenticated. Please login first.')
+                alert(t('common:not_authenticated'))
                 throw 'not authenticated'
             }
 
@@ -445,7 +439,7 @@ export default function EventPage() {
             }
 
             // 2) Decrement counter
-            const { data: dataDecrement, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action_id })
+            const { data: dataDecrement, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action.id })
             if (errorDecrement) {
                 console.log('errorDecrement: ', errorDecrement)
                 throw errorDecrement
@@ -475,31 +469,55 @@ export default function EventPage() {
         try {
             console.log('deleteAction eventAction: ', eventAction);
             if (!auth.id) {
-                alert('You are not authenticated. Please login first.')
+                // alert('You are not authenticated. Please login first.')
+                alert(t('common:not_authenticated'))
                 throw 'not_authenticated'
             }
             // if (eventAction.user.id !== auth.id) {
             //     alert('You are not the creator of this action')
             //     throw 'not_your_action'
             // }
-            const { data, error } = await supabase
+
+            // 1) Delete all users related to this action
+            const { error: error1 } = await supabase
+                .from('event_actions_users')
+                .delete()
+                .match({ event_action_id: eventAction.id })
+            if (error1) {
+                throw error1
+            }
+
+            // 2) Delete action
+            const { data, error: error2 } = await supabase
                 .from('event_actions')
                 .delete()
                 .match({ id: eventAction.id })
-            // const { data, error } = await supabase
-            //     .from(`event_actions:id=eq.${eventActionId}`)
-            //     .delete()
+        
             console.log('data: ', data);
-            if (error) {
-                throw error
+            if (error2) {
+                throw error2
             }
 
-            // let array = [...eventActions]; // make a separate copy of the array
-            // const index = array.findIndex(action => action.id === eventActionId)
-            // if (index !== -1) {
-            //     array.splice(index, 1);
-            //     setEventActions(array);
-            // }
+            // 3) Update eventActions store
+            let array = [...eventActions]; // make a separate copy of the array
+            console.log('array1: ', array);
+            let index = array.findIndex(action => action.id === eventAction.id)
+            console.log('index1: ', index);
+            if (index !== -1) {
+                array.splice(index, 1);
+                setEventActions(array);
+            }
+            
+            // 4) Update userActions store
+            array = [...userActions]; // make a separate copy of the array
+            console.log('array2: ', array);
+            console.log('eventAction.id: ', eventAction.id);
+            index = array.findIndex(action => action.event_action.id === eventAction.id)
+            console.log('index2: ', index);
+            if (index !== -1) {
+                array.splice(index, 1);
+                setUserActions(array);
+            }
         } catch (error) {
             console.log('error: ', error);
         }
@@ -518,13 +536,14 @@ export default function EventPage() {
                     <br />
                     <p style={{ textAlign: 'center' }}>{moment(event.date).format('ddd DD MMM HH:mm')}</p>
                     <h4>{t('list_of_event_users')}</h4>
-                    <ul>{eventUsers && eventUsers.map((user, index) => {
+                    <p>Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée "presence", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de <a target="_blank" href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>.</p>
+                    {/* <ul>{eventUsers && eventUsers.map((user, index) => {
                         return <li key={user.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {user.id}<br />
                             {t('name')}: {user.username}<br />
                             {t('joined_at')}: {moment(user.join_at).format('HH:mm')}&nbsp;
                         </li>
-                    })}</ul>
+                    })}</ul> */}
                 </div>}
                 {event && <div className={styles.childRight}>
                     <h3>{t('actions')}</h3>
@@ -544,7 +563,7 @@ export default function EventPage() {
                             {t('number_participants')}: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
                             {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             {action.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <>
-                                <button disabled={userActions.find(a => a.event_action_id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
+                                <button disabled={userActions.find(a => a.event_action.id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
                             </>}&nbsp;
                             <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
                         </li>
@@ -553,9 +572,10 @@ export default function EventPage() {
                     <ul>{userActions && userActions.map((action, index) => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id}<br />
-                            {t('name')}: {action.event_actions.action.name}<br />
+                            {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
+                            {/* {t('name')}: {action.name}<br /> */}
                             {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                            {action.event_actions.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
+                            {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                         </li>
                     })}</ul>
                     

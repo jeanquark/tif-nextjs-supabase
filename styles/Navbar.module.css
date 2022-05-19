@@ -25,12 +25,13 @@ nav.user {
     float: left;
     list-style: none;
     font-size: 1.1em;
+    padding-left: 6px;
 }
 .navigationLi {
     position: relative;
     display: block;
     float: left;
-    margin: 0px 8px;
+    margin: 0px 6px;
 }
 .navigationLi a {
     color: #000;

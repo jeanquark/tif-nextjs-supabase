@@ -1,3 +1,4 @@
 {
-	"greeting": "Hello world!"
+	"greeting": "Hello world!",
+	"not_authenticated": "You are not authenticated, please sign in first."
 }

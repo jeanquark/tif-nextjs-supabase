@@ -1,6 +1,7 @@
 {
     "actions": "Actions",
     "name": "Nom",
+    "launch": "Lancer",
     "launched_by": "Lancé par",
     "number_participants": "Nb de participants",
     "created_at": "Créé à",
