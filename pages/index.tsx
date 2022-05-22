@@ -34,9 +34,9 @@ export async function getServerSideProps({ locale }) {
 	const { data, error } = await supabase
 		.from('events')
 		.select('id, home_team_name, visitor_team_name, date, timestamp')
-		.gt('timestamp', current_timestamp)
+		// .gt('timestamp', current_timestamp)
 		.order('timestamp', { ascending: true })
-		.limit(10)
+		.limit(20)
 	console.log('error: ', error);
 	console.log('data: ', data);
 	// const data = []
