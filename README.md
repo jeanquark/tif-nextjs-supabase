@@ -28,7 +28,17 @@ By default realtime is disabled on the database. You need to activate it on a ta
 
 ## Supabase Docker Config
 
-Navigate to `/docker` folder. Run `docker-compose up -d` in terminal. The following services should be up and running:
+Create a separate environment in Jelastic for Supabase services by adding a Docker Engine CE. [Here](https://docs.jelastic.com/docker-engine-deployment/) is a description of the process.
+
+Add a NGINX web server to provide a SSL certificate and direct connections to the Docker container. In the `nginx-jelastic.conf` file, specify the path to the private IP address of the Docker container: 
+```bash
+upstream default_upstream {
+    server 10.101.23.135:8000;   ### Private IP Address ###
+    sticky path=/; keepalive 100;
+}
+```
+
+Navigate to `/docker` folder inside the newly created container. Run `docker-compose up -d` in terminal. The following services should be up and running:
 
 ![supabase_local_development_docker](public/supabase_local_development_docker.jpg)
 
