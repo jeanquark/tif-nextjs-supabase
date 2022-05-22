@@ -37,6 +37,7 @@ upstream default_upstream {
     sticky path=/; keepalive 100;
 }
 ```
+Then restart the NGINX server.
 
 Navigate to `/docker` folder inside the newly created container. Run `docker-compose up -d` in terminal. The following services should be up and running:
 
