@@ -3,6 +3,7 @@
 	"not_authenticated": "You are not authenticated, please sign in first.",
 	"loading": "Loading",
 	"close": "Close",
+	"login": "Login",
 	"register": "Register",
 	"email": "Email",
 	"password": "Password",

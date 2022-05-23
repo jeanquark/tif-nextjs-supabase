@@ -67,14 +67,14 @@ export default function HomePage({ data }) {
 			<h1>{t('current_and_next_games')}</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
-			Last deployment: Monday, 00:38.
+			{/* Last deployment: Monday, 00:38. */}
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
 						<a style={{ textDecoration: 'none' }}>
 							<Card >
 								<p style={{ textAlign: 'center' }}>{event.home_team_name} - {event.visitor_team_name}</p>
-								<p style={{ textAlign: 'center' }}>{moment(event.date).format('DD MMM HH:mm')}</p>
+								<p style={{ textAlign: 'center' }}>{moment(event.date).format('DD MMM YYYY HH:mm')}</p>
 							</Card>
 						</a>
 					</Link>

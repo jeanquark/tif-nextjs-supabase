@@ -2,6 +2,7 @@
     "greeting": "Bonjour le monde!",
 	"not_authenticated": "Vous n'êtes pas connecté. Veuillez vous d'abord vous loguer.",
     "close": "Fermer",
+	"login": "Login",
     "loading": "Chargement",
 	"register": "Enregistrement",
 	"email": "E-mail",

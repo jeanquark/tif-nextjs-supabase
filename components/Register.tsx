@@ -49,6 +49,10 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
             setLoading(true)
             // console.log('email: ', email);
             // console.log('password: ', password);
+            if (email !== password) {
+                alert('Password confirmation do not match')
+                return
+            }
             const { user, session, error } = await supabase.auth.signUp({ email, password })
             if (error) throw error
             console.log('user: ', user)
