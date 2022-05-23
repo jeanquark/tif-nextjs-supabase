@@ -13,14 +13,14 @@ import styles from '../styles/Home.module.css'
 export async function getServerSideProps({ locale }) {
     return {
       props: {
-        ...(await serverSideTranslations(locale, ['home'])),
+        ...(await serverSideTranslations(locale, ['common', 'home'])),
         // Will be passed to the page component as props
       },
     };
   }
 
 export default function AboutPage () {
-    const { t } = useTranslation(['home']);
+    const { t } = useTranslation(['common', 'home']);
 
     return (
         <div className={styles.container}>
@@ -31,7 +31,7 @@ export default function AboutPage () {
 
             {/* <Navbar /> */}
             <div>
-                <h1>{t('about')}</h1>
+                <h1>{t('home:about')}</h1>
             </div>
 
         </div>

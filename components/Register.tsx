@@ -49,7 +49,9 @@ const Register: React.FC<ChildProps> = (props: ChildProps) => {
             setLoading(true)
             // console.log('email: ', email);
             // console.log('password: ', password);
-            if (email !== password) {
+            if (password !== passwordConfirmation) {
+                console.log('password: ', password);
+                console.log('passwordConfirmation: ', passwordConfirmation);
                 alert('Password confirmation do not match')
                 return
             }
