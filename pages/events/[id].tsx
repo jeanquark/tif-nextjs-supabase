@@ -78,7 +78,7 @@ export default function EventPage() {
     const { t } = useTranslation(['actions', 'common', 'home']);
 
     useEffect((): ReturnType<EffectCallback> => {
-        console.log('[useEffect] subscribeToEvents id: ', id, auth)
+        console.log('[useEffect] subscribeToEvents id, auth: ', id, auth)
         if (id != undefined) {
             const username = auth.username ? auth.username : auth.email
             getEventAndSubscribe(+id)
@@ -107,11 +107,11 @@ export default function EventPage() {
     }, [id])
 
     useEffect(() => {
-        console.log('[useEffect] getInitialUserActions auth: ', auth)
+        console.log('[useEffect] getInitialUserActions id, auth: ', id, auth)
         if (auth && auth.id) {
-            getInitialUserActions(+auth.id)
+            getInitialUserActions(+id, +auth.id)
         }
-    }, [auth])
+    }, [id, auth])
 
     useEffect(() => {
         try {
@@ -179,23 +179,32 @@ export default function EventPage() {
 
     }
 
-    const getInitialUserActions = async (userId: number) => {
+    const getInitialUserActions = async (eventActionId: number, userId: number) => {
+        console.log('getInitialUserActions: ', eventActionId, userId);
         const { data, error } = await supabase
             .from('event_actions_users')
             // .select('*')
             .select(`
                 id,
                 inserted_at,
+                user_id,
                 event_action:event_actions (
                     id,
                     is_completed,
                     action:actions(
                         name
+                    ),
+                    event:events(
+                        id
                     )
                 )
             `)
             .eq('user_id', userId)
+            // .match({'user_id': userId, 'event_action.event.id': eventActionId})
+            // .match({'user_id': userId})
+            // .eq('event_action.event.id', eventActionId)
             .order('id', { ascending: false })
+
         console.log('userEventActions data: ', data);
         if (error) {
             console.log('error: ', error);
@@ -505,7 +514,7 @@ export default function EventPage() {
                 .from('event_actions')
                 .delete()
                 .match({ id: eventAction.id })
-        
+
             console.log('data: ', data);
             if (error2) {
                 throw error2
@@ -520,7 +529,7 @@ export default function EventPage() {
                 array.splice(index, 1);
                 setEventActions(array);
             }
-            
+
             // 4) Update userActions store
             array = [...userActions]; // make a separate copy of the array
             console.log('array2: ', array);
@@ -582,7 +591,8 @@ export default function EventPage() {
                         </li>
                     })}</ul>
                     <h4>{t('list_of_user_actions')}</h4>
-                    <ul>{userActions && userActions.map((action, index) => {
+
+                    <ul>{userActions && userActions.filter(action => action.event_action.event.id == id).map(action => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id}<br />
                             {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
@@ -591,7 +601,7 @@ export default function EventPage() {
                             {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                         </li>
                     })}</ul>
-                    
+
                 </div>}
 
             </div>
