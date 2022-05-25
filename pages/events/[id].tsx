@@ -77,8 +77,19 @@ export default function EventPage() {
 
     const { t } = useTranslation(['actions', 'common', 'home']);
 
+    // useEffect((): ReturnType<EffectCallback> => {
+    //     console.log('[useEffect] id: ', id)
+    //     return async () => {
+    //         if (subscriptionEvents) {
+    //             console.log('[removeSubscription] useEffect', subscriptionEvents)
+    //             // supabase.removeSubscription(subscriptionEvents)   
+    //             supabase.removeAllSubscriptions()
+    //         }
+    //     }
+    // }, [id])
+
     useEffect((): ReturnType<EffectCallback> => {
-        console.log('[useEffect] subscribeToEvents id, auth: ', id, auth)
+        console.log('[useEffect] subscribeToEvents id, auth: ', id)
         if (id != undefined) {
             const username = auth.username ? auth.username : auth.email
             getEventAndSubscribe(+id)
@@ -92,12 +103,12 @@ export default function EventPage() {
                 // await supabase.from('event_users').upsert({ user_id: auth.id, event_id: id, joined_at: null, left_at: new Date() }, { onConflict: 'user_id' })
             }
             if (subscriptionEvents) {
-                console.log('removeSubscription: ', subscriptionEvents)
+                console.log('[removeSubscription] useEffect', subscriptionEvents)
                 // supabase.removeSubscription(subscriptionEvents)   
                 supabase.removeAllSubscriptions()
             }
         }
-    }, [id, auth])
+    }, [id])
 
     useEffect(() => {
         console.log('[useEffect] fetchActions id: ', id)
@@ -228,7 +239,7 @@ export default function EventPage() {
                 })
                 .subscribe()
         } else {
-            console.log('removeSubscription')
+            console.log('[removeSubscription] getEventAndSubscribe')
             supabase.removeSubscription(subscriptionEvents)
         }
     }
@@ -323,6 +334,8 @@ export default function EventPage() {
                     console.log('items: ', items);
                     // 5. Set the state to our new copy
                     setEventActions(items);
+                    // setEventActions((a) => [items, ...a])
+
                 })
                 .on('DELETE', (payload) => {
                     console.log('[DELETE] subscriptionEventActions payload: ', payload)
@@ -350,7 +363,7 @@ export default function EventPage() {
                 })
                 .subscribe()
         } else {
-            console.log('removeSubscription')
+            console.log('[removeSubscription] getEventActionsAndSubscribe')
             supabase.removeSubscription(subscriptionEventActions)
         }
     }
@@ -433,7 +446,7 @@ export default function EventPage() {
             }
 
             // 3) Update local store
-            // setEventActions(oldArray => [...oldArray])
+            // setEventActions(oldArray => [...oldArray, eventAction]);
             setUserActions(oldArray => [...oldArray, userAction]);
 
         } catch (error) {
