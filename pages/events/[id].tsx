@@ -82,14 +82,14 @@ export default function EventPage() {
         if (id != undefined) {
             const username = auth.username ? auth.username : auth.email
             getEventAndSubscribe(+id)
-            getEventUsersAndSubscribe(+id, +auth.id, username)
+            // getEventUsersAndSubscribe(+id, +auth.id, username)
             getEventActionsAndSubscribe(+id)
         }
 
         return async () => {
             // Remove user from event_users list
             if (auth.id) {
-                await supabase.from('event_users').upsert({ user_id: auth.id, event_id: id, joined_at: null, left_at: new Date() }, { onConflict: 'user_id' })
+                // await supabase.from('event_users').upsert({ user_id: auth.id, event_id: id, joined_at: null, left_at: new Date() }, { onConflict: 'user_id' })
             }
             if (subscriptionEvents) {
                 console.log('removeSubscription: ', subscriptionEvents)
@@ -205,15 +205,15 @@ export default function EventPage() {
             // .eq('event_action.event.id', eventActionId)
             .order('id', { ascending: false })
 
+
         console.log('userEventActions data: ', data);
         if (error) {
             console.log('error: ', error);
             return
         }
-        setUserActions(data)
-        // data.forEach((a) => {
-        //     setUserActions[a.id] = a
-        // })
+        const userEventActions = data.filter(a => a.event_action.event.id == eventActionId)
+        console.log('userEventActions: ', userEventActions);
+        setUserActions(userEventActions)
     }
 
     const getEventAndSubscribe = async (id: number) => {
@@ -591,8 +591,10 @@ export default function EventPage() {
                         </li>
                     })}</ul>
                     <h4>{t('list_of_user_actions')}</h4>
+                    
+                    {/* .filter(action => action.event_action?.event?.id == id) */}
+                    <ul>{userActions && userActions.map(action => {
 
-                    <ul>{userActions && userActions.filter(action => action.event_action.event.id == id).map(action => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id}<br />
                             {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />

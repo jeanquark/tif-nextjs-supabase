@@ -125,10 +125,10 @@ export default function Login(props: ChildProps) {
                         e.preventDefault()
                         handleOAuthLogin('google')
                     }}>Google OAuth</button>&nbsp;
-                    <button onClick={(e) => {
+                    {/* <button onClick={(e) => {
                         e.preventDefault()
                         handleOAuthLogin('facebook')
-                    }}>Facebook OAuth</button>&nbsp;
+                    }}>Facebook OAuth</button>&nbsp; */}
                     <button onClick={(e) => {
                         e.preventDefault()
                         handleOAuthLogin('spotify')
