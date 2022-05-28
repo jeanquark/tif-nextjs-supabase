@@ -5,10 +5,10 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
 
-    console.log('[api/api-football/fetch-live-fixtures]', new Date())
-    return res.status(200).json({ success: true });
+    // console.log('[api/api-football/fetch-live-fixtures]', new Date())
+    // return res.status(200).json({ success: true });
     
-    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=5&live=all', { // ID UEFA Nations League: 5
+    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=2&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
         method: 'GET',
         headers: {
             'x-rapidapi-key': process.env.API_FOOTBALL_KEY,

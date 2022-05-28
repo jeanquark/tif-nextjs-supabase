@@ -34,7 +34,8 @@ export async function getServerSideProps({ locale }) {
 	const { data, error } = await supabase
 		.from('events')
 		.select('id, home_team_name, visitor_team_name, date, timestamp')
-		// .gt('timestamp', current_timestamp)
+		.gt('timestamp', (current_timestamp - 240 * 60))
+		// .gt('timestamp', (current_timestamp))
 		.order('timestamp', { ascending: true })
 		.limit(8)
 	console.log('error: ', error);
@@ -67,7 +68,7 @@ export default function HomePage({ data }) {
 			<h1>{t('current_and_next_games')}</h1>
 			{/* <div style={{ height: '400px', border: '1px dotted grey' }}>Box</div> */}
 			{/* {Date()}<br /> */}
-			Dernier déploiement: Mardi, 13h32.
+			Dernier déploiement: Samedi, 17h40.
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
