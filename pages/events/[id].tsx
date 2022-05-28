@@ -568,6 +568,7 @@ export default function EventPage() {
                 {event && <div className={styles.childLeft}>
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_name} vs {event.visitor_team_name}</h3>
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_score}&nbsp;-&nbsp;{event.visitor_team_score}</h3>
+                    <h5 style={{ textAlign: 'center' }}>{event.elapsed_time}min</h5>
                     <br />
                     <p style={{ textAlign: 'center' }}>{moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}</p>
                     <h4>{t('list_of_event_users')}</h4>
