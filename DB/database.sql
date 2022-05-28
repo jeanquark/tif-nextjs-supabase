@@ -56,6 +56,7 @@ CREATE TABLE events (
   country VARCHAR(60),
   date timestamp with time zone,
   timestamp INT,
+  elapsed_time INT,
   league_id INT,
   season INT,
   round VARCHAR(60),
