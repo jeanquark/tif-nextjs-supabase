@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             home_team_score: response[i]['goals']['home'],
             visitor_team_score: response[i]['goals']['away'],
             // events: response[i]['events']
-            elapsed: response[i]['fixture']['status']['elapsed'],
+            elapsed_time: response[i]['fixture']['status']['elapsed'],
             updated_at: new Date()
         })
     }
