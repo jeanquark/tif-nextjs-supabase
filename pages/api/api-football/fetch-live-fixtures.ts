@@ -5,10 +5,10 @@ const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
 
-    // console.log('[api/api-football/fetch-live-fixtures]', new Date())
+    console.log('[api/api-football/fetch-live-fixtures]', new Date())
     // return res.status(200).json({ success: true });
     
-    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=2&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
+    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=5&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
         method: 'GET',
         headers: {
             'x-rapidapi-key': process.env.API_FOOTBALL_KEY,
@@ -27,12 +27,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             visitor_team_score: response[i]['goals']['away'],
             // events: response[i]['events']
             elapsed_time: response[i]['fixture']['status']['elapsed'],
+            status: response[i]['fixture']['status']['short'],
             updated_at: new Date()
         })
     }
-    console.log('[api/api-football] array: ', array)
+    // console.log('[api/api-football] array: ', array)
     const { error } = await supabase.from('events').upsert(array, { onConflict: 'fixture_id' })
-    console.log('[api/api-football] error: ', error)
+    // console.log('[api/api-football] error: ', error)
 
     return res.status(200).json({ success: true, length: response.length });
 }

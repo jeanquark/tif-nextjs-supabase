@@ -37,7 +37,7 @@ export async function getServerSideProps({ locale }) {
 		.gt('timestamp', (current_timestamp - 240 * 60))
 		// .gt('timestamp', (current_timestamp))
 		.order('timestamp', { ascending: true })
-		.limit(8)
+		.limit(12)
 	console.log('error: ', error);
 	console.log('data: ', data);
 	// const data = []

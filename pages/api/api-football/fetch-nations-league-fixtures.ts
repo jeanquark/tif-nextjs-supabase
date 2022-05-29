@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         console.log('API_FOOTBALL_KEY: ', process.env.API_FOOTBALL_KEY)
 
         // 1) Request data from Football API
-        const fixtures = await fetch("https://v3.football.api-sports.io/fixtures?league=2&season=2021&date=2022-05-28", {
+        const fixtures = await fetch("https://v3.football.api-sports.io/fixtures?league=5&season=2022", {
             "method": "GET",
             "headers": {
                 "x-apisports-key": process.env.API_FOOTBALL_KEY
@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         })
         // console.log('data: ', data)
         const { response } = await fixtures.json()
-        // console.log('[api/api-football/fetchNextFixtures] response: ', response);
+        console.log('[api/api-football/fetchNextFixtures] response: ', response);
         
         // 2) Insert data in DB
         let array = []
@@ -40,6 +40,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 city: response[i]['fixture']['venue']['city'],
                 date: response[i]['fixture']['date'],
                 timestamp: response[i]['fixture']['timestamp'],
+                elapsed_time: response[i]['fixture']['status']['elapsed'],
+                status: response[i]['fixture']['status']['short'],
                 league_id: response[i]['league']['id'],
                 round: response[i]['league']['round'],
                 season: response[i]['league']['season']

@@ -57,6 +57,7 @@ CREATE TABLE events (
   date timestamp with time zone,
   timestamp INT,
   elapsed_time INT,
+  status VARCHAR(60),
   league_id INT,
   season INT,
   round VARCHAR(60),
@@ -66,6 +67,8 @@ CREATE TABLE events (
 );
 
 CREATE UNIQUE INDEX fixture_idx ON events (fixture_id);
+CREATE INDEX status_idx ON events (status); -- generate the index
+
 -- 2. Enable RLS (Prevent any action on the table)
 ALTER TABLE events enable row level security;
 CREATE POLICY "Events are viewable by everyone." ON events for SELECT USING (true);
