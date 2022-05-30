@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     console.log('[api/api-football/fetch-live-fixtures]', new Date())
     // return res.status(200).json({ success: true });
-    
-    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=5&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
+
+    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=562&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
         method: 'GET',
         headers: {
             'x-rapidapi-key': process.env.API_FOOTBALL_KEY,
@@ -28,12 +28,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             // events: response[i]['events']
             elapsed_time: response[i]['fixture']['status']['elapsed'],
             status: response[i]['fixture']['status']['short'],
+            events: response[i]['events'],
             updated_at: new Date()
         })
     }
-    // console.log('[api/api-football] array: ', array)
+    console.log('[api/api-football] array: ', array)
     const { error } = await supabase.from('events').upsert(array, { onConflict: 'fixture_id' })
     // console.log('[api/api-football] error: ', error)
 
     return res.status(200).json({ success: true, length: response.length });
 }
+
+
+// [
+//     {
+//       "team": {
+//         "id": 2002,
+//         "logo": "https://media.api-sports.io/football/teams/2002.png",
+//         "name": "Spartak Nalchik"
+//       },
+//       "time": {
+//         "extra": null,
+//         "elapsed": 5
+//       },
+//       "type": "Goal",
+//       "assist": {
+//         "id": null,
+//         "name": null
+//       },
+//       "detail": "Normal Goal",
+//       "player": {
+//         "id": null,
+//         "name": "S. Torosyan"
+//       },
+//       "comments": null
+//     }
+//   ]

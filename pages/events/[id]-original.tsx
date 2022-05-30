@@ -565,42 +565,35 @@ export default function EventPage() {
             <div>
                 <h1>{t('event_page')}</h1>
                 {/* <p>Event id: {event && event.id}</p> */}
-                <div className={`${styles.blink} ${styles.dot}`}></div><span>Live</span>
             </div>
             <div className={styles.parent}>
                 {event && <div className={styles.childLeft}>
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_name} vs {event.visitor_team_name}</h3>
                     <h3 style={{ textAlign: 'center' }}>{event.home_team_score}&nbsp;-&nbsp;{event.visitor_team_score}</h3>
                     <h5 style={{ textAlign: 'center' }}>{event.elapsed_time}min</h5>
-                    <h5 style={{ textAlign: 'center' }}>Statut: {event.status}</h5>
                     <br />
                     <p style={{ textAlign: 'center' }}>{moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}</p>
                     <h4>{t('list_of_event_users')}</h4>
                     <p>{"Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée \"presence\", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de "}<a href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>{"."}</p>
-
-                    <h4>List of game events</h4>
-                    <ul>{event && event.events.map((event, index) => {
-                        return <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                            Type: {event.type}<br />
-                            Time: {event.time?.elapsed}<br />
-                            Team: {event.team?.name}<br />
-                            Player: {event.player?.name}<br />
+                    {/* <ul>{eventUsers && eventUsers.map((user, index) => {
+                        return <li key={user.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
+                            Id: {user.id}<br />
+                            {t('name')}: {user.username}<br />
+                            {t('joined_at')}: {moment(user.join_at).format('HH:mm')}&nbsp;
                         </li>
-                    })}</ul>
+                    })}</ul> */}
                 </div>}
                 {event && <div className={styles.childRight}>
                     <h3>{t('actions')}</h3>
-                    <div className={styles.container}>
-                        {actions.map((action, index) => {
-                            return <Card key={index}>
-                                Id: {action.id}&nbsp;
-                                {action.name}&nbsp;
-                                <button onClick={() => launchAction(action)} className={styles.btn}>{t('launch')}</button>
-                            </Card>
-                        })}
-                    </div>
-                    <EventActions />
-                    {/* <h4>{t('list_of_event_actions')}</h4>
+                    {actions.map((action, index) => {
+                        return <Card key={index}>
+                            Id: {action.id}&nbsp;
+                            {action.name}&nbsp;
+                            <button onClick={() => launchAction(action)} className={styles.btn}>{t('launch')}</button>
+                        </Card>
+                    })}
+                    {/* <EventActions /> */}
+                    <h4>{t('list_of_event_actions')}</h4>
                     <ul>{eventActions && eventActions.map((action, index) => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id}<br />
@@ -613,10 +606,10 @@ export default function EventPage() {
                             </>}&nbsp;
                             <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
                         </li>
-                    })}</ul> */}
+                    })}</ul>
 
-                    <EventUserActions />
-                    {/* <h4>{t('list_of_user_actions')}</h4>
+                    {/* <EventUserActions /> */}
+                    <h4>{t('list_of_user_actions')}</h4>
                     <ul>{userActions && userActions.map(action => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Id: {action.id}<br />
@@ -624,7 +617,7 @@ export default function EventPage() {
                             {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                             {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                         </li>
-                    })}</ul> */}
+                    })}</ul>
 
                 </div>}
 

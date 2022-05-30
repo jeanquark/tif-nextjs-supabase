@@ -1,6 +1,9 @@
 import { ReactElement, useState } from 'react'
 import Link from 'next/link'
-import moment from 'moment'
+import Moment from 'react-moment';
+import 'moment/locale/fr';
+import Countdown, { zeroPad } from 'react-countdown';
+
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
@@ -12,11 +15,14 @@ import { Card } from '../components/UI/Card'
 import { useRouter } from 'next/router'
 import styles from '../styles/Home.module.css'
 
+
 interface Event {
 	id: number,
 	home_team_name: string,
 	visitor_team_name: string,
-	date: string
+	date: Date,
+	timestame: number,
+	updated_at: Date
 }
 
 export async function getServerSideProps({ locale }) {
@@ -33,31 +39,29 @@ export async function getServerSideProps({ locale }) {
 
 	const { data, error } = await supabase
 		.from('events')
-		.select('id, home_team_name, visitor_team_name, date, timestamp')
+		.select('id, home_team_name, visitor_team_name, date, timestamp, updated_at')
 		.gt('timestamp', (current_timestamp - 240 * 60))
 		// .gt('timestamp', (current_timestamp))
 		.order('timestamp', { ascending: true })
 		.limit(12)
 	console.log('error: ', error);
-	console.log('data: ', data);
+	// console.log('data: ', data);
 	// const data = []
 
 	return {
-		props: { 
-			data, 
+		props: {
+			data,
 			...(await serverSideTranslations(locale, ['common', 'home']))
 		}, // will be passed to the page component as props
 	}
 }
 
-// export async function getStaticProps({ locale }) {
-// 	return {
-// 	  props: {
-// 		...(await serverSideTranslations(locale, ['common', 'home'])),
-// 		// Will be passed to the page component as props
-// 	  },
-// 	};
-//   }
+const renderer = ({ hours, minutes, seconds }) => (
+	<span>
+	  {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
+	</span>
+  );
+
 
 export default function HomePage({ data }) {
 	const router = useRouter()
@@ -73,9 +77,22 @@ export default function HomePage({ data }) {
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
 						<a style={{ textDecoration: 'none' }}>
-							<Card >
+							<Card>
 								<p style={{ textAlign: 'center' }}>{event.home_team_name} - {event.visitor_team_name}</p>
-								<p style={{ textAlign: 'center' }}>{moment(event.date).format('DD MMM YYYY HH:mm')}</p>
+								<p style={{ textAlign: 'center' }}><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
+								<p style={{ textAlign: 'center' }}>
+									<Countdown 
+										date={Date.now() + 120000}
+    									intervalDelay={0}
+    									precision={0}
+										renderer={({ hours, minutes, seconds }) => (
+											<span>
+											  {zeroPad(minutes)}:{zeroPad(seconds)}
+											</span>
+										  )}
+									/>
+								</p>
+								<p style={{ textAlign: 'center' }}>Id: {event.id}</p>
 							</Card>
 						</a>
 					</Link>

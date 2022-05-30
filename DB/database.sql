@@ -62,6 +62,7 @@ CREATE TABLE events (
   season INT,
   round VARCHAR(60),
   group_name VARCHAR(60),
+  events JSONB,
   inserted_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
