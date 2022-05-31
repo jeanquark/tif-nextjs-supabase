@@ -4,6 +4,7 @@ import counterReducer from '../features/counter/counterSlice'
 import authReducer from '../features/auth/authSlice'
 import actionReducer from '../features/actions/actionsSlice'
 import eventActionsReducer from '../features/eventActions/eventActionsSlice'
+import eventUserActionsReducer from '../features/eventUserActions/eventUserActionsSlice'
 
 export function makeStore() {
     return configureStore({
@@ -12,6 +13,7 @@ export function makeStore() {
             auth: authReducer,
             actions: actionReducer,
             eventActions: eventActionsReducer,
+            eventUserActions: eventUserActionsReducer
         },
     })
 }

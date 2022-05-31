@@ -17,6 +17,8 @@ import {
     fetchActions
 } from '../features/actions/actionsSlice'
 
+import { selectEventUserActions as selectEventUserActions2, setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../features/eventUserActions/eventUserActionsSlice'
+
 
 interface Event {
     id: number,
@@ -29,6 +31,14 @@ interface Action {
     name: string,
     slug?: string,
     image?: string
+}
+
+interface EventUserAction {
+    id: number
+    user_id: number
+    event_action_id: number
+    inserted_at: Date
+    updated_at: Date
 }
 
 type EffectCallback = () => (void | (() => void | undefined));
@@ -57,6 +67,7 @@ export default function EventUserActions() {
     const eventUsersRef = useRef<any>()
     eventUsersRef.current = eventUsers
 
+    const eventUserActions2 = useAppSelector(selectEventUserActions2)
     const [userActions, setUserActions] = useState([])
     const userActionsRef = useRef<any[]>()
     userActionsRef.current = userActions
@@ -149,6 +160,7 @@ export default function EventUserActions() {
         const userEventActions = data.filter(a => a.event_action.event.id == eventActionId)
         console.log('userEventActions: ', userEventActions);
         setUserActions(userEventActions)
+        dispatch(setEventUserActions2(userEventActions))
     }
 
 
@@ -219,11 +231,13 @@ export default function EventUserActions() {
             //     array.splice(index, 1);
             //     setUserActions(array);
             // }
-            let array = [...userActions]; // make a separate copy of the array
+            // let array = [...userActions]; // make a separate copy of the array
+            let array = [...eventUserActions2]
             let index = array.findIndex(action => action.id === eventAction.id)
             if (index !== -1) {
                 array.splice(index, 1);
                 setUserActions(array);
+                dispatch(setEventUserActions2(array))
             }
         } catch (error) {
             console.log('error: ', error);
@@ -234,15 +248,23 @@ export default function EventUserActions() {
 
     return (
         <div style={{ border: '2px dashed darkblue' }}>
-            <h4>{t('list_of_user_actions')}</h4>
+            {/* <h4>{t('list_of_user_actions')}</h4>
             <ul>{userActions && userActions.map(action => {
 
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
                     {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
-                    {/* {t('name')}: {action.name}<br /> */}
                     {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                     {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
+                </li>
+            })}</ul> */}
+            EventUserActions from Redux store:
+            <ul>{eventUserActions2 && eventUserActions2.map(action => {
+                return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
+                    Id: {action.id}<br />
+                    {/* {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
+                    {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
+                    {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>} */}
                 </li>
             })}</ul>
         </div>

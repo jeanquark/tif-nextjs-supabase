@@ -19,6 +19,7 @@ import {
     fetchActions
 } from '../../features/actions/actionsSlice'
 
+import { setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../../features/eventUserActions/eventUserActionsSlice'
 
 interface Event {
     id: number,
@@ -227,6 +228,7 @@ export default function EventPage() {
         const userEventActions = data.filter(a => a.event_action.event.id == eventActionId)
         console.log('userEventActions: ', userEventActions);
         setUserActions(userEventActions)
+        dispatch(setEventUserActions2(userEventActions))
     }
 
     const getEventAndSubscribe = async (id: number) => {
@@ -361,6 +363,7 @@ export default function EventPage() {
                         console.log('items: ', items)
                         items.splice(index, 1)
                         setUserActions(items)
+                        dispatch(setEventUserActions2(items))
                     }
                 })
                 .subscribe()
@@ -450,7 +453,7 @@ export default function EventPage() {
             // 3) Update local store
             // setEventActions(oldArray => [...oldArray, eventAction]);
             setUserActions(oldArray => [...oldArray, userAction]);
-
+            dispatch(addEventUserAction2(userAction))
         } catch (error) {
             console.log('error: ', error);
         }
@@ -496,6 +499,7 @@ export default function EventPage() {
             if (index !== -1) {
                 array.splice(index, 1);
                 setUserActions(array);
+                dispatch(addEventUserAction2(array))
             }
         } catch (error) {
             console.log('error: ', error);
@@ -625,9 +629,7 @@ export default function EventPage() {
                             {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                         </li>
                     })}</ul> */}
-
                 </div>}
-
             </div>
         </>
     )

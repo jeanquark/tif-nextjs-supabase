@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import type { AppState, AppThunk } from '../../app/store'
-import { getEventActions } from './eventActionsAPI'
+import { getEventUserActions } from './eventUserActionsAPI'
 
-interface EventAction {
+interface EventUserAction {
     id: number
     action_id: number
     event_id: number
@@ -20,16 +20,26 @@ interface EventAction {
     inserted_at: Date
     expired_at: Date
     updated_at: Date
+    name: string
+    event_action: {
+        action: {
+            name: string
+        }
+        id: number
+    }
+    event_actions: {
+        is_completed: boolean
+    }
 }
 
-export interface EventActionsState {
+export interface EventUserActionsState {
     // eventActions: { id: number, name: string, lauched_by?: string, number_participants?: number, is_completed?: boolean, created_at: Date }[]
-    eventActions: EventAction[]
+    eventUserActions: EventUserAction[]
     status: 'idle' | 'loading' | 'failed'
 }
 
-const initialState: EventActionsState = {
-    eventActions: [],
+const initialState: EventUserActionsState = {
+    eventUserActions: [],
     status: 'idle',
 }
 
@@ -40,16 +50,16 @@ const initialState: EventActionsState = {
 // typically used to make async requests.
 export const fetchEventActions = createAsyncThunk(
     'eventActions/fetchEventActions',
-    async (id: number) => {
-        const response = await getEventActions({id})
+    async (id) => {
+        const response = await getEventUserActions({id})
         // The value we return becomes the `fulfilled` action payload
         console.log('[REDUX] fetchEventActions response: ', response)
         return response
     }
 )
 
-export const eventActionsSlice = createSlice({
-    name: 'eventActions',
+export const eventUserActionsSlice = createSlice({
+    name: 'eventUserActions',
     initialState,
     // The `reducers` field lets us define reducers and generate associated actions
     reducers: {
@@ -57,14 +67,15 @@ export const eventActionsSlice = createSlice({
         //     console.log('[REDUX authSlice] setActions: ', action)
         //     // state.actions = action.payload.data
         // }
-        setEventActions: (state, action: PayloadAction<EventAction[]>) => {
+        setEventUserActions: (state, action: PayloadAction<EventUserAction[]>) => {
         // setEventActions: (state, action: any[]) => {
-            console.log('[REDUX eventActionsSlice] setEventActions action: ', action)
-            state.eventActions = action.payload
+            console.log('[REDUX eventUserActionsSlice] setEventUserActions action: ', action)
+            state.eventUserActions = action.payload
         },
-        addEventAction: (state, action: PayloadAction<EventAction>) => {
-            console.log('[REDUX eventActionsSlice] addEventAction action: ', action)
-            state.eventActions.push(action.payload)
+        // addEventUserAction: (state, action: PayloadAction<EventUserAction>) => {
+        addEventUserAction: (state, action: PayloadAction<any>) => {
+            console.log('[REDUX eventUserActionsSlice] addEventUserAction action: ', action)
+            state.eventUserActions.push(action.payload)
         }
     },
     // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -77,16 +88,16 @@ export const eventActionsSlice = createSlice({
             .addCase(fetchEventActions.fulfilled, (state, action) => {
                 console.log('[REDUX] @Reducer action: ', action)
                 state.status = 'idle'
-                state.eventActions = action.payload
+                state.eventUserActions = action.payload
             })
     },
 })
 
 // export const { fetchActions } = actionsSlice.actions
-export const { setEventActions, addEventAction } = eventActionsSlice.actions
+export const { setEventUserActions, addEventUserAction } = eventUserActionsSlice.actions
 
 
-export const selectEventActions = (state: AppState) => state.eventActions.eventActions
+export const selectEventUserActions = (state: AppState) => state.eventUserActions.eventUserActions
 // export const selectEventActions = (state: AppState) => state.eventActions.eventActions
 
 
@@ -95,4 +106,4 @@ export const selectEventActions = (state: AppState) => state.eventActions.eventA
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 // export const selectCount = (state: AppState) => state.counter.value
 
-export default eventActionsSlice.reducer
+export default eventUserActionsSlice.reducer

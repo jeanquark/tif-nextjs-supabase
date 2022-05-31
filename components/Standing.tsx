@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react"
 import axios from 'axios'
+import { supabase } from '../utils/supabaseClient'
+import { useTranslation } from "next-i18next"
 
 function Standing() {
     // NextJS Client side request
     const [data, setData] = useState(null)
     const [isLoading, setLoading] = useState(false)
+	const { t } = useTranslation(['home'])
+
 
     interface User {
         id: string
         email: string
+        username: string
         points: number
     }
 
@@ -17,10 +22,8 @@ function Standing() {
             try {
                 console.log('[useEffect] Standing')
                 setLoading(true)
-                // const response = await fetch('api/players')
-                // console.log('response: ', response);
-                // const data = await response.json()
-                const { data } = await axios.get('/api/players')
+
+                const { data } = await axios.get('/api/users')
                 console.log('data: ', data)
                 setLoading(false)
                 setData(data)
@@ -30,11 +33,6 @@ function Standing() {
                 console.log('finally');
                 setLoading(false)
             }
-            // .then((res) => res.json())
-            //     .then((data) => {
-            //         setData(data)
-            //         setLoading(false)
-            //     })
         }
         fetchData()
         // .catch(console.log('an error occured'))
@@ -46,11 +44,11 @@ function Standing() {
 
     return (
         <>
-            <h3>Players Standing</h3>
+            <h3>{t('standing')}</h3>
             <ul>
                 {data.map((user: User) =>
                     <li key={user.id}>
-                        {user.email}
+                        {user.username ? user.username : user.email}&nbsp;<b>{user.points}</b> points
                     </li>
                 )}
             </ul>

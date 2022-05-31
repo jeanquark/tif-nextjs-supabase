@@ -12,7 +12,8 @@ import styles from '../styles/Event.module.css'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { selectAuth, incrementPoints } from '../features/auth/authSlice'
 import { selectActions, fetchActions } from '../features/actions/actionsSlice'
-import { selectEventActions as selectEventActions2, setEventActions as setEventActions2 } from '../features/eventActions/eventActionsSlice'
+import { selectEventActions as selectEventActions2, setEventActions as setEventActions2, addEventAction as addEventAction2 } from '../features/eventActions/eventActionsSlice'
+import { setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../features/eventUserActions/eventUserActionsSlice'
 
 import {
     decrement,
@@ -36,6 +37,25 @@ interface Action {
     image?: string
 }
 
+interface EventAction {
+    id: number
+    action_id: number
+    event_id: number
+    user_id: number
+    username: string
+    action: {
+        name: string
+        image: string
+    }
+    is_completed: boolean
+    number_participants: number
+    participation_threshold: number
+    points: number
+    expired_at: Date
+    inserted_at: Date
+    updated_at: Date
+}
+
 type EffectCallback = () => (void | (() => void | undefined));
 
 
@@ -55,7 +75,7 @@ export default function EventActions() {
 
     const eventActions2 = useAppSelector(selectEventActions2)
     const [eventActions, setEventActions] = useState([])
-    const eventActionsRef = useRef<any>()
+    const eventActionsRef = useRef<EventAction[]>()
     eventActionsRef.current = eventActions
 
     // const [eventUsers, setEventUsers] = useState([])
@@ -66,7 +86,7 @@ export default function EventActions() {
     const userActionsRef = useRef<any[]>()
     userActionsRef.current = userActions
 
-    
+
 
     let subscriptionEvents = null
     let subscriptionEventUsers = null
@@ -107,6 +127,8 @@ export default function EventActions() {
         }
         console.log('event actions data: ', data)
         setEventActions(data)
+        dispatch(setEventActions2(data))
+
     }
 
 
@@ -126,6 +148,7 @@ export default function EventActions() {
 
                     const action = actionsRef.current.find((action) => action.id == payload.new.action_id)
                     console.log('action: ', action)
+
                     const newEventAction = {
                         action: {
                             name: action.name,
@@ -133,7 +156,15 @@ export default function EventActions() {
                         },
                         ...payload.new,
                     }
-                    setEventActions((a) => [newEventAction, ...a])
+                    newEventAction['number_participants'] = 1
+                    console.log('newEventAction: ', newEventAction);
+                    // setEventActions((a) => [newEventAction, ...a])
+
+                    let items = [...eventActionsRef.current];
+                    // dispatch(setEventActions2([...items, newEventAction]))
+                    dispatch(addEventAction2(newEventAction))
+                    // dispatch(setEventActions2((a) => [newEventAction, ...a]))
+
                 })
                 .on('UPDATE', (payload) => {
                     console.log('[UPDATE] subscriptionEventActions payload: ', payload)
@@ -153,36 +184,44 @@ export default function EventActions() {
                         }
                     }
 
-                    index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    // index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    index = eventActions2.findIndex(action => action.id == payload.new.id)
                     console.log('index: ', index)
-                    // 1. Make a shallow copy of the items
-                    let items = [...eventActionsRef.current];
-                    // 2. Make a shallow copy of the item you want to mutate
-                    // let item = { ...items[index] };
-                    // 3. Replace the property you're intested in
-                    // item.name = 'newName';
-                    // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-                    items[index]['number_participants'] = payload.new.number_participants;
-                    items[index]['is_completed'] = payload.new.is_completed
-                    // items[index]['name'] = ''
-                    console.log('items: ', items);
-                    // 5. Set the state to our new copy
-                    // setEventActions((a) => [items, ...a])
-                    setEventActions(items);
-                    dispatch(setEventActions2(items))
-                    dispatch(incrementByAmount(2))
+                    if (index > -1) {
+                        // 1. Make a shallow copy of the items
+                        // 2. Make a shallow copy of the item you want to mutate
+                        // let item = { ...items[index] };
+                        // let items = [...eventActionsRef.current];
+                        let items = [...eventActions2]
+                        // 3. Replace the property you're intested in
+                        // item.name = 'newName';
+                        // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
+                        items[index]['number_participants'] = payload.new.number_participants;
+                        items[index]['is_completed'] = payload.new.is_completed
+                        // items[index]['name'] = ''
+                        console.log('items: ', items);
+                        // 5. Set the state to our new copy
+                        // setEventActions((a) => [items, ...a])
+                        setEventActions(items);
+                        dispatch(setEventActions2(items))
+                        // dispatch(incrementByAmount(2))
+                    }
+
                 })
                 .on('DELETE', (payload) => {
                     console.log('[DELETE] subscriptionEventActions payload: ', payload)
 
                     // 1) Delete eventActions
-                    let index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
+                    // let index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
+                    let index = eventActions2.findIndex(action => action.id == payload.old.id)
                     console.log('index1: ', index)
                     if (index > -1) {
-                        let items = [...eventActionsRef.current];
+                        // let items = [...eventActionsRef.current];
+                        let items = eventActions2
                         console.log('items: ', items)
                         items.splice(index, 1)
                         setEventActions(items)
+                        dispatch(setEventActions2(items))
                     }
 
                     // 2) Delete userActions
@@ -194,6 +233,8 @@ export default function EventActions() {
                         console.log('items: ', items)
                         items.splice(index, 1)
                         setUserActions(items)
+                        dispatch(setEventUserActions2(items))
+
                     }
                 })
                 .subscribe()
@@ -246,6 +287,7 @@ export default function EventActions() {
             // 3) Update local store
             // setEventActions(oldArray => [...oldArray, eventAction]);
             setUserActions(oldArray => [...oldArray, userAction]);
+            dispatch(addEventUserAction2(userAction))
 
         } catch (error) {
             console.log('error: ', error);
@@ -286,25 +328,26 @@ export default function EventActions() {
             }
 
             // 3) Update eventActions store
-            let array = [...eventActions]; // make a separate copy of the array
+            let array = [...eventActions2]; // make a separate copy of the array
             console.log('array1: ', array);
             let index = array.findIndex(action => action.id === eventAction.id)
             console.log('index1: ', index);
             if (index !== -1) {
                 array.splice(index, 1);
-                setEventActions(array);
+                // setEventActions(array);
+                dispatch(setEventActions2(array))
             }
 
             // 4) Update userActions store
-            array = [...userActions]; // make a separate copy of the array
-            console.log('array2: ', array);
-            console.log('eventAction.id: ', eventAction.id);
-            index = array.findIndex(action => action.event_action.id === eventAction.id)
-            console.log('index2: ', index);
-            if (index !== -1) {
-                array.splice(index, 1);
-                setUserActions(array);
-            }
+            // array = [...userActions]; // make a separate copy of the array
+            // console.log('array2: ', array);
+            // console.log('eventAction.id: ', eventAction.id);
+            // index = array.findIndex(action => action.event_action.id === eventAction.id)
+            // console.log('index2: ', index);
+            // if (index !== -1) {
+            //     array.splice(index, 1);
+            //     setUserActions(array);
+            // }
         } catch (error) {
             console.log('error: ', error);
         }
@@ -312,7 +355,7 @@ export default function EventActions() {
 
     return (
         <div style={{ border: '2px dashed orangered' }}>
-            <h4>{t('list_of_event_actions')}</h4>
+            {/* <h4>{t('list_of_event_actions')}</h4>
             <ul>{eventActions && eventActions.map((action, index) => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
@@ -325,9 +368,9 @@ export default function EventActions() {
                     </>}&nbsp;
                     <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
                 </li>
-            })}</ul>
-            Actions from Redux store:
-            <ul>{eventActions2 && eventActions2.map((action, index) => {
+            })}</ul> */}
+            EventActions from Redux store:
+            <ul>{eventActions2.map((action, index) => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
                     {t('name')}: {action.action?.name}<br />

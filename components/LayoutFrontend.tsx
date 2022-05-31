@@ -16,7 +16,10 @@ export default function LayoutFrontend({ children }) {
 				<header id="pageHeader" className={styles.pageHeader}><Navbar /></header>
 				<article id="mainArticle" className={styles.mainArticle}>{children}</article>
 				{/* <nav id="mainNav" className={styles.mainNav}><Standing /></nav> */}
-				<nav id="mainNav" className={styles.mainNav}>{t('standing')}</nav>
+				<nav id="mainNav" className={styles.mainNav}>
+					{/* {t('standing')} */}
+					<Standing />
+				</nav>
 				<div id="siteAds" className={styles.siteAds}>{t('ads')}</div>
 				<footer id="pageFooter" className={styles.pageFooter}>{t('footer')}</footer>
 			</div>
