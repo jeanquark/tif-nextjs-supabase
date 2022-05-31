@@ -4,31 +4,31 @@ import type { AppState, AppThunk } from '../../app/store'
 import { getEventUserActions } from './eventUserActionsAPI'
 
 interface EventUserAction {
-    id: number
-    action_id: number
-    event_id: number
-    user_id: number
-    username: string
-    action: {
-        name: string
-        image: string
+    id?: number
+    action_id?: number
+    event_id?: number
+    user_id?: number
+    username?: string
+    action?: {
+        name?: string
+        image?: string
     }
-    is_completed: boolean
-    number_participants: number
-    participation_threshold: number
-    points: number
-    inserted_at: Date
-    expired_at: Date
-    updated_at: Date
-    name: string
-    event_action: {
-        action: {
-            name: string
+    is_completed?: boolean
+    number_participants?: number
+    participation_threshold?: number
+    points?: number
+    inserted_at?: Date
+    expired_at?: Date
+    updated_at?: Date
+    name?: string
+    event_action?: {
+        action?: {
+            name?: string
         }
-        id: number
+        id?: number
     }
-    event_actions: {
-        is_completed: boolean
+    event_actions?: {
+        is_completed?: boolean
     }
 }
 
@@ -72,8 +72,8 @@ export const eventUserActionsSlice = createSlice({
             console.log('[REDUX eventUserActionsSlice] setEventUserActions action: ', action)
             state.eventUserActions = action.payload
         },
-        // addEventUserAction: (state, action: PayloadAction<EventUserAction>) => {
-        addEventUserAction: (state, action: PayloadAction<any>) => {
+        addEventUserAction: (state, action: PayloadAction<EventUserAction>) => {
+        // addEventUserAction: (state, action: PayloadAction<any>) => {
             console.log('[REDUX eventUserActionsSlice] addEventUserAction action: ', action)
             state.eventUserActions.push(action.payload)
         }

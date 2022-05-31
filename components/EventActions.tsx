@@ -13,7 +13,7 @@ import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { selectAuth, incrementPoints } from '../features/auth/authSlice'
 import { selectActions, fetchActions } from '../features/actions/actionsSlice'
 import { selectEventActions as selectEventActions2, setEventActions as setEventActions2, addEventAction as addEventAction2 } from '../features/eventActions/eventActionsSlice'
-import { setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../features/eventUserActions/eventUserActionsSlice'
+import { selectEventUserActions as selectEventUserActions2, setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../features/eventUserActions/eventUserActionsSlice'
 
 import {
     decrement,
@@ -82,6 +82,7 @@ export default function EventActions() {
     // const eventUsersRef = useRef<any>()
     // eventUsersRef.current = eventUsers
 
+    const eventUserActions2 = useAppSelector(selectEventUserActions2)
     const [userActions, setUserActions] = useState([])
     const userActionsRef = useRef<any[]>()
     userActionsRef.current = userActions
@@ -269,7 +270,7 @@ export default function EventActions() {
 
             const userAction = {
                 id: data[0].id,
-                user_id: auth.id,
+                user_id: +auth.id,
                 name: eventAction.name,
                 event_action: {
                     id: eventAction.id
@@ -338,16 +339,18 @@ export default function EventActions() {
                 dispatch(setEventActions2(array))
             }
 
-            // 4) Update userActions store
+            // 4) Update eventUserActions store
             // array = [...userActions]; // make a separate copy of the array
-            // console.log('array2: ', array);
-            // console.log('eventAction.id: ', eventAction.id);
-            // index = array.findIndex(action => action.event_action.id === eventAction.id)
-            // console.log('index2: ', index);
-            // if (index !== -1) {
-            //     array.splice(index, 1);
-            //     setUserActions(array);
-            // }
+            let array2 = [...eventUserActions2]
+            console.log('array2: ', array);
+            console.log('eventAction.id: ', eventAction.id);
+            index = array2.findIndex(action => action.event_action.id === eventAction.id)
+            console.log('index2: ', index);
+            if (index !== -1) {
+                array2.splice(index, 1);
+                setUserActions(array2);
+                dispatch(setEventUserActions2(array2))
+            }
         } catch (error) {
             console.log('error: ', error);
         }

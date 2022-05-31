@@ -435,7 +435,7 @@ export default function EventPage() {
 
             const userAction = {
                 id: data[0].id,
-                user_id: auth.id,
+                user_id: +auth.id,
                 name: eventAction.name,
                 event_action: {
                     id: eventAction.id
@@ -583,7 +583,7 @@ export default function EventPage() {
                     <p>{"Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée \"presence\", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de "}<a href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>{"."}</p>
 
                     <h4>List of game events</h4>
-                    <ul>{event && event.events.map((event, index) => {
+                    <ul>{event.events && event.events.map((event, index) => {
                         return <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
                             Type: {event.type}<br />
                             Time: {event.time?.elapsed}<br />
