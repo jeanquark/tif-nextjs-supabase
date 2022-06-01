@@ -14,25 +14,54 @@ import styles from '../../styles/Event.module.css'
 
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
 import { selectAuth, incrementPoints } from '../../features/auth/authSlice'
-import {
-    selectActions,
-    fetchActions
-} from '../../features/actions/actionsSlice'
+import { selectActions, fetchActions } from '../../features/actions/actionsSlice'
+import { selectEventActions, setEventActions } from '../../features/eventActions/eventActionsSlice'
+import { selectEventUserActions, setEventUserActions, addEventUserAction } from '../../features/eventUserActions/eventUserActionsSlice'
 
-import { setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../../features/eventUserActions/eventUserActionsSlice'
+import { Event, Action, EventAction, EventUserAction } from '../../app/interfaces'
 
-interface Event {
-    id: number,
-    home_team_name: string,
-    visitor_team_name: string
-}
+// interface Event {
+//     id: number,
+//     home_team_name: string,
+//     visitor_team_name: string
+// }
 
-interface Action {
-    id: number,
-    name: string,
-    slug?: string,
-    image?: string
-}
+// interface Action {
+//     id: number,
+//     name: string,
+//     slug?: string,
+//     image?: string
+// }
+
+// interface EventAction {
+//     id: number
+//     action_id: number
+//     event_id: number
+//     user_id: number
+//     username: string
+//     action: {
+//         name: string
+//         image: string
+//     }
+//     is_completed: boolean
+//     number_participants: number
+//     participation_threshold: number
+//     points: number
+//     expired_at: Date
+//     inserted_at: Date
+//     updated_at: Date
+// }
+
+// interface EventUserAction {
+//     id: number
+//     user_id: number
+//     event_action_id?: number
+//     event_action?: {
+//         id?: number
+//     }
+//     inserted_at: Date
+//     updated_at: Date
+// }
 
 type EffectCallback = () => (void | (() => void | undefined));
 
@@ -60,17 +89,19 @@ export default function EventPage() {
     const actionsRef = useRef<Action[]>()
     actionsRef.current = actions
 
-    const [eventActions, setEventActions] = useState([])
-    const eventActionsRef = useRef<any>()
+    const eventActions = useAppSelector(selectEventActions)
+    // const [eventActions, setEventActions] = useState([])
+    const eventActionsRef = useRef<EventAction[]>()
     eventActionsRef.current = eventActions
 
     const [eventUsers, setEventUsers] = useState([])
     const eventUsersRef = useRef<any>()
     eventUsersRef.current = eventUsers
 
-    const [userActions, setUserActions] = useState([])
-    const userActionsRef = useRef<any[]>()
-    userActionsRef.current = userActions
+    const eventUserActions = useAppSelector(selectEventUserActions)
+    // const [userActions, setUserActions] = useState([])
+    const eventUserActionsRef = useRef<EventUserAction[]>()
+    eventUserActionsRef.current = eventUserActions
 
 
 
@@ -227,8 +258,8 @@ export default function EventPage() {
         }
         const userEventActions = data.filter(a => a.event_action.event.id == eventActionId)
         console.log('userEventActions: ', userEventActions);
-        setUserActions(userEventActions)
-        dispatch(setEventUserActions2(userEventActions))
+        // setUserActions(userEventActions)
+        dispatch(setEventUserActions(userEventActions))
     }
 
     const getEventAndSubscribe = async (id: number) => {
@@ -303,19 +334,19 @@ export default function EventPage() {
                         },
                         ...payload.new,
                     }
-                    setEventActions((a) => [newEventAction, ...a])
+                    // setEventActions((a) => [newEventAction, ...a])
                 })
                 .on('UPDATE', (payload) => {
                     console.log('[UPDATE] subscriptionEventActions payload: ', payload)
                     console.log('eventActionsRef: ', eventActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
-                    console.log('userActionsRef: ', userActionsRef);
+                    console.log('eventUserActionsRef: ', eventUserActionsRef);
 
                     let index
                     if (payload.new.is_completed) {
                         console.log('Action is completed!!!')
 
-                        index = userActionsRef.current.findIndex(action => action.event_action.id == payload.new.id)
+                        index = eventUserActionsRef.current.findIndex(action => action.event_action.id == payload.new.id)
                         console.log('index: ', index);
                         if (index > -1) {
                             // Update user points
@@ -355,15 +386,15 @@ export default function EventPage() {
                     }
 
                     // 2) Delete userActions
-                    console.log('userActionsRef.current: ', userActionsRef.current);
-                    index = userActionsRef.current.findIndex(action => action.event_action.id == payload.old.id)
+                    console.log('userActionsRef.current: ', eventUserActionsRef.current);
+                    index = eventUserActionsRef.current.findIndex(action => action.event_action.id == payload.old.id)
                     console.log('index2: ', index)
                     if (index > -1) {
-                        let items = [...userActionsRef.current];
+                        let items = [...eventUserActionsRef.current];
                         console.log('items: ', items)
                         items.splice(index, 1)
-                        setUserActions(items)
-                        dispatch(setEventUserActions2(items))
+                        // setUserActions(items)
+                        dispatch(setEventUserActions(items))
                     }
                 })
                 .subscribe()
@@ -375,7 +406,7 @@ export default function EventPage() {
 
     const launchAction = async (action: Action) => {
         try {
-            console.log('lauchAction: ', action)
+            console.log('[id] lauchAction: ', action)
             if (!auth.id) {
                 // alert('You are not authenticated. Please login first.')
                 alert(t('common:not_authenticated'))
@@ -412,7 +443,7 @@ export default function EventPage() {
 
     const joinAction = async (eventAction: any) => {
         try {
-            console.log('joinAction: ', eventAction)
+            console.log('[id] joinAction: ', eventAction)
 
             if (!auth.id) {
                 // alert('You are not authenticated. Please login first.')
@@ -433,15 +464,17 @@ export default function EventPage() {
             }
             console.log('data: ', data);
 
-            const userAction = {
+            const userAction :EventUserAction = {
                 id: data[0].id,
                 user_id: +auth.id,
                 name: eventAction.name,
                 event_action: {
                     id: eventAction.id
                 },
-                inserted_at: data[0].inserted_at
+                inserted_at: data[0].inserted_at,
+                // updated_at: new Date()
             }
+            console.log('userAction: ', userAction);
 
             // 2) Increment counter
             const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventAction.id })
@@ -452,8 +485,8 @@ export default function EventPage() {
 
             // 3) Update local store
             // setEventActions(oldArray => [...oldArray, eventAction]);
-            setUserActions(oldArray => [...oldArray, userAction]);
-            dispatch(addEventUserAction2(userAction))
+            // setUserActions(oldArray => [...oldArray, userAction]);
+            dispatch(addEventUserAction(userAction))
         } catch (error) {
             console.log('error: ', error);
         }
@@ -494,12 +527,13 @@ export default function EventPage() {
             //     array.splice(index, 1);
             //     setUserActions(array);
             // }
-            let array = [...userActions]; // make a separate copy of the array
+            // let array = [...userActions]; // make a separate copy of the array
+            let array = [...eventUserActionsRef.current]
             let index = array.findIndex(action => action.id === eventAction.id)
             if (index !== -1) {
                 array.splice(index, 1);
-                setUserActions(array);
-                dispatch(addEventUserAction2(array))
+                // setUserActions(array);
+                // dispatch(addEventUserAction(array))
             }
         } catch (error) {
             console.log('error: ', error);
@@ -550,14 +584,15 @@ export default function EventPage() {
             }
 
             // 4) Update userActions store
-            array = [...userActions]; // make a separate copy of the array
-            console.log('array2: ', array);
+            let array2 = [...eventUserActionsRef.current]; // make a separate copy of the array
+            console.log('array2: ', array2);
             console.log('eventAction.id: ', eventAction.id);
-            index = array.findIndex(action => action.event_action.id === eventAction.id)
+            index = array2.findIndex(action => action.event_action.id === eventAction.id)
             console.log('index2: ', index);
             if (index !== -1) {
-                array.splice(index, 1);
-                setUserActions(array);
+                array2.splice(index, 1);
+                // setUserActions(array);
+                dispatch(setEventUserActions(array))
             }
         } catch (error) {
             console.log('error: ', error);
@@ -620,6 +655,7 @@ export default function EventPage() {
                     })}</ul> */}
 
                     <EventUserActions />
+
                     {/* <h4>{t('list_of_user_actions')}</h4>
                     <ul>{userActions && userActions.map(action => {
                         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>

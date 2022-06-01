@@ -11,9 +11,9 @@ import styles from '../styles/Event.module.css'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { selectAuth, incrementPoints } from '../features/auth/authSlice'
-import { selectActions, fetchActions } from '../features/actions/actionsSlice'
-import { selectEventActions as selectEventActions2, setEventActions as setEventActions2, addEventAction as addEventAction2 } from '../features/eventActions/eventActionsSlice'
-import { selectEventUserActions as selectEventUserActions2, setEventUserActions as setEventUserActions2, addEventUserAction as addEventUserAction2 } from '../features/eventUserActions/eventUserActionsSlice'
+import { selectActions } from '../features/actions/actionsSlice'
+import { selectEventActions, setEventActions, addEventAction } from '../features/eventActions/eventActionsSlice'
+import { selectEventUserActions, setEventUserActions, addEventUserAction } from '../features/eventUserActions/eventUserActionsSlice'
 
 import {
     decrement,
@@ -24,37 +24,47 @@ import {
     selectCount,
 } from '../features/counter/counterSlice'
 
-interface Event {
-    id: number,
-    home_team_name: string,
-    visitor_team_name: string
-}
+import { Event, Action, EventAction, EventUserAction } from '../app/interfaces'
 
-interface Action {
-    id: number,
-    name: string,
-    slug?: string,
-    image?: string
-}
+// interface Event {
+//     id: number,
+//     home_team_name: string,
+//     visitor_team_name: string
+// }
 
-interface EventAction {
-    id: number
-    action_id: number
-    event_id: number
-    user_id: number
-    username: string
-    action: {
-        name: string
-        image: string
-    }
-    is_completed: boolean
-    number_participants: number
-    participation_threshold: number
-    points: number
-    expired_at: Date
-    inserted_at: Date
-    updated_at: Date
-}
+// interface Action {
+//     id: number,
+//     name: string,
+//     slug?: string,
+//     image?: string
+// }
+
+// interface EventAction {
+//     id: number
+//     action_id: number
+//     event_id: number
+//     user_id: number
+//     username: string
+//     action: {
+//         name: string
+//         image: string
+//     }
+//     is_completed: boolean
+//     number_participants: number
+//     participation_threshold: number
+//     points: number
+//     expired_at: Date
+//     inserted_at: Date
+//     updated_at: Date
+// }
+
+// interface EventUserAction {
+//     id: number
+//     user_id: number
+//     event_action_id: number
+//     inserted_at: Date
+//     updated_at: Date
+// }
 
 type EffectCallback = () => (void | (() => void | undefined));
 
@@ -73,19 +83,19 @@ export default function EventActions() {
     const actionsRef = useRef<Action[]>()
     actionsRef.current = actions
 
-    const eventActions2 = useAppSelector(selectEventActions2)
-    const [eventActions, setEventActions] = useState([])
-    const eventActionsRef = useRef<EventAction[]>()
+    const eventActions = useAppSelector(selectEventActions)
+    // const [eventActions, setEventActions] = useState([])
+    const eventActionsRef = useRef<EventAction[] | null>(null)
     eventActionsRef.current = eventActions
 
     // const [eventUsers, setEventUsers] = useState([])
     // const eventUsersRef = useRef<any>()
     // eventUsersRef.current = eventUsers
 
-    const eventUserActions2 = useAppSelector(selectEventUserActions2)
-    const [userActions, setUserActions] = useState([])
-    const userActionsRef = useRef<any[]>()
-    userActionsRef.current = userActions
+    const eventUserActions = useAppSelector(selectEventUserActions)
+    // const [userActions, setUserActions] = useState([])
+    const eventUserActionsRef = useRef<EventUserAction[] | null>(null)
+    eventUserActionsRef.current = eventUserActions
 
 
 
@@ -127,8 +137,8 @@ export default function EventActions() {
             return
         }
         console.log('event actions data: ', data)
-        setEventActions(data)
-        dispatch(setEventActions2(data))
+        // setEventActions(data)
+        dispatch(setEventActions(data))
 
     }
 
@@ -146,9 +156,11 @@ export default function EventActions() {
                 // }).subscribe()
                 .on('INSERT', payload => {
                     console.log('[INSERT] subscriptionEventActions payload: ', payload.new)
+                    console.log('[INSERT] eventActionsRef.current: ', eventActionsRef.current);
 
                     const action = actionsRef.current.find((action) => action.id == payload.new.action_id)
-                    console.log('action: ', action)
+                    // const action = actions.find((action) => action.id == payload.new.action_id)
+                    console.log('[INSERT] action: ', action)
 
                     const newEventAction = {
                         action: {
@@ -161,23 +173,26 @@ export default function EventActions() {
                     console.log('newEventAction: ', newEventAction);
                     // setEventActions((a) => [newEventAction, ...a])
 
-                    let items = [...eventActionsRef.current];
+                    // let items = [...eventActionsRef.current];
                     // dispatch(setEventActions2([...items, newEventAction]))
-                    dispatch(addEventAction2(newEventAction))
+                    dispatch(addEventAction(newEventAction))
                     // dispatch(setEventActions2((a) => [newEventAction, ...a]))
 
                 })
                 .on('UPDATE', (payload) => {
                     console.log('[UPDATE] subscriptionEventActions payload: ', payload)
-                    console.log('eventActionsRef: ', eventActionsRef);
+                    console.log('[UPDATE] eventActionsRef.current: ', eventActionsRef.current);
+                    console.log('[UPDATE] eventActions: ', eventActions);
+                    // console.log('[UPDATE] useAppSelector: ', useAppSelector)
+                    // console.log('[UPDATE] useAppSelector(selectEventActions): ', selectEventActions)
+                    // console.log('userActionsRef: ', userActionsRef);
                     console.log('payload.new.id: ', payload.new.id);
-                    console.log('userActionsRef: ', userActionsRef);
 
-                    let index
                     if (payload.new.is_completed) {
-                        console.log('Action is completed!!!')
+                        console.log('Action is complete!!!')
 
-                        index = userActionsRef.current.findIndex(action => action.event_action.id == payload.new.id)
+                        let index = eventUserActionsRef.current.findIndex(action => action.event_action.id == payload.new.id)
+                        // let index = eventUserActions.findIndex(action => action.event_action.id == payload.new.id)
                         console.log('index: ', index);
                         if (index > -1) {
                             // Update user points
@@ -185,26 +200,38 @@ export default function EventActions() {
                         }
                     }
 
-                    // index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
-                    index = eventActions2.findIndex(action => action.id == payload.new.id)
-                    console.log('index: ', index)
-                    if (index > -1) {
+                    // let items = [...eventActionsRef.current];
+                    // let items =  Object.create(eventActionsRef.current);
+                    // console.log('items: ', items);
+                    let index2 = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    // let index2 = eventActions.findIndex(action => action.id == payload.new.id)
+                    console.log('index2: ', index2)
+                    if (index2 > -1) {
+                        let item = {
+
+                        }
+                        let items = [...eventActionsRef.current];
+                        let obj = {...items[index2]}
+                        obj['number_participants'] = payload.new.number_participants
+                        obj['is_completed'] = payload.new.is_completed
+                        console.log('obj: ', obj);
+                        items[index2] = obj
                         // 1. Make a shallow copy of the items
                         // 2. Make a shallow copy of the item you want to mutate
                         // let item = { ...items[index] };
-                        // let items = [...eventActionsRef.current];
-                        let items = [...eventActions2]
+                        
+                        // let items = [...eventActions]
                         // 3. Replace the property you're intested in
                         // item.name = 'newName';
                         // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-                        items[index]['number_participants'] = payload.new.number_participants;
-                        items[index]['is_completed'] = payload.new.is_completed
+                        // items[index2]['number_participants'] = payload.new.number_participants;
+                        // items[index2]['is_completed'] = payload.new.is_completed
                         // items[index]['name'] = ''
                         console.log('items: ', items);
                         // 5. Set the state to our new copy
                         // setEventActions((a) => [items, ...a])
-                        setEventActions(items);
-                        dispatch(setEventActions2(items))
+                        // setEventActions(items);
+                        dispatch(setEventActions(items))
                         // dispatch(incrementByAmount(2))
                     }
 
@@ -214,27 +241,32 @@ export default function EventActions() {
 
                     // 1) Delete eventActions
                     // let index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
-                    let index = eventActions2.findIndex(action => action.id == payload.old.id)
-                    console.log('index1: ', index)
+                    console.log('[DELETE] eventActionsRef.current: ', eventActionsRef.current);
+                    console.log('[DELETE] eventActions: ', eventActions)
+                    // let index = eventActions.findIndex(action => action.id == payload.old.id)
+                    let index = eventActionsRef.current.findIndex(action => action.id == payload.old.id)
+                    console.log('index: ', index)
                     if (index > -1) {
-                        // let items = [...eventActionsRef.current];
-                        let items = eventActions2
+                        let items = [...eventActionsRef.current];
+                        // let items = eventActions
                         console.log('items: ', items)
                         items.splice(index, 1)
-                        setEventActions(items)
-                        dispatch(setEventActions2(items))
+                        // setEventActions(items)
+                        dispatch(setEventActions(items))
                     }
 
                     // 2) Delete userActions
-                    console.log('userActionsRef.current: ', userActionsRef.current);
-                    index = userActionsRef.current.findIndex(action => action.event_action.id == payload.old.id)
-                    console.log('index2: ', index)
-                    if (index > -1) {
-                        let items = [...userActionsRef.current];
+                    // console.log('userActionsRef.current: ', userActionsRef.current);
+                    let index2 = eventUserActionsRef.current.findIndex(action => action.event_action.id == payload.old.id)
+                    // index = eventUserActions.findIndex(action => action.event_action.id == payload.old.id)
+                    console.log('index2: ', index2)
+                    if (index2 > -1) {
+                        let items = [...eventUserActionsRef.current];
+                        // let items = [...eventUserActions]
                         console.log('items: ', items)
-                        items.splice(index, 1)
-                        setUserActions(items)
-                        dispatch(setEventUserActions2(items))
+                        items.splice(index2, 1)
+                        // setUserActions(items)
+                        dispatch(setEventUserActions(items))
 
                     }
                 })
@@ -247,7 +279,7 @@ export default function EventActions() {
 
     const joinAction = async (eventAction: any) => {
         try {
-            console.log('joinAction: ', eventAction)
+            console.log('[eventAction] joinAction: ', eventAction)
 
             if (!auth.id) {
                 // alert('You are not authenticated. Please login first.')
@@ -268,14 +300,15 @@ export default function EventActions() {
             }
             console.log('data: ', data);
 
-            const userAction = {
-                id: data[0].id,
+            const userAction: EventUserAction = {
+                id: +data[0].id,
                 user_id: +auth.id,
                 name: eventAction.name,
                 event_action: {
                     id: eventAction.id
                 },
-                inserted_at: data[0].inserted_at
+                inserted_at: data[0].inserted_at,
+                // updated_at: new Date()
             }
 
             // 2) Increment counter
@@ -287,8 +320,8 @@ export default function EventActions() {
 
             // 3) Update local store
             // setEventActions(oldArray => [...oldArray, eventAction]);
-            setUserActions(oldArray => [...oldArray, userAction]);
-            dispatch(addEventUserAction2(userAction))
+            // setUserActions(oldArray => [...oldArray, userAction]);
+            dispatch(addEventUserAction(userAction))
 
         } catch (error) {
             console.log('error: ', error);
@@ -329,31 +362,40 @@ export default function EventActions() {
             }
 
             // 3) Update eventActions store
-            let array = [...eventActions2]; // make a separate copy of the array
+            let array = [...eventActionsRef.current]; // make a separate copy of the array
             console.log('array1: ', array);
             let index = array.findIndex(action => action.id === eventAction.id)
             console.log('index1: ', index);
             if (index !== -1) {
                 array.splice(index, 1);
                 // setEventActions(array);
-                dispatch(setEventActions2(array))
+                dispatch(setEventActions(array))
             }
 
             // 4) Update eventUserActions store
             // array = [...userActions]; // make a separate copy of the array
-            let array2 = [...eventUserActions2]
+            // let array2 = [...eventUserActions]
+            let array2 = [...eventUserActionsRef.current]
             console.log('array2: ', array);
             console.log('eventAction.id: ', eventAction.id);
             index = array2.findIndex(action => action.event_action.id === eventAction.id)
             console.log('index2: ', index);
             if (index !== -1) {
                 array2.splice(index, 1);
-                setUserActions(array2);
-                dispatch(setEventUserActions2(array2))
+                // setUserActions(array2);
+                dispatch(setEventUserActions(array2))
             }
         } catch (error) {
             console.log('error: ', error);
         }
+    }
+
+    const disabled = (actionId: number) => {
+        const index = eventUserActions.findIndex(a => a.event_action.id == actionId)
+        if (index > -1) {
+            return true
+        }
+        return false
     }
 
     return (
@@ -373,7 +415,7 @@ export default function EventActions() {
                 </li>
             })}</ul> */}
             EventActions from Redux store:
-            <ul>{eventActions2.map((action, index) => {
+            <ul>{eventActions && eventActions.map((action, index) => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
                     {t('name')}: {action.action?.name}<br />
@@ -381,7 +423,7 @@ export default function EventActions() {
                     {t('number_participants')}: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
                     {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                     {action.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <>
-                        <button disabled={userActions.find(a => a.event_action.id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
+                        <button disabled={disabled(action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
                     </>}&nbsp;
                     <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
                 </li>

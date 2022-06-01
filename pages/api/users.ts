@@ -20,12 +20,12 @@ const usersHandler: NextApiHandler = async (request, response) => {
         // .select('*')
         .order('points', { ascending: false })
 
-    console.log('data: ', data)
-    console.log('error: ', error)
+    // console.log('data: ', data)
+    // console.log('error: ', error)
     if (error) {
         return response.status(500).send(error);
     }
-    console.log('bypass error')
+    // console.log('bypass error')
     return response.status(200).json(data)
 }
 

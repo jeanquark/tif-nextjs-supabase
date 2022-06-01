@@ -48,7 +48,7 @@ function Standing() {
             <ul>
                 {data.map((user: User) =>
                     <li key={user.id}>
-                        {user.username ? user.username : user.email}&nbsp;<b>{user.points}</b> points
+                        {user.username ? user.username : user.email.substring(0, 8)}&nbsp;<b>{user.points}</b> points
                     </li>
                 )}
             </ul>

@@ -3,24 +3,27 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { AppState, AppThunk } from '../../app/store'
 import { getEventActions } from './eventActionsAPI'
 
-interface EventAction {
-    id: number
-    action_id: number
-    event_id: number
-    user_id: number
-    username: string
-    action: {
-        name: string
-        image: string
-    }
-    is_completed: boolean
-    number_participants: number
-    participation_threshold: number
-    points: number
-    inserted_at: Date
-    expired_at: Date
-    updated_at: Date
-}
+import { EventAction } from '../../app/interfaces'
+
+
+// interface EventAction {
+//     id: number
+//     action_id: number
+//     event_id: number
+//     user_id: number
+//     username: string
+//     action: {
+//         name: string
+//         image: string
+//     }
+//     is_completed: boolean
+//     number_participants: number
+//     participation_threshold: number
+//     points: number
+//     inserted_at: Date
+//     expired_at: Date
+//     updated_at: Date
+// }
 
 export interface EventActionsState {
     // eventActions: { id: number, name: string, lauched_by?: string, number_participants?: number, is_completed?: boolean, created_at: Date }[]
