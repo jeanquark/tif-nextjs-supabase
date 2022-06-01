@@ -1,7 +1,19 @@
+// export interface Event {
+//     id: number,
+//     home_team_name: string,
+//     visitor_team_name: string
+// }
+
 export interface Event {
-    id: number,
-    home_team_name: string,
-    visitor_team_name: string
+	id: number,
+	home_team_name: string,
+	visitor_team_name: string,
+	home_team_score: number,
+	visitor_team_score: number,
+	status: string,
+	date: Date,
+	timestame: number,
+	updated_at: Date
 }
 
 export interface Action {

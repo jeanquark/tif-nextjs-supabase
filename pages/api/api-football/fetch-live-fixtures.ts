@@ -8,7 +8,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     console.log('[api/api-football/fetch-live-fixtures]', new Date())
     // return res.status(200).json({ success: true });
 
-    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=562&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
+    const fixtures = await fetch('https://v3.football.api-sports.io/fixtures?league=5&live=all', { // ID UEFA Champions League: 2, ID UEFA Nations League: 5
         method: 'GET',
         headers: {
             'x-rapidapi-key': process.env.API_FOOTBALL_KEY,

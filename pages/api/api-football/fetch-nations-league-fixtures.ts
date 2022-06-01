@@ -44,7 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
                 status: response[i]['fixture']['status']['short'],
                 league_id: response[i]['league']['id'],
                 round: response[i]['league']['round'],
-                season: response[i]['league']['season']
+                season: response[i]['league']['season'],
+                // events: response[i]['events']
             })
         }
         // console.log('[api/api-football/fetchNextFixtures] array: ', array)

@@ -15,15 +15,20 @@ import { Card } from '../components/UI/Card'
 import { useRouter } from 'next/router'
 import styles from '../styles/Home.module.css'
 
+import { Event } from '../app/interfaces'
 
-interface Event {
-	id: number,
-	home_team_name: string,
-	visitor_team_name: string,
-	date: Date,
-	timestame: number,
-	updated_at: Date
-}
+
+// interface Event {
+// 	id: number,
+// 	home_team_name: string,
+// 	visitor_team_name: string,
+// 	home_team_score: number,
+// 	visitor_team_score: number,
+// 	status: string,
+// 	date: Date,
+// 	timestame: number,
+// 	updated_at: Date
+// }
 
 export async function getServerSideProps({ locale }) {
 	// Run on the server everytime the page is visited
@@ -39,7 +44,7 @@ export async function getServerSideProps({ locale }) {
 
 	const { data, error } = await supabase
 		.from('events')
-		.select('id, home_team_name, visitor_team_name, date, timestamp, updated_at')
+		.select('id, home_team_name, visitor_team_name, home_team_score, visitor_team_score, status, date, timestamp, updated_at')
 		.gt('timestamp', (current_timestamp - 240 * 60))
 		// .gt('timestamp', (current_timestamp))
 		.order('timestamp', { ascending: true })
@@ -81,7 +86,7 @@ export default function HomePage({ data }) {
 								<p style={{ textAlign: 'center' }}>{event.home_team_name} - {event.visitor_team_name}</p>
 								<p style={{ textAlign: 'center' }}><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
 								<p style={{ textAlign: 'center' }}>
-									<Countdown 
+									{/* <Countdown 
 										date={Date.now() + 120000}
     									intervalDelay={0}
     									precision={0}
@@ -90,7 +95,10 @@ export default function HomePage({ data }) {
 											  {zeroPad(minutes)}:{zeroPad(seconds)}
 											</span>
 										  )}
-									/>
+									/> */}
+								</p>
+								<p style={{ textAlign: 'center' }}>
+									{event.home_team_score} - {event.visitor_team_score}
 								</p>
 								<p style={{ textAlign: 'center' }}>Id: {event.id}</p>
 							</Card>
