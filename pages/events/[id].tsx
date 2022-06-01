@@ -464,15 +464,14 @@ export default function EventPage() {
             }
             console.log('data: ', data);
 
-            const userAction :EventUserAction = {
-                id: data[0].id,
+            const userAction: EventUserAction = {
+                id: +data[0].id,
                 user_id: +auth.id,
                 name: eventAction.name,
                 event_action: {
                     id: eventAction.id
                 },
                 inserted_at: data[0].inserted_at,
-                // updated_at: new Date()
             }
             console.log('userAction: ', userAction);
 
@@ -492,112 +491,6 @@ export default function EventPage() {
         }
     }
 
-    const unjoinAction = async (eventAction: any) => {
-        try {
-            console.log('unjoinAction: ', eventAction)
-            if (!auth.id) {
-                // alert('You are not authenticated. Please login first.')
-                alert(t('common:not_authenticated'))
-                throw 'not authenticated'
-            }
-
-            // 1) Remove auth user to event_actions_users table
-            const { data, error } = await supabase
-                .from('event_actions_users')
-                .delete()
-                .match({ id: eventAction.id })
-            if (error) {
-                console.log('error: ', error)
-                throw error
-            }
-
-            // 2) Decrement counter
-            const { data: dataDecrement, error: errorDecrement } = await supabase.rpc('decrement_participation_count_by_one', { row_id: eventAction.event_action.id })
-            if (errorDecrement) {
-                console.log('errorDecrement: ', errorDecrement)
-                throw errorDecrement
-            }
-            console.log('dataDecrement: ', dataDecrement);
-
-            // 3) Update local state
-            // let array = [...eventActions] // make separate copy of the array
-            // let index = array.findIndex(action => action.id === eventAction.id)
-            // console.log('index: ', index);
-            // if (index !== -1) {
-            //     array.splice(index, 1);
-            //     setUserActions(array);
-            // }
-            // let array = [...userActions]; // make a separate copy of the array
-            let array = [...eventUserActionsRef.current]
-            let index = array.findIndex(action => action.id === eventAction.id)
-            if (index !== -1) {
-                array.splice(index, 1);
-                // setUserActions(array);
-                // dispatch(addEventUserAction(array))
-            }
-        } catch (error) {
-            console.log('error: ', error);
-        }
-    }
-
-    const deleteAction = async (eventAction: any) => {
-        try {
-            console.log('deleteAction eventAction: ', eventAction);
-            if (!auth.id) {
-                // alert('You are not authenticated. Please login first.')
-                alert(t('common:not_authenticated'))
-                throw 'not_authenticated'
-            }
-            // if (eventAction.user.id !== auth.id) {
-            //     alert('You are not the creator of this action')
-            //     throw 'not_your_action'
-            // }
-
-            // 1) Delete all users related to this action
-            const { error: error1 } = await supabase
-                .from('event_actions_users')
-                .delete()
-                .match({ event_action_id: eventAction.id })
-            if (error1) {
-                throw error1
-            }
-
-            // 2) Delete action
-            const { data, error: error2 } = await supabase
-                .from('event_actions')
-                .delete()
-                .match({ id: eventAction.id })
-
-            console.log('data: ', data);
-            if (error2) {
-                throw error2
-            }
-
-            // 3) Update eventActions store
-            let array = [...eventActions]; // make a separate copy of the array
-            console.log('array1: ', array);
-            let index = array.findIndex(action => action.id === eventAction.id)
-            console.log('index1: ', index);
-            if (index !== -1) {
-                array.splice(index, 1);
-                setEventActions(array);
-            }
-
-            // 4) Update userActions store
-            let array2 = [...eventUserActionsRef.current]; // make a separate copy of the array
-            console.log('array2: ', array2);
-            console.log('eventAction.id: ', eventAction.id);
-            index = array2.findIndex(action => action.event_action.id === eventAction.id)
-            console.log('index2: ', index);
-            if (index !== -1) {
-                array2.splice(index, 1);
-                // setUserActions(array);
-                dispatch(setEventUserActions(array))
-            }
-        } catch (error) {
-            console.log('error: ', error);
-        }
-    }
 
     return (
         <>

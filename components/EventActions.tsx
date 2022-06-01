@@ -139,7 +139,6 @@ export default function EventActions() {
         console.log('event actions data: ', data)
         // setEventActions(data)
         dispatch(setEventActions(data))
-
     }
 
 
@@ -149,11 +148,7 @@ export default function EventActions() {
         if (!subscriptionEventActions) {
             console.log('Not subscribed to eventActions')
             subscriptionEventActions = supabase
-                // .from('event_actions')
                 .from(`event_actions:event_id=eq.${id}`)
-                // .on('*', payload => {
-                //     console.log('Changed received!', payload)
-                // }).subscribe()
                 .on('INSERT', payload => {
                     console.log('[INSERT] subscriptionEventActions payload: ', payload.new)
                     console.log('[INSERT] eventActionsRef.current: ', eventActionsRef.current);
@@ -162,7 +157,7 @@ export default function EventActions() {
                     // const action = actions.find((action) => action.id == payload.new.action_id)
                     console.log('[INSERT] action: ', action)
 
-                    const newEventAction = {
+                    const newEventAction: EventAction = {
                         action: {
                             name: action.name,
                             image: action.image,
@@ -181,11 +176,8 @@ export default function EventActions() {
                 })
                 .on('UPDATE', (payload) => {
                     console.log('[UPDATE] subscriptionEventActions payload: ', payload)
-                    console.log('[UPDATE] eventActionsRef.current: ', eventActionsRef.current);
-                    console.log('[UPDATE] eventActions: ', eventActions);
-                    // console.log('[UPDATE] useAppSelector: ', useAppSelector)
-                    // console.log('[UPDATE] useAppSelector(selectEventActions): ', selectEventActions)
-                    // console.log('userActionsRef: ', userActionsRef);
+                    console.log('[UPDATE] eventActionsRef.current: ', eventActionsRef.current)
+                    console.log('[UPDATE] eventActions: ', eventActions)
                     console.log('payload.new.id: ', payload.new.id);
 
                     if (payload.new.is_completed) {
@@ -203,19 +195,19 @@ export default function EventActions() {
                     // let items = [...eventActionsRef.current];
                     // let items =  Object.create(eventActionsRef.current);
                     // console.log('items: ', items);
-                    let index2 = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
+                    let index = eventActionsRef.current.findIndex(action => action.id == payload.new.id)
                     // let index2 = eventActions.findIndex(action => action.id == payload.new.id)
-                    console.log('index2: ', index2)
-                    if (index2 > -1) {
+                    console.log('index: ', index)
+                    if (index > -1) {
                         let item = {
 
                         }
-                        let items = [...eventActionsRef.current];
-                        let obj = {...items[index2]}
+                        let eventActionsArray = [...eventActionsRef.current];
+                        let obj = {...eventActionsArray[index]}
                         obj['number_participants'] = payload.new.number_participants
                         obj['is_completed'] = payload.new.is_completed
                         console.log('obj: ', obj);
-                        items[index2] = obj
+                        eventActionsArray[index] = obj
                         // 1. Make a shallow copy of the items
                         // 2. Make a shallow copy of the item you want to mutate
                         // let item = { ...items[index] };
@@ -227,11 +219,11 @@ export default function EventActions() {
                         // items[index2]['number_participants'] = payload.new.number_participants;
                         // items[index2]['is_completed'] = payload.new.is_completed
                         // items[index]['name'] = ''
-                        console.log('items: ', items);
+                        console.log('eventActionsArray: ', eventActionsArray);
                         // 5. Set the state to our new copy
                         // setEventActions((a) => [items, ...a])
                         // setEventActions(items);
-                        dispatch(setEventActions(items))
+                        dispatch(setEventActions(eventActionsArray))
                         // dispatch(incrementByAmount(2))
                     }
 
@@ -300,16 +292,7 @@ export default function EventActions() {
             }
             console.log('data: ', data);
 
-            const userAction: EventUserAction = {
-                id: +data[0].id,
-                user_id: +auth.id,
-                name: eventAction.name,
-                event_action: {
-                    id: eventAction.id
-                },
-                inserted_at: data[0].inserted_at,
-                // updated_at: new Date()
-            }
+            
 
             // 2) Increment counter
             const { error: errorIncrement } = await supabase.rpc('increment_participation_count_by_one', { row_id: eventAction.id })
@@ -319,6 +302,15 @@ export default function EventActions() {
             }
 
             // 3) Update local store
+            const userAction: EventUserAction = {
+                id: +data[0].id,
+                user_id: +auth.id,
+                name: eventAction.name,
+                event_action: {
+                    id: eventAction.id
+                },
+                inserted_at: data[0].inserted_at,
+            }
             // setEventActions(oldArray => [...oldArray, eventAction]);
             // setUserActions(oldArray => [...oldArray, userAction]);
             dispatch(addEventUserAction(userAction))
@@ -350,7 +342,7 @@ export default function EventActions() {
                 throw error1
             }
 
-            // 2) Delete action
+            // 2) Delete event action
             const { data, error: error2 } = await supabase
                 .from('event_actions')
                 .delete()
@@ -362,28 +354,27 @@ export default function EventActions() {
             }
 
             // 3) Update eventActions store
-            let array = [...eventActionsRef.current]; // make a separate copy of the array
-            console.log('array1: ', array);
-            let index = array.findIndex(action => action.id === eventAction.id)
+            let eventActionsArray = [...eventActionsRef.current]; // make a separate copy of the array
+            console.log('eventActionsArray: ', eventActionsArray);
+            let index = eventActionsArray.findIndex(action => action.id === eventAction.id)
             console.log('index1: ', index);
             if (index !== -1) {
-                array.splice(index, 1);
+                // eventActionsArray.splice(index, 1);
                 // setEventActions(array);
-                dispatch(setEventActions(array))
+                dispatch(setEventActions(eventActionsArray))
             }
 
             // 4) Update eventUserActions store
             // array = [...userActions]; // make a separate copy of the array
             // let array2 = [...eventUserActions]
-            let array2 = [...eventUserActionsRef.current]
-            console.log('array2: ', array);
+            let eventUserActionsArray = [...eventUserActionsRef.current]
+            console.log('eventUserActionsArray: ', eventUserActionsArray);
             console.log('eventAction.id: ', eventAction.id);
-            index = array2.findIndex(action => action.event_action.id === eventAction.id)
+            index = eventUserActionsArray.findIndex(action => action.event_action.id === eventAction.id)
             console.log('index2: ', index);
             if (index !== -1) {
-                array2.splice(index, 1);
-                // setUserActions(array2);
-                dispatch(setEventUserActions(array2))
+                // eventUserActionsArray.splice(index, 1);
+                dispatch(setEventUserActions(eventUserActionsArray))
             }
         } catch (error) {
             console.log('error: ', error);
@@ -400,20 +391,6 @@ export default function EventActions() {
 
     return (
         <div style={{ border: '2px dashed orangered' }}>
-            {/* <h4>{t('list_of_event_actions')}</h4>
-            <ul>{eventActions && eventActions.map((action, index) => {
-                return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                    Id: {action.id}<br />
-                    {t('name')}: {action.action?.name}<br />
-                    {t('launched_by')}: {action.username}<br />
-                    {t('number_participants')}: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
-                    {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                    {action.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <>
-                        <button disabled={userActions.find(a => a.event_action.id == action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
-                    </>}&nbsp;
-                    <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
-                </li>
-            })}</ul> */}
             EventActions from Redux store:
             <ul>{eventActions && eventActions.map((action, index) => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>

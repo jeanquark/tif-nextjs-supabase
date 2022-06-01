@@ -6,8 +6,8 @@ import { useTranslation } from 'next-i18next';
 import { supabase } from '../utils/supabaseClient'
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
-import { Card } from '../components/UI/Card'
-import EventActions from '../components/EventActions';
+// import { Card } from '../components/UI/Card'
+// import EventActions from '../components/EventActions';
 import styles from '../styles/Event.module.css'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks'
@@ -18,27 +18,6 @@ import { selectEventUserActions, setEventUserActions, addEventUserAction } from 
 
 import { Event, Action, EventAction, EventUserAction } from '../app/interfaces'
 
-// interface Event {
-//     id: number,
-//     home_team_name: string,
-//     visitor_team_name: string
-// }
-
-// interface Action {
-//     id: number,
-//     name: string,
-//     slug?: string,
-//     image?: string
-// }
-
-// interface EventUserAction {
-//     id: number
-//     user_id: number
-//     event_action_id: number
-//     inserted_at: Date
-//     updated_at: Date
-// }
-
 type EffectCallback = () => (void | (() => void | undefined));
 
 
@@ -48,8 +27,6 @@ export default function EventUserActions() {
     const auth = useAppSelector(selectAuth)
     const router = useRouter()
     const { id } = router.query
-    const [isLoading, setLoading] = useState<boolean>(false)
-    const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
     const [updateEvent, handleUpdateEvent] = useState(null)
 
@@ -58,24 +35,18 @@ export default function EventUserActions() {
     actionsRef.current = actions
 
     const eventActions = useAppSelector(selectEventActions)
-    // const [eventActions, setEventActions] = useState([])
     const eventActionsRef = useRef<any>()
     eventActionsRef.current = eventActions
 
-    const [eventUsers, setEventUsers] = useState([])
-    const eventUsersRef = useRef<any>()
-    eventUsersRef.current = eventUsers
+    // const [eventUsers, setEventUsers] = useState([])
+    // const eventUsersRef = useRef<any>()
+    // eventUsersRef.current = eventUsers
 
     const eventUserActions = useAppSelector(selectEventUserActions)
-    // const [userActions, setUserActions] = useState([])
     const eventUserActionsRef = useRef<any[]>()
     eventUserActionsRef.current = eventUserActions
 
-
-
     let subscriptionEvents = null
-    let subscriptionEventUsers = null
-    let subscriptionEventActions = null
 
     const { t } = useTranslation(['actions', 'common', 'home']);
 
@@ -85,10 +56,6 @@ export default function EventUserActions() {
         }
 
         return async () => {
-            // Remove user from event_users list
-            if (auth.id) {
-                // await supabase.from('event_users').upsert({ user_id: auth.id, event_id: id, joined_at: null, left_at: new Date() }, { onConflict: 'user_id' })
-            }
             if (subscriptionEvents) {
                 console.log('[removeSubscription] useEffect', subscriptionEvents)
                 // supabase.removeSubscription(subscriptionEvents)   
@@ -128,7 +95,6 @@ export default function EventUserActions() {
         console.log('getInitialUserActions: ', eventActionId, userId);
         const { data, error } = await supabase
             .from('event_actions_users')
-            // .select('*')
             .select(`
                 id,
                 inserted_at,
@@ -145,9 +111,6 @@ export default function EventUserActions() {
                 )
             `)
             .eq('user_id', userId)
-            // .match({'user_id': userId, 'event_action.event.id': eventActionId})
-            // .match({'user_id': userId})
-            // .eq('event_action.event.id', eventActionId)
             .order('id', { ascending: false })
 
 
@@ -158,41 +121,9 @@ export default function EventUserActions() {
         }
         const userEventActions = data.filter(a => a.event_action.event.id == eventActionId)
         console.log('userEventActions: ', userEventActions);
-        // setUserActions(userEventActions)
         dispatch(setEventUserActions(userEventActions))
     }
 
-
-    const getEventUsersAndSubscribe = async (id: number, authId: number, username: string) => {
-        console.log('authId: ', authId);
-        console.log('username: ', username);
-        if (!subscriptionEventUsers) {
-            subscriptionEventUsers = supabase
-                .from(`event_users:event_id=eq.${id}`)
-                .on('*', payload => {
-                    console.log('Change received!', payload)
-                    if (payload.new.joined_at) {
-                        // User joined
-                        console.log('user joined!')
-                        const user = eventUsersRef.current.find((user) => user.user_id == payload.new.user_id)
-                        console.log('user: ', user)
-                        if (!user) {
-                            const newEventUser = payload.new
-                            setEventUsers((a) => [newEventUser, ...a])
-                        }
-                    } else {
-                        // User left
-                        console.log('user left!')
-                        const user = eventUsersRef.current.find((user) => user.user_id == payload.new.user_id)
-                        console.log('user: ', user)
-                        const users = eventUsersRef.current.filter((user) => user.user_id != payload.new.user_id)
-                        console.log('users: ', users);
-                        setEventUsers(users)
-                    }
-                })
-                .subscribe()
-        }
-    }
 
 
     const unjoinAction = async (eventAction: any) => {
@@ -205,7 +136,7 @@ export default function EventUserActions() {
             }
 
             // 1) Remove auth user to event_actions_users table
-            const { data, error } = await supabase
+            const { error } = await supabase
                 .from('event_actions_users')
                 .delete()
                 .match({ id: eventAction.id })
@@ -223,19 +154,10 @@ export default function EventUserActions() {
             console.log('dataDecrement: ', dataDecrement);
 
             // 3) Update local state
-            // let array = [...eventActions] // make separate copy of the array
-            // let index = array.findIndex(action => action.id === eventAction.id)
-            // console.log('index: ', index);
-            // if (index !== -1) {
-            //     array.splice(index, 1);
-            //     setUserActions(array);
-            // }
-            // let array = [...userActions]; // make a separate copy of the array
-            let array = [...eventUserActionsRef.current]
+            let array = [...eventUserActionsRef.current] // make a separate copy of the array
             let index = array.findIndex(action => action.id === eventAction.id)
             if (index !== -1) {
                 array.splice(index, 1);
-                // setUserActions(array);
                 dispatch(setEventUserActions(array))
             }
         } catch (error) {
@@ -243,27 +165,15 @@ export default function EventUserActions() {
         }
     }
 
-
-
     return (
         <div style={{ border: '2px dashed darkblue' }}>
-            {/* <h4>{t('list_of_user_actions')}</h4>
-            <ul>{userActions && userActions.map(action => {
-
-                return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                    Id: {action.id}<br />
-                    {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
-                    {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                    {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
-                </li>
-            })}</ul> */}
             EventUserActions from Redux store:
             <ul>{eventUserActions && eventUserActions.map(action => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
-                    {/* {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br /> */}
+                    {t('name')}: {action.name ? action.name : action.event_action?.name}<br />
                     {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                    {/* {action.event_actions?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>} */}
+                    {action.event_action?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                 </li>
             })}</ul>
         </div>
