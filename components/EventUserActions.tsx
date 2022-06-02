@@ -50,19 +50,19 @@ export default function EventUserActions() {
 
     const { t } = useTranslation(['actions', 'common', 'home']);
 
-    useEffect((): ReturnType<EffectCallback> => {
-        console.log('[useEffect] subscribeToEvents id, auth: ', id)
-        if (id != undefined) {
-        }
+    // useEffect((): ReturnType<EffectCallback> => {
+    //     console.log('[useEffect] subscribeToEvents id, auth: ', id)
+    //     if (id != undefined) {
+    //     }
 
-        return async () => {
-            if (subscriptionEvents) {
-                console.log('[removeSubscription] useEffect', subscriptionEvents)
-                // supabase.removeSubscription(subscriptionEvents)   
-                supabase.removeAllSubscriptions()
-            }
-        }
-    }, [id])
+    //     return async () => {
+    //         if (subscriptionEvents) {
+    //             console.log('[removeSubscription] useEffect', subscriptionEvents)
+    //             // supabase.removeSubscription(subscriptionEvents)   
+    //             supabase.removeAllSubscriptions()
+    //         }
+    //     }
+    // }, [id])
 
     useEffect(() => {
         console.log('[useEffect] fetchActions id: ', id)
@@ -171,7 +171,7 @@ export default function EventUserActions() {
             <ul>{eventUserActions && eventUserActions.map(action => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />
-                    {t('name')}: {action.name ? action.name : action.event_action?.name}<br />
+                    {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
                     {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
                     {action.event_action?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
                 </li>

@@ -51,6 +51,9 @@ export interface EventUserAction {
         id?: number
         name?: string
         is_completed?: boolean
+        action?: {
+            name: string
+        }
     }
     inserted_at: Date
     // updated_at: Date
