@@ -390,8 +390,8 @@ export default function EventActions() {
     }
 
     return (
-        <div style={{ border: '2px dashed orangered' }}>
-            EventActions from Redux store:
+        <div style={{ border: '0px dashed orangered' }}>
+            <h4>{t('list_of_event_actions')}</h4>
             <ul>{eventActions && eventActions.map((action, index) => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />

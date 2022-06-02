@@ -166,8 +166,8 @@ export default function EventUserActions() {
     }
 
     return (
-        <div style={{ border: '2px dashed darkblue' }}>
-            EventUserActions from Redux store:
+        <div style={{ border: '0px dashed darkblue' }}>
+            <h4>{t('list_of_user_actions')}</h4>
             <ul>{eventUserActions && eventUserActions.map(action => {
                 return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
                     Id: {action.id}<br />

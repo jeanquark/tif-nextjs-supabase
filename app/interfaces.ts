@@ -12,7 +12,7 @@ export interface Event {
 	visitor_team_score: number,
 	status: string,
 	date: Date,
-	timestame: number,
+	timestamp: number,
 	updated_at: Date
 }
 

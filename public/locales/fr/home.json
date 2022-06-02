@@ -13,5 +13,8 @@
     "update_username": "Modifier nom d'utilisateur",
     "loading": "Chargement",
     "update": "Modifier",
-    "reset": "Remettre à 0"
+    "reset": "Remettre à 0",
+    "in": "Dans",
+    "kick_off_in": "Coup d'envoi dans"
+
 }

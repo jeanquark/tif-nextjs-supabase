@@ -13,5 +13,7 @@
     "update_username": "Update username",
     "loading": "Loading",
     "update": "Update",
-    "reset": "Reset"
+    "reset": "Reset",
+    "in": "In",
+    "kick_off_in": "Kick off in"
 }

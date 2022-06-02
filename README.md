@@ -72,5 +72,6 @@ All Supabase active containers on the server (`docker ps`):
 
 ## Cron
 
-Start a cron job to fetch live fixtures by adding this line to the nodejs file inside server's cron folder:
+Start a cron job to fetch live fixtures by adding this line to the nodejs file inside node server's cron folder:
 `* * * * * wget -O - https://thisisfan.com/api/api-football/fetch-live-fixtures >/dev/null 2>&1`
+`* * * * * wget -O - https://thisisfan.com/api/api-football/fetch-ending-games >/dev/null 2>&1`
