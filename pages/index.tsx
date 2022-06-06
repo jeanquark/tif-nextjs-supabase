@@ -101,7 +101,7 @@ export default function HomePage({ data }) {
 			{/* {Date()}<br /> */}
 			{/* Date.now(): {Date.now()}<br />
 					event.timestamp: {event.timestamp}<br /> */}
-			Dernier déploiement: Jeudi 02 Juin, 15h44.
+			Dernier déploiement: Lundi 06 Juin, 22h26.
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
