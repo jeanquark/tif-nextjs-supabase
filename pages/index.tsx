@@ -72,7 +72,13 @@ export async function getServerSideProps({ locale }) {
 // );
 
 const eventInLessThan12Hours = (timestamp: number) => {
-	return (timestamp*1000 - Date.now()) < 12 * 60 * 60 * 1000
+	// console.log('timestamp: ', timestamp);
+	// console.log('timestamp*1000: ', timestamp*1000)
+	// console.log('Date.now(): ', Date.now())
+	// console.log('diff: ', timestamp*1000 - Date.now())
+	// console.log('12 * 60 * 60 * 1000: ', 12 * 60 * 60 * 1000)
+	// console.log('(timestamp*1000 - Date.now()) < 12 * 60 * 60 * 1000: ', (timestamp*1000 - Date.now()) < 12 * 60 * 60 * 1000)
+	return (timestamp*1000 - Date.now() > 0 && timestamp*1000 - Date.now() < 12 * 60 * 60 * 1000)
 }
 
 const timeToKickOff = (timestamp: number) => {
@@ -101,7 +107,7 @@ export default function HomePage({ data }) {
 			{/* {Date()}<br /> */}
 			{/* Date.now(): {Date.now()}<br />
 					event.timestamp: {event.timestamp}<br /> */}
-			Dernier déploiement: Lundi 06 Juin, 22h26.
+			Dernier déploiement: Mardi 07 Juin, 13h28.
 			<div className={styles.container}>
 				{data && data.map((event: Event) =>
 					<Link key={event.id} href={`/events/${event.id}`}>
