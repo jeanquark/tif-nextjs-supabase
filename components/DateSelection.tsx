@@ -18,8 +18,8 @@ export default function DateSelection () {
         console.log('[useEffect] day: ', day)
 
         const datesInterval = {
-            date1: moment().add(day - 0, 'd').unix(),
-            date2: moment().add(day + 1, 'd').unix()
+            date1: moment().add(day - 1, 'd').unix(),
+            date2: moment().add(day + 0, 'd').unix()
         }
         // if (events && events.length < 1) {
             dispatch(fetchEvents(datesInterval));

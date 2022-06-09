@@ -108,8 +108,8 @@ export default function HomePage({ data }) {
         console.log('[useEffect] fetchEvents')
 
         const datesInterval = {
-            date1: moment().add(-0, 'd').unix(),
-            date2: moment().add(+1, 'd').unix()
+            date1: moment().add(-1, 'd').unix(),
+            date2: moment().add(0, 'd').unix()
         }
         // if (events && events.length < 1) {
             dispatch(fetchEvents(datesInterval));
@@ -123,7 +123,7 @@ export default function HomePage({ data }) {
 				<h3 className={styles.center}>Le jeu dédié à tous les fans</h3>
 			</div>
 			{/* <h1>{t('current_and_next_games')}</h1> */}
-			Dernier déploiement: Mercredi 09 Juin, 19h39.
+			Dernier déploiement: Mercredi 09 Juin, 21h44.
 			{/* date: { date }<br /> */}
 			{/* {typeof window !== 'undefined' && */}
 			{/* events.length: {events.length}<br /> */}
