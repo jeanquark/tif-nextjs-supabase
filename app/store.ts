@@ -3,6 +3,7 @@ import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit'
 import counterReducer from '../features/counter/counterSlice'
 import authReducer from '../features/auth/authSlice'
 import actionReducer from '../features/actions/actionsSlice'
+import eventReducer from '../features/events/eventsSlice'
 import eventActionsReducer from '../features/eventActions/eventActionsSlice'
 import eventUserActionsReducer from '../features/eventUserActions/eventUserActionsSlice'
 
@@ -12,6 +13,7 @@ export function makeStore() {
             counter: counterReducer,
             auth: authReducer,
             actions: actionReducer,
+            events: eventReducer,
             eventActions: eventActionsReducer,
             eventUserActions: eventUserActionsReducer
         },

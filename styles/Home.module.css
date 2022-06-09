@@ -49,3 +49,7 @@
 	cursor: pointer;
 	color: orangered;
 }
+
+.active {
+	color: orangered;
+}

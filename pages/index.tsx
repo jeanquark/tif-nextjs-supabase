@@ -1,7 +1,9 @@
 import { ReactElement, useState, useEffect } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { useRouter } from 'next/router'
 import Moment from 'react-moment';
+import moment from 'moment'
 import 'moment/locale/fr';
 
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -9,10 +11,11 @@ import { useTranslation } from "next-i18next";
 
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
-import axios from 'axios'
-import { supabase } from '../utils/supabaseClient'
 import { Card } from '../components/UI/Card'
-import { useRouter } from 'next/router'
+import { supabase } from '../utils/supabaseClient'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { selectEvents, setEvents, fetchEvents } from '../features/events/eventsSlice'
+
 import styles from '../styles/Home.module.css'
 
 import { Event } from '../app/interfaces'
@@ -50,20 +53,20 @@ export async function getServerSideProps({ locale }) {
 	// 	.from('events')
 	// 	.select('*')
 
-	const { data, error } = await supabase
-		.from('events')
-		.select('id, home_team_name, visitor_team_name, home_team_score, visitor_team_score, status, date, timestamp, updated_at')
-		.gt('timestamp', (current_timestamp - 240 * 60))
-		// .gt('timestamp', (current_timestamp))
-		.order('timestamp', { ascending: true })
-		.limit(12)
-	console.log('error: ', error);
+	// const { data, error } = await supabase
+	// 	.from('events')
+	// 	.select('id, home_team_name, visitor_team_name, home_team_score, visitor_team_score, status, date, timestamp, updated_at')
+	// 	.gt('timestamp', (current_timestamp - 240 * 60))
+	// 	// .gt('timestamp', (current_timestamp))
+	// 	.order('timestamp', { ascending: true })
+	// 	.limit(12)
+	// console.log('error: ', error);
 	// console.log('data: ', data);
 	// const data = []
 
 	return {
 		props: {
-			data,
+			// data,
 			...(await serverSideTranslations(locale, ['common', 'home']))
 		}, // will be passed to the page component as props
 	}
@@ -91,6 +94,8 @@ const eventInLessThan12Hours = (timestamp: number) => {
 export default function HomePage({ data }) {
 	const router = useRouter()
 	const { t } = useTranslation(['home']);
+    const events = useAppSelector(selectEvents)
+	const dispatch = useAppDispatch()
 	const [date, setDate] = useState<Date>();
 	// const date = new Date();
 
@@ -99,6 +104,18 @@ export default function HomePage({ data }) {
 	// 	setCountdown(0);
 	// }, [countdown]);
 
+	useEffect(() => {
+        console.log('[useEffect] fetchEvents')
+
+        const datesInterval = {
+            date1: moment().add(-1, 'd').unix(),
+            date2: moment().add(+1, 'd').unix()
+        }
+        // if (events && events.length < 1) {
+            dispatch(fetchEvents(datesInterval));
+        // }
+    }, [])
+
 	return (
 		<>
 			<div>
@@ -106,14 +123,15 @@ export default function HomePage({ data }) {
 				<h3 className={styles.center}>Le jeu dédié à tous les fans</h3>
 			</div>
 			{/* <h1>{t('current_and_next_games')}</h1> */}
-			{/* Dernier déploiement: Mardi 07 Juin, 13h28. */}
+			Dernier déploiement: Mercredi 08 Juin, 19h03.
 			{/* date: { date }<br /> */}
 			{/* {typeof window !== 'undefined' && */}
+			{/* events.length: {events.length}<br /> */}
 			<div>
-				{/* <DateSelection /> */}
+				<DateSelection />
 			</div>
 			<div className={styles.container}>
-				{data && data.map((event: Event) =>
+				{events && events.map((event: any) => 
 					<Link key={event.id} href={`/events/${event.id}`}>
 						<a style={{ textDecoration: 'none' }}>
 							<Card>
