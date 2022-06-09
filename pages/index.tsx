@@ -123,7 +123,7 @@ export default function HomePage({ data }) {
 				<h3 className={styles.center}>Le jeu dédié à tous les fans</h3>
 			</div>
 			{/* <h1>{t('current_and_next_games')}</h1> */}
-			Dernier déploiement: Mercredi 08 Juin, 19h03.
+			Dernier déploiement: Mercredi 08 Juin, 19h14.
 			{/* date: { date }<br /> */}
 			{/* {typeof window !== 'undefined' && */}
 			{/* events.length: {events.length}<br /> */}
