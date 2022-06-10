@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import Moment from 'react-moment';
 import moment from 'moment'
+import { useTranslation } from 'next-i18next';
 
 import { supabase } from '../utils/supabaseClient'
 import styles from '../styles/Home.module.css'
@@ -13,14 +14,16 @@ export default function DateSelection () {
     const [day, setDay] = useState<number>(0)
     const dispatch = useAppDispatch()
     const events = useAppSelector(selectEvents)
+    const { t } = useTranslation(['common', 'home']);
 
     useEffect(() => {
         console.log('[useEffect] day: ', day)
 
         const datesInterval = {
-            date1: moment().add(day - 1, 'd').unix(),
-            date2: moment().add(day + 0, 'd').unix()
+            date1: moment().add(day, 'd').startOf('day').unix(),
+            date2: moment().add(day, 'd').endOf('day').unix()
         }
+        console.log('moment().unix(): ', moment().unix())
         // if (events && events.length < 1) {
             dispatch(fetchEvents(datesInterval));
         // }
@@ -55,9 +58,9 @@ export default function DateSelection () {
 
     return (<ul className={styles.ul}>
         <li className={`${day == -2 ? styles.active : ""}`} onClick={() => setDay(-2)}><Moment format="DD MMM" subtract={{ days: 2 }}>{date}</Moment></li>
-        <li className={`${day == -1 ? styles.active : ""}`} onClick={() => setDay(-1)}>Hier</li>
-        <li className={`${day == 0 ? styles.active : ""}`} onClick={() => setDay(0)}>Aujourd hui &nbsp;{date}</li>
-        <li className={`${day == 1 ? styles.active : ""}`} onClick={() => setDay(1)}>Demain</li>
+        <li className={`${day == -1 ? styles.active : ""}`} onClick={() => setDay(-1)}>{t('yesterday')}</li>
+        <li className={`${day == 0 ? styles.active : ""}`} onClick={() => setDay(0)}>{t('today')}</li>
+        <li className={`${day == 1 ? styles.active : ""}`} onClick={() => setDay(1)}>{t('tomorrow')}</li>
         <li className={`${day == 2 ? styles.active : ""}`} onClick={() => setDay(2)}><Moment format="DD MMM" add={{ days: 2 }}>{new Date()}</Moment></li>
     </ul>)
 }

@@ -16,8 +16,8 @@ export async function getEvents(date1, date2) {
         .from('events')
         .select('id, home_team_name, visitor_team_name, home_team_score, visitor_team_score, status, date, timestamp, updated_at')
         // .eq('date', date)
-        .gt('timestamp', date1)
-        .lt('timestamp', date2)
+        .gte('timestamp', date1)
+        .lte('timestamp', date2)
         .order('timestamp', { ascending: true })
     console.log('[REDUX] @eventsAPI data: ', data)
     console.log('error: ', error);

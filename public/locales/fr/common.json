@@ -13,5 +13,8 @@
 	"forgot_password": "Mot de passe oublié",
 	"switch_to_login": "Aller au login",
 	"switch_to_register": "Aller à l'enregistrement",
-	"user_create_success": "Utilisateur créé avec succès. Consultez votre boîte de messagerie pour le message de vérification!"
+	"user_create_success": "Utilisateur créé avec succès. Consultez votre boîte de messagerie pour le message de vérification!",
+	"today": "Aujourd'hui",
+	"yesterday": "Hier",
+	"tomorrow": "Demain"
 }

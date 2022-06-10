@@ -13,5 +13,8 @@
 	"forgot_password": "Forgot password",
 	"switch_to_login": "Switch to Login",
 	"switch_to_register": "Switch to Register",
-	"user_create_success": "User was successfully created. Check your inbox for the confirmation message!"
+	"user_create_success": "User was successfully created. Check your inbox for the confirmation message!",
+	"today": "Today",
+	"yesterday": "Yesterday",
+	"tomorrow": "Tomorrow"
 }
