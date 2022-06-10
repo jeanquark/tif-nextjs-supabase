@@ -123,7 +123,7 @@ export default function HomePage({ data }) {
 		<>
 			<div>
 				<h1 className={styles.center}>Bienvenue sur ThisIsFan!</h1>
-				<h3 className={styles.center}>Le jeu dédié à tous les fans</h3>
+				<h3 className={styles.center}>Le jeu dédié aux fans</h3>
 			</div>
 			{/* <h1>{t('current_and_next_games')}</h1> */}
 			Dernier déploiement: Jeudi 10 Juin, 11h49.
