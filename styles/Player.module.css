@@ -1,0 +1,105 @@
+.levelBox {
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    width: 100%;
+    padding: 5px 5px 5px 5px;
+    overflow: hidden;
+    border: none;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+    color: rgba(0,0,0,1);
+    text-align: center;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    background: rgba(255,69,0,1);
+    -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+    box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+}
+
+.dollarBox {
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    width: 100%;
+    padding: 5px 5px 5px 5px;
+    overflow: hidden;
+    border: none;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+    color: rgba(0,0,0,1);
+    text-align: center;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    background: rgba(124,252,0,1);
+    -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+    box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+}
+
+.tokenBox {
+    display: inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    width: 100%;
+    padding: 5px 5px 5px 5px;
+    overflow: hidden;
+    border: none;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+    color: rgba(0,0,0,1);
+    text-align: center;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    background: yellow;
+    -webkit-box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+    box-shadow: 1px 1px 1px 0 rgba(0,0,0,0.5) ;
+}
+
+.boxShadow {
+    -moz-box-shadow: inset 0px 0px 5px 2px #FF4500;
+    -webkit-box-shadow: inset 0px 0px 5px 2px #FF4500;
+    -o-box-shadow: inset 0px 0px 5px 2px #FF4500;
+    box-shadow: inset 0px 0px 5px 2px #FF4500;
+    filter:progid:DXImageTransform.Microsoft.Shadow(color=#FF4500, Direction=NaN, Strength=5);
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.imgAvatar {
+    max-height: 100%;
+    width: 60px;
+}
+
+.imgModalProprieteFlags {
+    position: relative;
+    top: 6px;
+    height: 80px;
+    width: 80px;
+}
+
+.imgParametre {
+    max-height: 100%;
+    width: auto;
+}
+
+.modalPropriete {
+    position: relative;
+    top: 12px;
+    color: white;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 2px 2px 1px rgba(255,255,255,0.5);
+    text-decoration: none;
+}
+
+.columnProfil {
+    margin: 5px;
+    flex-grow: 1;
+    flex-shrink: 1;
+}
