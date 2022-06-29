@@ -1,17 +1,24 @@
 import { ReactElement, useState, useEffect } from 'react'
+import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import Moment from 'react-moment';
 import moment from 'moment'
 import 'moment/locale/fr';
+
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
 
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
+import { Card } from '../components/UI/Card'
+import { supabase } from '../utils/supabaseClient'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
-import { selectEvents, fetchEvents } from '../features/events/eventsSlice'
+import { selectEvents, setEvents, fetchEvents } from '../features/events/eventsSlice'
 
+import styles from '../styles/Home.module.css'
 
+import { Event } from '../app/interfaces'
 const CountdownTimer = dynamic(
 	() => import('../components/CountdownTimer'),
 	{ ssr: false }
@@ -114,12 +121,40 @@ export default function HomePage({ data }) {
 
 	return (
 		<>
-			<div className="d-flex align-content-center flex-wrap" style={{ height: '600px', border: '3px solid orange' }}>
-				<ul>
-					<li>abc</li>
-					<li>def</li>
-					<li>ghi</li>
-				</ul>
+			<div>
+				<h1 className={styles.center}>Bienvenue sur ThisIsFan!</h1>
+				<h3 className={styles.center}>Le jeu dédié aux fans</h3>
+			</div>
+			{/* <h1>{t('current_and_next_games')}</h1> */}
+			Dernier déploiement: Jeudi 10 Juin, 11h49.
+			{/* date: { date }<br /> */}
+			{/* {typeof window !== 'undefined' && */}
+			{/* events.length: {events.length}<br /> */}
+			<div>
+				<DateSelection />
+			</div>
+			<div className={styles.container}>
+				{events && events.map((event: any) => 
+					<Link key={event.id} href={`/events/${event.id}`}>
+						<a style={{ textDecoration: 'none' }}>
+							<Card>
+								<p style={{ textAlign: 'center' }}>{event.home_team_name} - {event.visitor_team_name}</p>
+								<p style={{ textAlign: 'center' }}><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
+								{/* eventInLessThan12Hours: {eventInLessThan12Hours(event.timestamp)} */}
+
+								{event && eventInLessThan12Hours(event.timestamp) && <p style={{ textAlign: 'center' }}>
+									{/* event.timestamp: {event.timestamp*1000 - Date.now()}<br /> */}
+									{t('kick_off_in')}&nbsp;
+									<CountdownTimer timestamp={event.timestamp} />
+								</p>}
+								{event && event.status != 'NS' && <p style={{ textAlign: 'center' }}>
+									{event.home_team_score} - {event.visitor_team_score}
+								</p>}
+								<p style={{ textAlign: 'center' }}>Id: {event.id}</p>
+							</Card>
+						</a>
+					</Link>
+				)}
 			</div>
 		</>
 	)

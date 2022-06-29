@@ -151,8 +151,8 @@
     text-shadow: 2px 2px 1px rgba(255,255,255,0.5);
 }
 .textSubTitle {
-    position: relative;
-    top: 12px;
+    /* position: relative; */
+    /* top: 12px; */
     color: #fff;
     font: normal 150%/1 "bangers", Helvetica, sans-serif;
     text-shadow: 2px 2px 1px rgba(255,255,255,0.5);
