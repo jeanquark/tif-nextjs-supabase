@@ -104,6 +104,9 @@
     flex-shrink: 1;
 }
 
+.link:hover {
+    cursor: pointer;
+}
 
 /* */
 .box {

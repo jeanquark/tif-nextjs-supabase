@@ -11,7 +11,6 @@ import {
 	faDollarSign,
 	faCertificate
 } from "@fortawesome/free-solid-svg-icons"
-import Link from 'next/link'
 
 export async function getServerSideProps({ locale }) {
 	return {
@@ -29,7 +28,7 @@ export default function PlayerPage({ data }) {
 
 	return (
 		<div className="container" style={{ border: "1px solid red" }}>
-			<div className="row my-2">
+			<div className="row mt-2">
 				<div className="col">
 					<span className={classNames(styles.menuBox, styles.orangered)}><FontAwesomeIcon
 						icon={faStar}
@@ -54,25 +53,19 @@ export default function PlayerPage({ data }) {
 				</div>
 			</div>
 
-			<div className="row align-items-center">
+			<div className="row">
 				<div className="col col-lg-1">
-					<div className={classNames(styles.link, styles.boxShadow)}>
-						<Link href="/avatar">
-							<img src="/images/avatar.png" width="100%" className="p-1" />
-						</Link>
+					<div className={styles.boxShadow}>
+						<img src="/images/avatar.png" width="100%" className="p-1" />
 					</div>
 				</div>
-				<div className={classNames("col col-lg-10 align-self-stretch text-center", styles.boxShadow)}>
-					{/* <div className="d-flex align-items-center"> */}
-					{/* <div className={styles.boxShadow}> */}
-					{/* <div className="" style={{ border: '1px solid white' }}> */}
+				<div className="col col-lg-10 text-center" style={{ border: "1px solid red" }}>
+					<div className={styles.boxShadow}>
 						<img src="/images/163.png" width="60px" />
 						<span className={classNames(styles.textSubTitle)}>CarolineKaeser</span>
-					{/* </div> */}
 						<img src="/images/cup.png" width="60px" />
 						<span className={classNames(styles.textSubTitle)}>1863ème</span>
-					{/* </div> */}
-					{/* </div> */}
+					</div>
 				</div>
 				<div className="col col-lg-1">
 					<div className={styles.boxShadow}>
@@ -112,8 +105,8 @@ export default function PlayerPage({ data }) {
 
 			<footer className={classNames("container fixed-bottom", styles.footer)}>
 				<div className="row">
-					<div className="d-flex align-content-center flex-wrap" style={{ height: '150px', border: '1px solid orange' }}>
-						<ul className="list-inline mx-auto justify-content-center text-center" style={{ border: '1px dashed white', width: '100%' }}>
+					<div className="d-flex align-content-center flex-wrap" style={{ height: '200px', border: '1px solid orange' }}>
+						<ul className="list-inline mx-auto justify-content-center" style={{ border: '1px dashed white', width: '100%' }}>
 							<li className={classNames("list-inline-item", "mx-0", styles.listItem)} style={{ border: '1px solid blue', width: '17%' }}>
 								<img src="/images/menuShop.png" width="60" />
 								<span className={classNames(styles.textMenu)}>FanShop</span>
