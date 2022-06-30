@@ -1,16 +1,19 @@
 import { redirect } from 'next/dist/server/api-utils'
 import React, { useEffect } from 'react'
 import { ReactElement, useState, useRef } from 'react'
-import mergeImages from 'merge-images';
+import mergeImages from 'merge-images'
+import classNames from "classnames"
 
 import { supabase } from '../utils/supabaseClient'
 import { useAppSelector } from '../app/hooks'
 import { selectAuth } from '../features/auth/authSlice'
+import styles from '../styles/Avatar.module.css'
 
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
 import BackgroundImages from '../components/Avatar/Background'
 import SkinImages from '../components/Avatar/Skin'
+import Link from 'next/link'
 
 type ImagesToMerge = {
     background: string
@@ -25,6 +28,7 @@ export default function AvatarPage() {
         background: '',
         skin: ''
     })
+    const [type, setType] = useState<string>('skin')
     const [background, setBackground] = useState<string>('')
     const [skin, setSkin] = useState<string>('')
 
@@ -124,17 +128,75 @@ export default function AvatarPage() {
     }
 
     return (
-        <>
-            <h1>Avatar</h1>
+        <div className="container" style={{ backgroundColor: 'LightSlateGray' }}>
+            <div className="row">
+                <div className="col col-sm-12" >
+                    <h2 className={classNames('my-0 py-2', styles.title)}>Ton Avatar</h2>
+                </div>
+            </div>
+            <div className="row justify-content-center rounded mx-1" style={{ backgroundColor: 'whitesmoke' }}>
+                <div className="col col-sm-12">
+                    <h3 className={classNames('my-0 py-2', styles.subtitle)}>Envie de changer de tête ?</h3>
+                </div>
+                <div className="col col-sm-12 col-md-4">
+                    <img src="" ref={ref} width="100%" style={{ border: '1px solid red' }} />
+                </div>
+                <div className="row justify-content-evenly">
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('skin')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Peau</span>
+                        </div>
+                    </div>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('background')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Yeux</span>
+                        </div>
+                    </div>
+                    <div className={classNames('col col-sm-2 text-center')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Bouche</span>
+                        </div>
+                    </div>
 
-            <BackgroundImages setAvatarImage={setAvatarImage2} />
-            <SkinImages setAvatarImage={setAvatarImage2} />
+                    <div className={classNames('col col-sm-2 text-center')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Poils</span>
+                        </div>
+                    </div>
+                    <div className={classNames('col col-sm-2 text-center')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Cheveux</span>
+                        </div>
+                    </div>
+                    <div className={classNames('col col-sm-2 text-center')}>
+                        <div className={styles.box}>
+                            <span className={styles.boxTitle}>Arrière</span>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    {type === 'background' && <BackgroundImages setAvatarImage={setAvatarImage2} />}
+                    {type === 'skin' && <SkinImages setAvatarImage={setAvatarImage2} />}
+                </div>
+            </div>
 
-            <img src="" ref={ref} width="200" height="200" style={{ border: '1px solid red' }} /><br />
-            <button onClick={() => saveImage()}>Save image</button><br />
+            <div className="row align-items-center py-2" style={{}}>
+                <div className="col col-sm-6">
+                    <Link href="/" passHref>
+                        <button className={classNames('btn btn-danger text-uppercase float-end', styles.text1)}>Annule tout!</button>
+                    </Link>
+                </div>
+                <div className="col col-sm-6">
+                    <button className={classNames('btn btn-success text-uppercase float-start', styles.text1)} onClick={() => saveImage()}>Allez, valide!</button>
+                </div>
+            </div>
+
+
+
+            {/* <button onClick={() => saveImage()}>Save image</button><br />
             <button onClick={() => updateAvatar()}>Update image</button><br />
-            <button onClick={() => deleteAvatar()}>Delete image</button><br />
-        </>
+            <button onClick={() => deleteAvatar()}>Delete image</button><br /> */}
+        </div>
     )
 
 

@@ -5,11 +5,14 @@ import moment from 'moment'
 import 'moment/locale/fr';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import classNames from "classnames"
 
+import styles from '../styles/Player.module.css'
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { selectEvents, fetchEvents } from '../features/events/eventsSlice'
+
 
 
 const CountdownTimer = dynamic(
@@ -87,7 +90,7 @@ const eventInLessThan12Hours = (timestamp: number) => {
 export default function HomePage({ data }) {
 	const router = useRouter()
 	const { t } = useTranslation(['home']);
-    const events = useAppSelector(selectEvents)
+	const events = useAppSelector(selectEvents)
 	const dispatch = useAppDispatch()
 	const [date, setDate] = useState<Date>();
 	// const date = new Date();
@@ -98,30 +101,34 @@ export default function HomePage({ data }) {
 	// }, [countdown]);
 
 	useEffect(() => {
-        console.log('[useEffect] fetchEvents')
+		console.log('[useEffect] fetchEvents')
 
-        const datesInterval = {
-            // date1: moment().add(-1, 'd').unix(),
+		const datesInterval = {
+			// date1: moment().add(-1, 'd').unix(),
 			date1: moment().add(0, 'days').startOf('day').unix(),
-            // date2: moment().add(+1, 'd').unix()
+			// date2: moment().add(+1, 'd').unix()
 			date2: moment().add(0, 'days').endOf('day').unix()
-        }
+		}
 		console.log('datesInterval: ', datesInterval);
-        // if (events && events.length < 1) {
-            dispatch(fetchEvents(datesInterval));
-        // }
-    }, [])
+		// if (events && events.length < 1) {
+		dispatch(fetchEvents(datesInterval));
+		// }
+	}, [])
 
 	return (
-		<>
-			<div className="d-flex align-content-center flex-wrap" style={{ height: '600px', border: '3px solid orange' }}>
-				<ul>
-					<li>abc</li>
-					<li>def</li>
-					<li>ghi</li>
-				</ul>
+		<div className="">
+			<div className="row my-2">
+				<div className="col col-sm-12 col-md-6">
+					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Tes équipes</p>
+				</div>
+				<div className="col col-sm-12 col-md-6">
+					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
+				</div>
 			</div>
-		</>
+			<div className="row" style={{ height: '500px', border: '1px solid white' }}>
+
+			</div>
+		</div>
 	)
 }
 

@@ -1,0 +1,39 @@
+.title {
+    color: #ffffff;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 2px 2px 1px rgb(255 255 255 / 50%);
+    text-align: center;
+}
+
+.subtitle {
+    text-align: center;
+    color: #000000;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 1px 1px 1px rgb(0 0 0 / 50%);
+    margin-top: 5px;
+}
+
+.text1 {
+    font: normal 140%/1 "bangers", Helvetica, sans-serif;
+}
+
+.box {
+    border: 1px solid darkred;
+    background-color: black;
+    border-radius: 5px;
+    color: white;
+    /* height: 30px; */
+    /* margin: 3px; */
+    text-align: center;
+    /* padding-top: 2px; */
+    /* padding: 5px; */
+}
+.box:hover {
+    cursor: pointer;
+}
+
+.boxTitle {
+    /* position: relative; */
+    /* top: 0; */
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+}
