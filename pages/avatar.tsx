@@ -11,13 +11,21 @@ import styles from '../styles/Avatar.module.css'
 
 import Layout from '../components/Layout'
 import NestedLayout from '../components/LayoutFrontend'
-import BackgroundImages from '../components/Avatar/Background'
 import SkinImages from '../components/Avatar/Skin'
+import EyesImages from '../components/Avatar/Eyes'
+import MouthImages from '../components/Avatar/Mouth'
+import BeardImages from '../components/Avatar/Beard'
+import HairImages from '../components/Avatar/Hair'
+import BackgroundImages from '../components/Avatar/Background'
 import Link from 'next/link'
 
 type ImagesToMerge = {
     background: string
     skin: string
+    eyes: string
+    mouth: string
+    beard: string
+    hair: string
 }
 
 export default function AvatarPage() {
@@ -25,12 +33,17 @@ export default function AvatarPage() {
     const auth = useAppSelector(selectAuth)
     const [arrayOfImagesToMerge, setArrayOfImagesToMerge] = useState<any>([])
     const [objectOfImagesToMerge, setObjectOfImagesToMerge] = useState<ImagesToMerge>({
-        background: '',
-        skin: ''
+        background: '/images/avatars/background/background01001.png',
+        // background: 'background01001',
+        skin: '/images/avatars/skin/skin0101.png',
+        eyes: '/images/avatars/eyes/eyes0101.png',
+        mouth: '/images/avatars/mouth/mouth0101.png',
+        beard: '/images/avatars/beard/beard0101.png',
+        hair: '/images/avatars/hair/hair0101.png',
     })
     const [type, setType] = useState<string>('skin')
-    const [background, setBackground] = useState<string>('')
-    const [skin, setSkin] = useState<string>('')
+    // const [background, setBackground] = useState<string>('')
+    // const [skin, setSkin] = useState<string>('')
 
     useEffect(() => {
         const el2 = ref.current;
@@ -71,6 +84,7 @@ export default function AvatarPage() {
             .storage
             .from('avatars')
             .upload(`public/${auth.id}.png`, file)
+            // .upload(`public/abc.png`, file)
     }
 
     const updateAvatar = async () => {
@@ -107,7 +121,7 @@ export default function AvatarPage() {
         }
     }
 
-    const setAvatarImage2 = (value) => {
+    const setAvatarImage = (value) => {
         // console.log('setAvatarImage2: ', value);
         // console.log('value.type: ', value.type)
         setObjectOfImagesToMerge({
@@ -136,47 +150,51 @@ export default function AvatarPage() {
             </div>
             <div className="row justify-content-center rounded mx-1" style={{ backgroundColor: 'whitesmoke' }}>
                 <div className="col col-sm-12">
-                    <h3 className={classNames('my-0 py-2', styles.subtitle)}>Envie de changer de tête ?</h3>
+                    <h3 className={classNames('mt-2 py-2', styles.subtitle)}>Envie de changer de tête ?</h3>
                 </div>
                 <div className="col col-sm-12 col-md-4">
                     <img src="" ref={ref} width="100%" style={{ border: '1px solid red' }} />
                 </div>
                 <div className="row justify-content-evenly">
                     <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('skin')}>
-                        <div className={styles.box}>
+                        <div className={classNames(styles.box, type === 'skin' && styles.active)}>
                             <span className={styles.boxTitle}>Peau</span>
                         </div>
                     </div>
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('background')}>
-                        <div className={styles.box}>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('eyes')}>
+                        <div className={classNames(styles.box, type === 'eyes' && styles.active)}>
                             <span className={styles.boxTitle}>Yeux</span>
                         </div>
                     </div>
-                    <div className={classNames('col col-sm-2 text-center')}>
-                        <div className={styles.box}>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('mouth')}>
+                        <div className={classNames(styles.box, type === 'mouth' && styles.active)}>
                             <span className={styles.boxTitle}>Bouche</span>
                         </div>
                     </div>
 
-                    <div className={classNames('col col-sm-2 text-center')}>
-                        <div className={styles.box}>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('beard')}>
+                        <div className={classNames(styles.box, type === 'beard' && styles.active)}>
                             <span className={styles.boxTitle}>Poils</span>
                         </div>
                     </div>
-                    <div className={classNames('col col-sm-2 text-center')}>
-                        <div className={styles.box}>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('hair')}>
+                        <div className={classNames(styles.box, type === 'hair' && styles.active)}>
                             <span className={styles.boxTitle}>Cheveux</span>
                         </div>
                     </div>
-                    <div className={classNames('col col-sm-2 text-center')}>
-                        <div className={styles.box}>
-                            <span className={styles.boxTitle}>Arrière</span>
+                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('background')}>
+                        <div className={classNames(styles.box, type === 'background' && styles.active)}>
+                            <span className={styles.boxTitle}>Arrière-fond</span>
                         </div>
                     </div>
                 </div>
                 <div className="row">
-                    {type === 'background' && <BackgroundImages setAvatarImage={setAvatarImage2} />}
-                    {type === 'skin' && <SkinImages setAvatarImage={setAvatarImage2} />}
+                    {type === 'skin' && <SkinImages setAvatarImage={setAvatarImage} />}
+                    {type === 'eyes' && <EyesImages setAvatarImage={setAvatarImage} />}
+                    {type === 'mouth' && <MouthImages setAvatarImage={setAvatarImage} />}
+                    {type === 'beard' && <BeardImages setAvatarImage={setAvatarImage} />}
+                    {type === 'hair' && <HairImages setAvatarImage={setAvatarImage} />}
+                    {type === 'background' && <BackgroundImages setAvatarImage={setAvatarImage} />}
                 </div>
             </div>
 

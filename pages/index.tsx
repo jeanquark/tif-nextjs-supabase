@@ -125,7 +125,7 @@ export default function HomePage({ data }) {
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
 				</div>
 			</div>
-			<div className="row" style={{ height: '500px', border: '1px solid white' }}>
+			<div className="row" style={{ height: '500px', border: '0px solid white' }}>
 
 			</div>
 		</div>

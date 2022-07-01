@@ -30,10 +30,15 @@
 }
 .box:hover {
     cursor: pointer;
+    background-color: orangered;
 }
 
 .boxTitle {
     /* position: relative; */
     /* top: 0; */
     font: normal 120%/1 "bangers", Helvetica, sans-serif;
+}
+
+.active {
+    background-color: orangered;
 }

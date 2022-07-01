@@ -1,14 +1,15 @@
+import { getImageSize } from 'next/dist/server/image-optimizer'
 import styles from '../../styles/Home.module.css'
 
 export default function Skin(props) {
+    const images = ['0101', '0102', '0103', '0104', '0105', '0106', '0107', '0108', '0109', '0110', '0111', '0112']
     return (
         <>
-            <div className="col col-sm-1">
-                <img src="/images/avatars/skin/skin0101.png" width="100" className={styles.image} onClick={() => props.setAvatarImage({ type: 'skin', image: 'skin0101' })} />
-            </div>
-            <div className="col col-sm-1">
-                <img src="/images/avatars/skin/skin0102.png" width="100" className={styles.image} onClick={() => props.setAvatarImage({ type: 'skin', image: 'skin0102' })} />
-            </div>
+            {images.map((image, index) => (
+                <div className="col col-xs-6 col-sm-4 col-md-3 col-lg-2" key={index}>
+                    {<img src={`/images/avatars/skin/skin${image}.png`} width="100%" className={styles.image} onClick={() => props.setAvatarImage({ type: 'skin', image: `skin${image}` })} />}
+                </div>
+            ))}
         </>
     )
 }
