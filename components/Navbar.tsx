@@ -238,14 +238,13 @@ export default function Navbar() {
                                 <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#exampleModal">
                                     {/* <p className={styles.textSubTitle}>S'enregistrer</p> */}
                                     <span className={classNames("btn", styles.textSubTitle)} >
-                                        S'enregistrer
+                                        Senregistrer
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 }
-
             </header>
 
             <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
