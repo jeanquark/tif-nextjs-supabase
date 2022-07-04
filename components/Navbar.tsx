@@ -18,6 +18,9 @@ import { Modal2 } from '../components/UI/Modal2'
 import { useRouter } from 'next/router'
 
 import styles from '../styles/Navbar.module.css'
+import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDoubleUp, faCertificate, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
 
 // export async function getServerSideProps({ locale }) {
 //     return {
@@ -170,121 +173,121 @@ export default function Navbar() {
 
     return (
         <>
-            {/* <img src="/logo.png" alt="logo" style={{ maxWidth: 50, display: 'inline-block', verticalAlign: 'middle' }} />
-            <Link href="/">
-                <a>{t('home')}</a>
-            </Link>&nbsp;|&nbsp;
-            <Link href="/about">
-                <a>{t('about')}</a>
-            </Link>&nbsp;|&nbsp;
-            <Link href="/counter">
-                <a>Counter</a>
-            </Link>&nbsp;|&nbsp;
-            {auth.id ?
-                <><Link href="/account"><a>{t('account')}</a></Link>&nbsp;|&nbsp;
-                    <div style={{ display: 'inline-block' }}><button onClick={() => handleLogout()}>{t('logout')}</button>&nbsp;Welcome, {auth.email}&nbsp;</div></>
-                : <><button onClick={openLoginModal}>{t('login')}</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>{t('register')}</button></>
-            }
-            <Modal show={modal} handleClose={() => setModal(false)}>
-                {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
-                {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
-                {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
-            </Modal>
-            <select onChange={handleLocaleChange} value={router.locale}>
-                <option value="en">🇺🇸 English</option>
-                <option value="fr">FR Français</option>
-            </select>
-            <button style={{ float: 'right' }}>Right</button>
-            <br />
-            <div>
-                auth.id: {auth.id}&nbsp;
-                auth.username: {auth.username}&nbsp;
-                auth.points: {auth.points}&nbsp;
-                {auth.points > 0 && <button onClick={resetPoints}>{t('reset')}</button>}
-            </div>
-
-
-            <div className={styles.topnav}>
-                <div className={styles.topnavLeft}>
-                    <img src="/logo.png" alt="logo" style={{ float: 'left', maxWidth: 50, verticalAlign: 'middle' }} />
-                    <Link href="/">
-                        <a>{t('home')}</a>
-                    </Link>
-                    <Link href="/about">
-                        <a>{t('about')}</a>
-                    </Link>
-                    {auth.id ?
-                        <>
-                            <Link href="/account"><a>{t('account')}</a></Link>
-                            <button className={styles.btn} onClick={() => handleLogout()}>{t('logout')}</button>
-                            <span>Welcome, {auth.email}</span>
-                        </>
-                        : 
-                        <>
-                            <button onClick={openLoginModal}>{t('login')}</button>&nbsp;|&nbsp;<button onClick={openRegisterModal}>{t('register')}</button>
-                        </>
-                    }
+            <header>
+                <div className="row mb-2">
+                    <div className="col">
+                        <span className={classNames(styles.menuBox, styles.orangered)}><FontAwesomeIcon
+                            icon={faStar}
+                            style={{ fontSize: 20 }}
+                        />&nbsp;Niv. 1 -&nbsp;
+                            <FontAwesomeIcon
+                                icon={faAngleDoubleUp}
+                                style={{ fontSize: 20 }}
+                            />&nbsp;1/10</span>
+                    </div>
+                    <div className="col">
+                        <span className={classNames(styles.menuBox, styles.green)}><FontAwesomeIcon
+                            icon={faDollarSign}
+                            style={{ fontSize: 20 }}
+                        />&nbsp;500</span>
+                    </div>
+                    <div className="col">
+                        <span className={classNames(styles.menuBox, styles.yellow)}><FontAwesomeIcon
+                            icon={faCertificate}
+                            style={{ fontSize: 20 }}
+                        />&nbsp;5</span>
+                    </div>
                 </div>
 
-                <div className={styles.topnavRight}>
-                    <a href="#search">Search</a>
-                    <a href="#about">About</a>
-                </div>
-            </div> */}
+                {auth.id ?
+                    <div className="row align-items-center">
+                        <div className="col col-lg-1">
+                            <div className={classNames(styles.link, styles.boxShadow)}>
+                                <Link href="/avatar">
+                                    <img src="/images/avatar.png" width="100%" className="" />
+                                </Link>
+                            </div>
+                        </div>
+                        <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
+                            <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '0px dashed pink' }}>
+                                <div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
+                                    <img src="/images/163.png" width="60px" style={{}} />
+                                    <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>CarolineKaeser</span>
+                                </div>
+                                <div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
+                                    <img src="/images/cup.png" width="60px" />
+                                    <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col col-lg-1">
+                            <div className={styles.boxShadow} style={{ border: '0px dashed grey' }}>
+                                <img src="/images/parametre.png" width="100%" />
+                            </div>
+                        </div>
+                    </div>
+                    :
+                    <div>
+                        <div className="row">
+                            <div className="col col-md-6">
+                                <div className={styles.boxShadow} onClick={openLoginModal}>
+                                    <p className={styles.textSubTitle}>Login</p>
+                                </div>
+                            </div>
+                            <div className="col col-md-6 text-center">
+                                <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    {/* <p className={styles.textSubTitle}>S'enregistrer</p> */}
+                                    <span className={classNames("btn", styles.textSubTitle)} >
+                                        S'enregistrer
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
 
-
-
-            <header className={styles.topbar}>
-                <div className={styles.logo}>
-                    <img src="/logo.png" alt="logo" style={{ float: 'left', maxWidth: 50, verticalAlign: 'middle' }} />
-                </div>
-                <nav className={styles.navigation}>
-                    <ul className={styles.navigationUl}>
-                        <li className={styles.navigationLi}><Link href="/">
-                            <a>{t('home')}</a>
-                        </Link></li>
-                        <li className={styles.navigationLi}><Link href="/about">
-                            <a>{t('about')}</a>
-                        </Link></li>
-                        <li className={styles.navigationLi}>
-                            <select onChange={handleLocaleChange} value={router.locale}>
-                                <option value="en">🇺🇸 English</option>
-                                <option value="fr">FR Français</option>
-                            </select>
-                        </li>
-                        {auth.id &&
-                            <>
-                                <li className={styles.navigationLi}><b>{auth.points}&nbsp;points</b></li>
-                                <li className={styles.navigationLi}>
-                                    <button onClick={resetPoints}>{t('reset')}</button>
-                                </li>
-                            </>
-                        }
-                    </ul>
-                </nav>
-                <nav className={styles.user}>
-                    {auth.id ?
-                        <>
-                            <ul className={styles.navigationUl}>
-                                <li className={styles.navigationLi}>{t('welcome')}, {auth.email}!</li>
-                                <li className={styles.navigationLi}><Link href="/account"><a>{t('account')}</a></Link></li>
-                                <li className={styles.navigationLi}><button onClick={() => handleLogout()}>{t('logout')}</button>
-                                </li>
-                            </ul>
-                        </>
-                        :
-                        <ul>
-                            <li className={styles.navigationLi}><button onClick={openLoginModal}>{t('login')}</button></li>
-                            <li className={styles.navigationLi}><button onClick={openRegisterModal}>{t('register')}</button></li>
-                        </ul>
-                    }
-                </nav>
             </header>
-            <Modal show={modal} handleClose={() => setModal(false)}>
+
+            <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content" style={{ backgroundColor: 'LightSlateGray' }}>
+                        <div className="modal-header">
+                            <h5 className={classNames("modal-title", styles.textSubTitle)} id="exampleModalLabel">Login</h5>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body" style={{ backgroundColor: 'whitesmoke' }}>
+                            <div className="row">
+                                <div className="col col-md-12">
+                                    <main className="form-signin w-100 m-auto text-center">
+                                        <form>
+                                            <img className="mb-4" src="/images/avatar.png" alt="tif-logo" width="100" />
+
+                                            <div className="form-floating mb-2">
+                                                <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
+                                                <label htmlFor="floatingInput">Email address</label>
+                                            </div>
+                                            <div className="form-floating mb-4">
+                                                <input type="password" className="form-control" id="floatingPassword" placeholder="Password" />
+                                                <label htmlFor="floatingPassword">Password</label>
+                                            </div>
+                                            <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+                                        </form>
+                                    </main>
+                                </div>
+                            </div>
+                        </div>
+                        {/* <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="button" className="btn btn-primary">Save changes</button>
+                        </div> */}
+                    </div>
+                </div>
+            </div>
+            {/* <Modal show={modal} handleClose={() => setModal(false)}>
                 {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
                 {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
                 {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
-            </Modal>
+            </Modal> */}
         </>
     )
 }

@@ -9,9 +9,11 @@ import classNames from "classnames"
 
 import styles from '../styles/Player.module.css'
 import Layout from '../components/Layout'
+import { Card } from '../components/UI/Card'
 import NestedLayout from '../components/LayoutFrontend'
 import { useAppSelector, useAppDispatch } from '../app/hooks'
 import { selectEvents, fetchEvents } from '../features/events/eventsSlice'
+import Link from 'next/link';
 
 
 
@@ -105,9 +107,9 @@ export default function HomePage({ data }) {
 
 		const datesInterval = {
 			// date1: moment().add(-1, 'd').unix(),
-			date1: moment().add(0, 'days').startOf('day').unix(),
+			date1: moment().add(-2, 'days').startOf('day').unix(),
 			// date2: moment().add(+1, 'd').unix()
-			date2: moment().add(0, 'days').endOf('day').unix()
+			date2: moment().add(2, 'days').endOf('day').unix()
 		}
 		console.log('datesInterval: ', datesInterval);
 		// if (events && events.length < 1) {
@@ -125,8 +127,15 @@ export default function HomePage({ data }) {
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
 				</div>
 			</div>
-			<div className="row" style={{ height: '500px', border: '0px solid white' }}>
-
+			<div className="row" style={{ height: '500px', border: '2px solid white' }}>
+				{events && events.map((event: any) =>
+					<div className="col col-md-3" key={event.id}>
+						<Card>
+							<h5 className="text-center">{event.home_team_name} - {event.visitor_team_name}</h5>
+							<p>ID: {event.id}</p>
+						</Card>
+					</div>
+				)}
 			</div>
 		</div>
 	)

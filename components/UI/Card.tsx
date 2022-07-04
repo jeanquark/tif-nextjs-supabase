@@ -8,10 +8,14 @@ type CardProps = {
 export const Card = ({ event, children }: any) => {
 
 	return (
-		<div className={styles.card}>
-			{/* {event.home_team_name} - {event.visitor_team_name}
-			{event.id}<br /> */}
-			{children}
+		// <div className={styles.card}>
+		// 	{children}
+		// </div>
+
+		<div className="card" style={{ backgroundColor: 'LightSlateGray' }}>
+			<div className="card-body" style={{ backgroundColor: 'whitesmoke' }}>
+				<div className="card-text">{children}</div>
+			</div>
 		</div>
 	);
 };

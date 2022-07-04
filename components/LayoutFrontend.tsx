@@ -1,9 +1,8 @@
-import Navbar from './Navbar'
-import Standing from './Standing'
 import { useTranslation } from "next-i18next"
 import { ReactElement, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import classNames from "classnames"
+import Navbar from './Navbar'
 import styles from '../styles/Layout.module.css'
 
 import {
@@ -18,58 +17,8 @@ export default function LayoutFrontend({ children }) {
 	return (
 		<div className="min-vh-100" style={{ background: '#000' }}>
 			<div className="container" style={{ border: "0px solid red" }}>
-				<div className="row mb-2">
-					<div className="col">
-						<span className={classNames(styles.menuBox, styles.orangered)}><FontAwesomeIcon
-							icon={faStar}
-							style={{ fontSize: 20 }}
-						/>&nbsp;Niv. 1 -&nbsp;
-							<FontAwesomeIcon
-								icon={faAngleDoubleUp}
-								style={{ fontSize: 20 }}
-							/>&nbsp;1/10</span>
-					</div>
-					<div className="col">
-						<span className={classNames(styles.menuBox, styles.green)}><FontAwesomeIcon
-							icon={faDollarSign}
-							style={{ fontSize: 20 }}
-						/>&nbsp;500</span>
-					</div>
-					<div className="col">
-						<span className={classNames(styles.menuBox, styles.yellow)}><FontAwesomeIcon
-							icon={faCertificate}
-							style={{ fontSize: 20 }}
-						/>&nbsp;5</span>
-					</div>
-				</div>
-
-				<div className="row align-items-center">
-					<div className="col col-lg-1">
-						<div className={classNames(styles.link, styles.boxShadow)}>
-							<Link href="/avatar">
-								<img src="/images/avatar.png" width="100%" className="" />
-							</Link>
-						</div>
-					</div>
-					<div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
-						<div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '0px dashed pink' }}>
-							<div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
-								<img src="/images/163.png" width="60px" style={{}} />
-								<span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>CarolineKaeser</span>
-							</div>
-							<div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
-								<img src="/images/cup.png" width="60px" />
-								<span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
-							</div>
-						</div>
-					</div>
-					<div className="col col-lg-1">
-						<div className={styles.boxShadow} style={{ border: '0px dashed grey' }}>
-							<img src="/images/parametre.png" width="100%" />
-						</div>
-					</div>
-				</div>
-
+				<Navbar />
+				
 				<main className="" style={{ paddingBottom: '70px', border: '0px solid green' }}>
 					{children}
 				</main>
