@@ -19,6 +19,7 @@ import { selectEventActions, setEventActions } from '../../features/eventActions
 import { selectEventUserActions, setEventUserActions, addEventUserAction } from '../../features/eventUserActions/eventUserActionsSlice'
 
 import { Event, Action, EventAction, EventUserAction } from '../../app/interfaces'
+import classNames from 'classnames';
 
 // interface Event {
 //     id: number,
@@ -291,49 +292,57 @@ export default function EventPage() {
 
     return (
         <>
-            <div>
-                <h1>{t('event_page')}</h1>
-                {/* <p>Event id: {event && event.id}</p> */}
-                {event && eventInProgress(event.status) && 
-                    <><div className={`${styles.blink} ${styles.dot}`}></div><span>Live</span></>}
-                
-            </div>
-            <div className={styles.parent}>
-                {event && <div className={styles.childLeft}>
-                    <h3 style={{ textAlign: 'center' }}>{event.home_team_name} vs {event.visitor_team_name}</h3>
-                    <h3 style={{ textAlign: 'center' }}>{event.home_team_score}&nbsp;-&nbsp;{event.visitor_team_score}</h3>
-                    <h5 style={{ textAlign: 'center' }}>{event.elapsed_time}min</h5>
-                    <h5 style={{ textAlign: 'center' }}>Statut: {event.status}</h5>
-                    <br />
-                    <p style={{ textAlign: 'center' }}>{moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}</p>
-                    <h4>{t('list_of_event_users')}</h4>
-                    <p>{"Ce serait bien d'avoir ici la liste des joueurs qui suivent ce match, c'est à dire les joueurs en ligne qui visitent en ce moment cette page. Malheureusement, cette fonctionnalité, appelée \"presence\", n'est pas encore disponible avec notre base de données. L'équipe de Supabase est en train de "}<a href="https://supabase.com/blog/2022/04/01/supabase-realtime-with-multiplayer-features">travailler dessus</a>{"."}</p>
+            <div className={classNames('row', styles.backgroundImage)}>
+                <div className={classNames('row', styles.header)}>
 
-                    <h4>List of game events</h4>
-                    <ul>{event.events && event.events.sort((a, b) => b.time.elapsed - a.time.elapsed).map((event, index) => {
-                        return <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                            Type: {event.type}<br />
-                            Time: {event.time?.elapsed}<br />
-                            Team: {event.team?.name}<br />
-                            Player: {event.player?.name}<br />
-                        </li>
-                    })}</ul>
-                </div>}
-                {event && <div className={styles.childRight}>
-                    <h3>{t('actions')}</h3>
-                    <div className={styles.container}>
-                        {actions.map((action, index) => {
-                            return <Card key={index}>
-                                Id: {action.id}&nbsp;
-                                {action.name}&nbsp;
-                                <button onClick={() => launchAction(action)} className={styles.btn}>{t('launch')}</button>
-                            </Card>
-                        })}
+                    <div className="col col-4 left">Championnat Suisse</div>
+                    <div className="col col-4 center text-center">16 Juillet 2022<br />16:00</div>
+                    <div className="col col-4 right">Match de Championnat - Regular Season 1</div>
+                </div>
+                <div className="row">
+                    <div className={classNames("col col-md-1", styles.teamFlag)}>
+                        <img src="/images/163.png" alt="team flag" width="100%" />
                     </div>
-                    <EventActions />
+                    <div className={classNames("col col-md-3", styles.scorePF)}>
+                        1234.99 PF
+                    </div>
+                    <div className={classNames("col col-md-4", styles.matchStatus)}>En cours<br />75ème minute</div>
+                    <div className={classNames("col col-md-3", styles.scorePF)}>1369.74 PF</div>
+                    <div className={classNames("col col-md-1", styles.teamFlag)}>
+                        <img src="/images/163.png" alt="team flag" width="100%" />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className={classNames("col col-md-5", styles.team)}>Suisse</div>
+                    <div className={classNames("col col-md-2", styles.scoreReal)}>Score réel<br />2-1</div>
+                    <div className={classNames("col col-md-5", styles.team)}>Brésil</div>
+                </div>
+                <div className="row">
+                    <div className={classNames("col col-md-6", styles.matchInfoLeft)}>But : 12e - Buteur no 1<br />
+                        Carton jaune : 25e - Joueur no 12</div>
+                    <div className={classNames("col col-md-6", styles.matchInfoRight)}>But : 12e - Buteur no 1<br />
+                        Carton jaune : 25e - Joueur no 12</div>
+                </div>
+                <div className="row">
+                    <div className={classNames("col col-md-12", styles.playerScore)}>
+                        Ton score<br />
+                        0.00 PF
+                    </div>
+                </div>
+                <div className="row">
+                    <div className={classNames("col col-md-12", styles.gameScoreProgression)}>
+                        Barre de progression du score<br />
+                        <div className="progress">
+                            {/* <div className="progress-bar w-75" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div> */}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className={classNames('row', 'mt-3')}>
+                <div className="col col-md-6"><button className="btn btn-danger">Retour aux Events</button></div>
+                <div className="col col-md-6"><button className="btn btn-success">Je veux voir ce match!</button></div>
 
-                    <EventUserActions />
-                </div>}
+
             </div>
         </>
     )

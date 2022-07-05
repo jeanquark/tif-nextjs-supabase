@@ -9,18 +9,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         console.log('API_FOOTBALL_KEY: ', process.env.API_FOOTBALL_KEY)
 
         console.log('[api/api-football/fetch-superleague-fixtures]', new Date())
-        return res.status(200).json({ success: true });
+        // return res.status(200).json({ success: true });
 
         // 1) Request data from Football API
-        const fixtures = await fetch("https://v3.football.api-sports.io/fixtures?league=207&season=2021", {
+        const fixtures = await fetch("https://v3.football.api-sports.io/fixtures?league=207&season=2022", {
             "method": "GET",
             "headers": {
                 "x-apisports-key": process.env.API_FOOTBALL_KEY
             }
         })
-        // console.log('data: ', data)
         const { response } = await fixtures.json()
-        // console.log('[api/api-football/fetchNextFixtures] response: ', response);
+        console.log('[api/api-football/fetchNextFixtures] response: ', response);
         
         // 2) Insert data in DB
         let array = []

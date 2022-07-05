@@ -1,6 +1,7 @@
 import { ReactElement, useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
+import Moment from 'react-moment';
 import moment from 'moment'
 import 'moment/locale/fr';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -107,9 +108,9 @@ export default function HomePage({ data }) {
 
 		const datesInterval = {
 			// date1: moment().add(-1, 'd').unix(),
-			date1: moment().add(-2, 'days').startOf('day').unix(),
+			date1: moment().add(0, 'days').startOf('day').unix(),
 			// date2: moment().add(+1, 'd').unix()
-			date2: moment().add(2, 'days').endOf('day').unix()
+			date2: moment().add(30, 'days').endOf('day').unix()
 		}
 		console.log('datesInterval: ', datesInterval);
 		// if (events && events.length < 1) {
@@ -127,15 +128,28 @@ export default function HomePage({ data }) {
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
 				</div>
 			</div>
-			<div className="row" style={{ height: '500px', border: '0px solid white' }}>
-				{events && events.map((event: any) =>
-					<div className="col col-md-3" key={event.id}>
-						<Card>
-							<h5 className="text-center">{event.home_team_name} - {event.visitor_team_name}</h5>
-							<p>ID: {event.id}</p>
-						</Card>
+			<div className="row" style={{ minHeight: '500px', border: '2px solid white' }}>
+				<p style={{ color: '#fff' }}>events.length: {events.length}</p>
+				{/* {events && events.map((event: any) =>
+					<div className="col col-md-3 my-2" key={event.id}>
+						<Link href={`/events/${event.id}`}>
+							<a style={{ textDecoration: 'none' }}>
+								<Card>
+									<h5 className="text-center">{event.home_team_name} - {event.visitor_team_name}</h5>
+									<p>ID: {event.id}</p>
+									<p className="text-center"><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
+									{event && eventInLessThan12Hours(event.timestamp) && <p style={{ textAlign: 'center' }}>
+										{t('kick_off_in')}&nbsp;
+										<CountdownTimer timestamp={event.timestamp} />
+									</p>}
+									{event && event.status && event.status != 'NS' && <p style={{ textAlign: 'center' }}>
+										{event.home_team_score} - {event.visitor_team_score}
+									</p>}
+								</Card>
+							</a>
+						</Link>
 					</div>
-				)}
+				)} */}
 			</div>
 		</div>
 	)
