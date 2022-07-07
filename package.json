@@ -1,6 +1,6 @@
 {
     "name": "next-redux-supabase",
-    "version": "0.1.93",
+    "version": "0.1.94",
     "private": true,
     "scripts": {
         "dev": "next dev",
