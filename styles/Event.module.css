@@ -40,6 +40,7 @@
         opacity: 0;
     }
 }
+
 /* New style from here */
 .backgroundImage {
     width: 100%;
@@ -53,6 +54,10 @@
     background-image: url(/images/stade_gd.jpg);
     background-repeat: no-repeat;
     background-position: center;   
+}
+
+.actions {
+    background-color: whitesmoke;
 }
 
 .header {
@@ -75,8 +80,8 @@
     /* font: normal 110%/1 "bangers", Helvetica, sans-serif; */
     font-size: 110%;
     text-shadow: 2px 2px 1px rgba(0,0,0,0.25);
-    padding: 5px;
-    padding-top: 8px;
+    /* padding: 5px; */
+    /* padding-top: 8px; */
     /* margin: 5px; */
 }
 
@@ -91,6 +96,7 @@
     /* font: normal 80%/1 "bangers", Helvetica, sans-serif; */
     font-size: 80%;
     text-shadow: 2px 2px 1px rgba(0,0,0,0.25);
+    color: #fff;
 }
 
 .team {
@@ -110,7 +116,7 @@
     border-radius: 3px;
 }
 
-.scoreReal {
+.scoreRealtime {
     border-radius: 3px;
     /* width: 30%; */
     /* margin: 5px; */
@@ -178,5 +184,30 @@
     /* margin: 5px; */
     /* font: normal 90%/1 "bangers", Helvetica, sans-serif; */
     font-size: 90%;
+    background: rgba(1,1,1,0.5) !important;
     text-shadow: 2px 2px 1px rgba(0,0,0,0.25);
+}
+
+.textShadow {
+    text-shadow: 2px 2px 1px rgb(255 255 255 / 25%);
+    color: #fff;
+}
+
+.banner {
+    width: 100%;
+    border-width: 0 1px 1px 1px;
+}
+
+.banner h2 {
+    background: orangered;
+    background-image: radial-gradient(transparent 30%, rgba(0, 0, 0, 0.2));
+    border: 0 solid rgba(0,0,0,0.2);
+    color: #ffffff;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 2px 2px 1px rgb(0 0 0 / 50%);
+    position: relative;
+}
+
+.borderRight {
+    border-right: 1px solid lightgray;
 }

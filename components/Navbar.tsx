@@ -1,26 +1,26 @@
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAngleDoubleUp, faCertificate, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
+import { useRouter } from 'next/router';
+import classNames from 'classnames';
 
-import { supabase } from '../utils/supabaseClient'
-import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { supabase } from '../utils/supabaseClient';
+import { useAppSelector, useAppDispatch } from '../app/hooks';
 import {
     loginUser,
     setAuthUser,
     selectAuth
 } from '../features/auth/authSlice'
-import Login from '../components/Login'
-import Register from '../components/Register'
+import LoginModal from '../components/LoginModal'
+import RegisterModal from '../components/RegisterModal'
 import ForgotPassword from '../components/ForgotPassword'
 import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
-import { useRouter } from 'next/router'
 
 import styles from '../styles/Navbar.module.css'
-import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDoubleUp, faCertificate, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
 
 // export async function getServerSideProps({ locale }) {
 //     return {
@@ -199,7 +199,7 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                {auth.id ?
+                {auth?.id ?
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
                             <div className={classNames(styles.link, styles.boxShadow)}>
@@ -229,17 +229,18 @@ export default function Navbar() {
                     :
                     <div>
                         <div className="row">
-                            <div className="col col-md-6">
-                                <div className={styles.boxShadow} onClick={openLoginModal}>
-                                    <p className={styles.textSubTitle}>Login</p>
+                            <div className="col col-md-6 text-center">
+                                <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <p className={classNames("my-0 py-2", styles.textSubTitle)} >
+                                        Login
+                                    </p>
                                 </div>
                             </div>
                             <div className="col col-md-6 text-center">
-                                <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    {/* <p className={styles.textSubTitle}>S'enregistrer</p> */}
-                                    <span className={classNames("btn", styles.textSubTitle)} >
+                                <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#registerModal">
+                                    <p className={classNames("my-0 py-2", styles.textSubTitle)} >
                                         Senregistrer
-                                    </span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -247,46 +248,9 @@ export default function Navbar() {
                 }
             </header>
 
-            <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
-                    <div className="modal-content" style={{ backgroundColor: 'LightSlateGray' }}>
-                        <div className="modal-header">
-                            <h5 className={classNames("modal-title", styles.textSubTitle)} id="exampleModalLabel">Login</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body" style={{ backgroundColor: 'whitesmoke' }}>
-                            <div className="row">
-                                <div className="col col-md-12">
-                                    <main className="form-signin w-100 m-auto text-center">
-                                        <form>
-                                            <img className="mb-4" src="/images/avatar.png" alt="tif-logo" width="100" />
+            <LoginModal />
+            <RegisterModal />
 
-                                            <div className="form-floating mb-2">
-                                                <input type="email" className="form-control" id="floatingInput" placeholder="name@example.com" />
-                                                <label htmlFor="floatingInput">Email address</label>
-                                            </div>
-                                            <div className="form-floating mb-4">
-                                                <input type="password" className="form-control" id="floatingPassword" placeholder="Password" />
-                                                <label htmlFor="floatingPassword">Password</label>
-                                            </div>
-                                            <button className="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
-                                        </form>
-                                    </main>
-                                </div>
-                            </div>
-                        </div>
-                        {/* <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
-                        </div> */}
-                    </div>
-                </div>
-            </div>
-            {/* <Modal show={modal} handleClose={() => setModal(false)}>
-                {modalType == 'login' && <Login switchTo={switchTo} handleClose={closeModal} />}
-                {modalType == 'register' && <Register switchTo={switchTo} handleClose={closeModal} />}
-                {modalType == 'forgot-password' && <ForgotPassword switchTo={switchTo} handleClose={closeModal} />}
-            </Modal> */}
         </>
     )
 }

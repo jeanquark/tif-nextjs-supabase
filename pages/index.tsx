@@ -6,9 +6,10 @@ import moment from 'moment'
 import 'moment/locale/fr';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
-import classNames from "classnames"
+import classNames from "classnames";
 
 import styles from '../styles/Player.module.css'
+import { selectAuth } from '../features/auth/authSlice'
 import Layout from '../components/Layout'
 import { Card } from '../components/UI/Card'
 import NestedLayout from '../components/LayoutFrontend'
@@ -92,7 +93,9 @@ const eventInLessThan12Hours = (timestamp: number) => {
 
 export default function HomePage({ data }) {
 	const router = useRouter()
-	const { t } = useTranslation(['home']);
+	const { t } = useTranslation(['home'])
+    const auth = useAppSelector(selectAuth)
+
 	const events = useAppSelector(selectEvents)
 	const dispatch = useAppDispatch()
 	const [date, setDate] = useState<Date>();
@@ -120,15 +123,15 @@ export default function HomePage({ data }) {
 
 	return (
 		<div className="">
-			<div className="row my-2">
+			{auth?.id && <div className="row my-2">
 				<div className="col col-sm-12 col-md-6">
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Tes équipes</p>
 				</div>
 				<div className="col col-sm-12 col-md-6">
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
 				</div>
-			</div>
-			<div className="row" style={{ minHeight: '500px', border: '2px solid white' }}>
+			</div>}
+			<div className="row gx-0" style={{ minHeight: '500px', border: '2px solid white' }}>
 				<p style={{ color: '#fff' }}>events.length: {events.length}</p>
 				{/* {events && events.map((event: any) =>
 					<div className="col col-md-3 my-2" key={event.id}>
