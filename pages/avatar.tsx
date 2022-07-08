@@ -1,8 +1,10 @@
 import { redirect } from 'next/dist/server/api-utils'
-import React, { useEffect } from 'react'
-import { ReactElement, useState, useRef } from 'react'
-import mergeImages from 'merge-images'
-import classNames from "classnames"
+import React, { ReactElement, useState, useRef, useEffect } from 'react';
+// import { ReactElement, useState, useRef } from 'react';
+import mergeImages from 'merge-images';
+import classNames from "classnames";
+import Link from 'next/link';
+import Head from 'next/head';
 
 import { supabase } from '../utils/supabaseClient'
 import { useAppSelector } from '../app/hooks'
@@ -17,7 +19,7 @@ import MouthImages from '../components/Avatar/Mouth'
 import BeardImages from '../components/Avatar/Beard'
 import HairImages from '../components/Avatar/Hair'
 import BackgroundImages from '../components/Avatar/Background'
-import Link from 'next/link'
+
 
 type ImagesToMerge = {
     background: string
@@ -142,6 +144,10 @@ export default function AvatarPage() {
     }
 
     return (
+        <>
+        <Head>
+                <title>TIF - Avatar</title>
+            </Head>
         <div className="container" style={{ backgroundColor: 'LightSlateGray' }}>
             <div className="row">
                 <div className="col col-sm-12" >
@@ -215,6 +221,7 @@ export default function AvatarPage() {
             <button onClick={() => updateAvatar()}>Update image</button><br />
             <button onClick={() => deleteAvatar()}>Delete image</button><br /> */}
         </div>
+        </>
     )
 
 

@@ -1,9 +1,10 @@
-import { ReactElement, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import moment from 'moment'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { ReactElement, useEffect, useState, useRef } from 'react';
+import moment from 'moment';
+import classNames from 'classnames';
 import { useTranslation } from 'next-i18next';
-import Image from 'next/image'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 import { supabase } from '../../utils/supabaseClient'
 import Layout from '../../components/Layout'
@@ -11,59 +12,14 @@ import NestedLayout from '../../components/LayoutFrontend'
 import { Card } from '../../components/UI/Card'
 import EventActions from '../../components/EventActions'
 import EventUserActions from '../../components/EventUserActions'
-import styles from '../../styles/Event.module.css'
-
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
 import { selectAuth, incrementPoints } from '../../features/auth/authSlice'
 import { selectActions, fetchActions } from '../../features/actions/actionsSlice'
 import { selectEventActions, setEventActions } from '../../features/eventActions/eventActionsSlice'
 import { selectEventUserActions, setEventUserActions, addEventUserAction } from '../../features/eventUserActions/eventUserActionsSlice'
-
 import { Event, Action, EventAction, EventUserAction } from '../../app/interfaces'
-import classNames from 'classnames';
+import styles from '../../styles/Event.module.css'
 
-// interface Event {
-//     id: number,
-//     home_team_name: string,
-//     visitor_team_name: string
-// }
-
-// interface Action {
-//     id: number,
-//     name: string,
-//     slug?: string,
-//     image?: string
-// }
-
-// interface EventAction {
-//     id: number
-//     action_id: number
-//     event_id: number
-//     user_id: number
-//     username: string
-//     action: {
-//         name: string
-//         image: string
-//     }
-//     is_completed: boolean
-//     number_participants: number
-//     participation_threshold: number
-//     points: number
-//     expired_at: Date
-//     inserted_at: Date
-//     updated_at: Date
-// }
-
-// interface EventUserAction {
-//     id: number
-//     user_id: number
-//     event_action_id?: number
-//     event_action?: {
-//         id?: number
-//     }
-//     inserted_at: Date
-//     updated_at: Date
-// }
 
 type EffectCallback = () => (void | (() => void | undefined));
 
@@ -84,7 +40,7 @@ export default function EventPage() {
     const { id } = router.query
     const [isLoading, setLoading] = useState<boolean>(false)
     const [data, setData] = useState(null)
-    const [event, setEvent] = useState(null)
+    const [event, setEvent] = useState<Event>(null)
     const [updateEvent, handleUpdateEvent] = useState(null)
 
     const actions = useAppSelector(selectActions)
@@ -169,7 +125,8 @@ export default function EventPage() {
 
         const { data, error } = await supabase
             .from('events')
-            .select('*')
+            // .select('*')
+            .select(`id, home_team_name, home_team_image, home_team_score, visitor_team_name, visitor_team_image, visitor_team_score, status, date, timestamp, round, league:leagues (id, name, image)`)
             .eq('id', id)
         if (error) {
             console.log('error: ', error);
@@ -293,66 +250,66 @@ export default function EventPage() {
 
     return (
         <>
-            <div className={classNames('row', styles.backgroundImage)}>
-                <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '2px solid white' }}>
-                    <div className={classNames("col col-4 text-start", styles.textShadow)}>Championnat<br />Suisse</div>
-                    <div className={classNames("col col-4 text-center", styles.textShadow)}>16 Juillet 2022<br />16:00</div>
-                    <div className={classNames("col col-4 text-end", styles.textShadow)}>Match de Championnat<br />Regular Season 1</div>
-                </div>
-                <div className={classNames("row gx-0 my-2 align-items-center py-3")} style={{ border: '2px solid orange' }}>
-                    <div className={classNames("col col-md-1", styles.teamFlag)}>
-                        <img src="/images/163.png" alt="team flag" width="100%" />
+            {event &&
+                <div className={classNames('row', styles.backgroundImage)}>
+                    <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '2px solid white' }}>
+                        <div className={classNames("col col-4 text-start", styles.textShadow)}>{event.league.name}</div>
+                        <div className={classNames("col col-4 text-center", styles.textShadow)}>{moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}</div>
+                        <div className={classNames("col col-4 text-end", styles.textShadow)}>{event.round}</div>
                     </div>
-                    <div className={classNames("col col-md-3")}>
-                        <div className={classNames("mx-3", styles.scorePF)}>1234.99 PF</div>
-                    </div>
-                    <div className={classNames("col col-md-4")}>
-                        <div className={classNames("mx-5", styles.matchStatus)}>En cours<br />75ème minute</div>
-                    </div>
-                    <div className={classNames("col col-md-3")}>
-                        <div className={classNames("mx-3", styles.scorePF)}>
-                            1369.74 PF
+                    <div className={classNames("row gx-0 my-2 align-items-center py-3")} style={{ border: '2px solid orange' }}>
+                        <div className={classNames("col col-md-1", styles.teamFlag)}>
+                            <Image src={`/images/teams/${event.home_team_image}`} alt="home team flag" width="100%" height="100%" />
+                        </div>
+                        <div className={classNames("col col-md-3")}>
+                            <div className={classNames("mx-3 py-2", styles.scorePF)}>1234.99 PF</div>
+                        </div>
+                        <div className={classNames("col col-md-4")}>
+                            <div className={classNames("mx-5", styles.matchStatus)}>{event.status}<br />{event.elapsed_time}min</div>
+                        </div>
+                        <div className={classNames("col col-md-3")}>
+                            <div className={classNames("mx-3 py-2", styles.scorePF)}>
+                                1369.74 PF
+                            </div>
+                        </div>
+                        <div className={classNames("col col-md-1", styles.teamFlag)}>
+                            <Image src={`/images/teams/${event.visitor_team_image}`} alt="visitor team flag" width="100%" height="100%" />
                         </div>
                     </div>
-                    <div className={classNames("col col-md-1", styles.teamFlag)}>
-                        <img src="/images/163.png" alt="team flag" width="100%" />
-                    </div>
-                </div>
-                <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '2px solid blue' }}>
-                    <div className={classNames("col col-md-5")}>
-                        <div className={classNames("mx-2", styles.team)}>Suisse</div>
-                    </div>
-                    <div className={classNames("col col-md-2")}>
-                        <div className={classNames("mx-2", styles.scoreRealtime)}>Score réel<br />2-1</div>
-                    </div>
-                    <div className={classNames("col col-md-5")}>
-                        <div className={classNames("mx-2", styles.team)}>
-                            Brésil
+                    <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '2px solid blue' }}>
+                        <div className={classNames("col col-md-5")}>
+                            <div className={classNames("mx-2", styles.team)}>{event.home_team_name}</div>
+                        </div>
+                        <div className={classNames("col col-md-2")}>
+                            <div className={classNames("mx-2", styles.scoreRealtime)}>Score réel<br />{event.home_team_score}-{event.visitor_team_score}</div>
+                        </div>
+                        <div className={classNames("col col-md-5")}>
+                            <div className={classNames("mx-2", styles.team)}>
+                                {event.visitor_team_name}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
-                    <div className={classNames("col col-md-6", styles.matchInfoLeft)}>But : 12e - Buteur no 1<br />
-                        Carton jaune : 25e - Joueur no 12</div>
-                    <div className={classNames("col col-md-6", styles.matchInfoRight)}>But : 12e - Buteur no 1<br />
-                        Carton jaune : 25e - Joueur no 12</div>
-                </div>
-                <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
-                    <div className={classNames("col col-md-4", styles.playerScore)}>
-                        Ton score<br />
-                        <span style={{ color: 'orangered' }}>0.00 PF</span>
+                    <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
+                        <div className={classNames("col col-md-6", styles.matchInfoLeft)}>But : 12e - Buteur no 1<br />
+                            Carton jaune : 25e - Joueur no 12</div>
+                        <div className={classNames("col col-md-6", styles.matchInfoRight)}>But : 12e - Buteur no 1<br />
+                            Carton jaune : 25e - Joueur no 12</div>
                     </div>
-                </div>
-                <div className="row gx-0 my-3" style={{ border: '2px solid grey' }}>
-                    <div className={classNames("col col-md-12", styles.gameScoreProgression, styles.textShadow)}>
-                        <div className="mb-2">Barre de progression du score</div>
-                        <div className="progress" style={{ height: '20px', backgroundColor: 'red' }}>
-                            <div className="progress-bar w-50" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100}></div>
+                    <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
+                        <div className={classNames("col col-md-4", styles.playerScore)}>
+                            Ton score<br />
+                            <span style={{ color: 'orangered' }}>0.00 PF</span>
                         </div>
                     </div>
-
-                </div>
-            </div>
+                    <div className="row gx-0 my-3" style={{ border: '2px solid grey' }}>
+                        <div className={classNames("col col-md-12", styles.gameScoreProgression, styles.textShadow)}>
+                            <div className="mb-2">Barre de progression du score</div>
+                            <div className="progress" style={{ height: '20px', backgroundColor: 'red' }}>
+                                <div className="progress-bar w-50" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>}
             <div className={classNames('row gx-0', styles.actions)}>
                 <div className='row gx-0 py-2'>
                     <div className="col col-md-6">
@@ -381,31 +338,34 @@ export default function EventPage() {
                     <div className={classNames("col col-md-12", styles.banner)}>
                         <h2 className={classNames("text-center py-1", styles.textShadow)}>Actions utilisées durant l event</h2>
                     </div>
-                    <div className="col col-md-6">
-                        Tu n as pas encore participé au match !
-
-                    </div>
-                    <div className="col col-md-6"></div>
+                    {auth.id ? <div className="col col-md-12 text-center">
+                        <Image src="/images/actions/sing.png" width="65" height="65" alt="sing" className="p-2" />
+                        <Image src="/images/actions/hola.png" width="65" height="65" alt="hola" className="p-2" />
+                        <Image src="/images/actions/vuvuzela.png" width="65" height="65" alt="vuvuzela" className="p-2" />
+                        <Image src="/images/actions/clapping.png" width="65" height="65" alt="clapping" className="p-2" />
+                    </div> :
+                    <div className="col col-md-12 text-center">
+                        <h5 className={classNames(styles.textPrimary)}>Tu n as pas encore participé au match !</h5>
+                    </div>}
                 </div>
                 <div className='row gx-0'>
                     <div className={classNames("col col-md-12", styles.banner)}>
                         <h2 className={classNames("text-center py-1", styles.textShadow)}>Actions collectives réalisées par les fans</h2>
                     </div>
                     <div className={classNames("col col-md-6 my-3 px-5", styles.borderRight)}>
-                        {[...Array(12)].map((e, i) => <Image src="/images/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />)}
+                        {[...Array(12)].map((e, i) => <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />)}
                     </div>
                     <div className="col col-md-6 my-3 px-5">
-                        {[...Array(18)].map((e, i) => <Image src="/images/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />)}
+                        {[...Array(18)].map((e, i) => <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />)}
                     </div>
                 </div>
                 <div className='row gx-0'>
                     <div className={classNames("col col-md-12", styles.banner)}>
                         <h2 className={classNames("text-center py-1", styles.textShadow)}>Actions collectives en cours</h2>
                     </div>
-                    <div className="col col-md-6">
-                        Il faut que tu aies participés au match pour pouvoir prendre part aux actions collectives !
+                    <div className="col col-md-12 text-center">
+                        <h5 className={classNames(styles.textPrimary)}>Il faut que tu aies participés au match pour pouvoir prendre part aux actions collectives!</h5>
                     </div>
-                    <div className="col col-md-6"></div>
                 </div>
             </div>
         </>

@@ -7,12 +7,20 @@
 export interface Event {
 	id: number,
 	home_team_name: string,
-	visitor_team_name: string,
 	home_team_score: number,
+    home_team_image: string,
+	visitor_team_name: string,
 	visitor_team_score: number,
+	visitor_team_image: string,
+    league: {
+        name: string,
+        image: string
+    },
 	status: string,
 	date: Date,
 	timestamp: number,
+    elapsed_time: number,
+    round: string,
 	updated_at: Date
 }
 

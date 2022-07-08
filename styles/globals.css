@@ -5,3 +5,8 @@ body {
 	/* background-color: #000; */
 	font: normal 100%/1 "bangers", Helvetica, sans-serif;
 }
+
+.modal-backdrop
+{
+    opacity:0.7 !important;
+}

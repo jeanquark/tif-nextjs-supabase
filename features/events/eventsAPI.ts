@@ -14,7 +14,8 @@ export async function getEvents(date1, date2) {
 
     const { data, error } = await supabase
         .from('events')
-        .select('id, home_team_name, visitor_team_name, home_team_score, visitor_team_score, status, date, timestamp, updated_at')
+        // .select('id, home_team_name, home_team_image, home_team_score, visitor_team_name, visitor_team_image,  visitor_team_score, status, date, timestamp, updated_at')
+        .select(`id, home_team_name, home_team_image, home_team_score, visitor_team_name, visitor_team_image, visitor_team_score, status, date, timestamp, round, league:leagues (id, name, image)`)
         // .eq('date', date)
         .gte('timestamp', date1)
         .lte('timestamp', date2)

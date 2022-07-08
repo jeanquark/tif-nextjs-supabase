@@ -248,3 +248,7 @@ nav.user {
 .navigationLi a:hover {
     color: orangered;
 }
+
+.error {
+    border: 1px solid red;
+}

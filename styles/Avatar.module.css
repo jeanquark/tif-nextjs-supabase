@@ -42,3 +42,22 @@
 .active {
     background-color: orangered;
 }
+
+.backgroundPrimary {
+    background-color: orangered;
+}
+
+.accordionButton {
+    display: block;
+    background: orangered; 
+    color: #fff;
+    border: 1px solid #000;
+}
+
+.accordionButton:focus {
+    background: orangered;
+    color: #fff;
+    box-shadow: none;
+    border: none;
+}
+

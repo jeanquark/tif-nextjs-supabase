@@ -6,6 +6,7 @@ import moment from 'moment'
 import 'moment/locale/fr';
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import Image from 'next/image';
 import classNames from "classnames";
 
 import styles from '../styles/Player.module.css'
@@ -94,7 +95,7 @@ const eventInLessThan12Hours = (timestamp: number) => {
 export default function HomePage({ data }) {
 	const router = useRouter()
 	const { t } = useTranslation(['home'])
-    const auth = useAppSelector(selectAuth)
+	const auth = useAppSelector(selectAuth)
 
 	const events = useAppSelector(selectEvents)
 	const dispatch = useAppDispatch()
@@ -133,26 +134,32 @@ export default function HomePage({ data }) {
 			</div>}
 			<div className="row gx-0" style={{ minHeight: '500px', border: '2px solid white' }}>
 				<p style={{ color: '#fff' }}>events.length: {events.length}</p>
-				{/* {events && events.map((event: any) =>
+				{events && events.map((event: any) =>
 					<div className="col col-md-3 my-2" key={event.id}>
-						<Link href={`/events/${event.id}`}>
-							<a style={{ textDecoration: 'none' }}>
-								<Card>
-									<h5 className="text-center">{event.home_team_name} - {event.visitor_team_name}</h5>
-									<p>ID: {event.id}</p>
-									<p className="text-center"><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
-									{event && eventInLessThan12Hours(event.timestamp) && <p style={{ textAlign: 'center' }}>
-										{t('kick_off_in')}&nbsp;
-										<CountdownTimer timestamp={event.timestamp} />
-									</p>}
-									{event && event.status && event.status != 'NS' && <p style={{ textAlign: 'center' }}>
-										{event.home_team_score} - {event.visitor_team_score}
-									</p>}
-								</Card>
-							</a>
-						</Link>
+						<Card event={event}>
+							<h6 className="text-center">{event.home_team_name} - {event.visitor_team_name}</h6>
+							<div className="row my-3">
+								<div className="col col-md-6 px-4">
+									<Image src={`/images/teams/${event.home_team_image}`} width="100%" height="100%" alt="team image" />
+
+								</div>
+								<div className="col col-md-6 px-4">
+									<Image src={`/images/teams/${event.visitor_team_image}`} width="100%" height="100%" alt="team image" />
+
+								</div>
+							</div>
+							{/* <p>ID: {event.id}</p> */}
+							<p className="text-center"><Moment locale={router.locale} format="ll HH:mm">{event.date}</Moment></p>
+							{event && eventInLessThan12Hours(event.timestamp) && <p style={{ textAlign: 'center' }}>
+								{t('kick_off_in')}&nbsp;
+								<CountdownTimer timestamp={event.timestamp} />
+							</p>}
+							{event && event.status && event.status != 'NS' && <p style={{ textAlign: 'center' }}>
+								{event.home_team_score} - {event.visitor_team_score}
+							</p>}
+						</Card>
 					</div>
-				)} */}
+				)}
 			</div>
 		</div>
 	)

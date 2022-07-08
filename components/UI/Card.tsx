@@ -1,6 +1,7 @@
 import { MutableRefObject, useRef } from 'react'
-import styles from '../../styles/Card.module.css'
+import styles from '../../styles/UI/Card.module.css'
 import classNames from "classnames"
+import Link from 'next/link'
 
 
 type CardProps = {
@@ -10,14 +11,12 @@ type CardProps = {
 export const Card = ({ event, children }: any) => {
 
 	return (
-		// <div className={styles.card}>
-		// 	{children}
-		// </div>
-
-		<div className={classNames("card", styles.card)} style={{ backgroundColor: 'LightSlateGray' }}>
-			<div className="card-body" style={{ backgroundColor: 'whitesmoke' }}>
+		<Link href={`/events/${event.id}`} passHref>
+		<div className={classNames("card", styles.card)} style={{}}>
+			<div className="card-body" style={{}}>
 				<div className="card-text">{children}</div>
 			</div>
 		</div>
+		</Link>
 	);
 };

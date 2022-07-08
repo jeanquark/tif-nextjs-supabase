@@ -11,6 +11,7 @@ export default function LoginModal() {
     const dispatch = useAppDispatch()
     const { t } = useTranslation(['common'])
     const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string>(null)
     const [email, setEmail] = useState<string>('')
     const [password, setPassword] = useState<string>('')
 
@@ -35,7 +36,9 @@ export default function LoginModal() {
                 }))
             }
         } catch (error) {
-            alert(error.error_description || error.message)
+            console.log('error: ', error);
+            // alert(error.error_description || error.message)
+            setError(error)
         } finally {
             setLoading(false)
         }
@@ -68,16 +71,20 @@ export default function LoginModal() {
                         <div className="row">
                             <div className="col col-md-12">
                                 <main className="form-signin w-100 m-auto text-center">
-                                    <form>
+                                    <form className="form-floating">
                                         <img className="mb-4" src="/images/avatar.png" alt="tif-logo" width="100" />
 
                                         <div className="form-floating mb-2">
-                                            <input type="email" className="form-control" id="floatingInput" placeholder={t('your_email')} value={email} onChange={(e) => setEmail(e.target.value)} />
+                                            <input type="email" className={classNames("form-control", error && "is-invalid")} id="floatingInput" placeholder={t('your_email')} value={email} onChange={(e) => (setError(null), setEmail(e.target.value))} />
                                             <label htmlFor="floatingInput">{t('email')}</label>
                                         </div>
                                         <div className="form-floating mb-4">
-                                            <input type="password" className="form-control" id="floatingPassword" placeholder={t('your_password')} value={password} onChange={(e) => setPassword(e.target.value)} />
+                                            <input type="password" className={classNames("form-control", error && "is-invalid")} id="floatingPassword" placeholder={t('your_password')} value={password} onChange={(e) => (setError(null), setPassword(e.target.value))}/>
                                             <label htmlFor="floatingPassword">{t('password')}</label>
+                                            {error && <span className="text-danger float-start fw-light m-2">Invalid email or password</span>}
+                                        </div>
+                                        <div>
+                                        <div className="btn btn-sm text-center mb-2" onClick={(e) => {}}>{t('forgot_password')}</div>
                                         </div>
                                         <button className="w-100 btn btn-lg" type="submit" style={{ backgroundColor: 'orangered', color: 'white' }} disabled={loading} onClick={(e) => {
                                             e.preventDefault()

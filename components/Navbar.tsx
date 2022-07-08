@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { useTranslation } from "next-i18next";
+import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleUp, faCertificate, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
-import { useRouter } from 'next/router';
 import classNames from 'classnames';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useRouter } from 'next/router';
 
 import { supabase } from '../utils/supabaseClient';
 import { useAppSelector, useAppDispatch } from '../app/hooks';
@@ -19,7 +20,6 @@ import RegisterModal from '../components/RegisterModal'
 import ForgotPassword from '../components/ForgotPassword'
 import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
-
 import styles from '../styles/Navbar.module.css'
 
 // export async function getServerSideProps({ locale }) {
@@ -204,25 +204,28 @@ export default function Navbar() {
                         <div className="col col-lg-1">
                             <div className={classNames(styles.link, styles.boxShadow)}>
                                 <Link href="/avatar">
-                                    <img src="/images/avatar.png" width="100%" className="" />
+                                    <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" />
                                 </Link>
                             </div>
                         </div>
                         <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
                             <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '0px dashed pink' }}>
-                                <div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
-                                    <img src="/images/163.png" width="60px" style={{}} />
-                                    <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>CarolineKaeser</span>
+                                <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
+                                    <Image src="/images/163.png" alt="flag icon" width="60px" height="60px" />
+                                    <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>{ auth.username || auth.email }</span>
                                 </div>
-                                <div className="d-flex align-items-center" style={{ border: '0px dashed grey' }}>
-                                    <img src="/images/cup.png" width="60px" />
+                                <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
+                                    <Image src="/images/cup.png" alt="cup icon" width="60px" height="60px" />
                                     <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
                                 </div>
+                                <span className="text-white" onClick={() => handleLogout()}>{t('logout')}</span>
                             </div>
                         </div>
                         <div className="col col-lg-1">
                             <div className={styles.boxShadow} style={{ border: '0px dashed grey' }}>
-                                <img src="/images/parametre.png" width="100%" />
+                                <Link href="/parameters">
+                                <Image src="/images/parameters.png" alt="parameters icon" width="100%" height="100%" />
+                                </Link>
                             </div>
                         </div>
                     </div>
