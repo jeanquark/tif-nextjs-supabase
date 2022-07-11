@@ -86,11 +86,11 @@ export default function ParameterPage() {
                         <div className="accordion-item my-1">
                             <h2 className="accordion-header" id="flush-headingTwo">
                                 <button className={classNames("accordion-button collapsed rounded py-2", styles.accordionButton)} type="button" data-bs-toggle="collapse" data-bs-target="#conditions" aria-expanded="false" aria-controls="conditions">
-                                    Conditions d'utilisation
+                                    Conditions d utilisation
                                 </button>
                             </h2>
                             <div id="conditions" className="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-                                <div className="accordion-body">Contenu Conditions d'utilisation</div>
+                                <div className="accordion-body">Contenu Conditions d utilisation</div>
                             </div>
                         </div>
                         <div className="accordion-item my-1">
