@@ -49,7 +49,7 @@ export default function ParameterPage() {
                                 <div>Musique</div>
                             </div>
                             <div className="col col-sm-12 col-md-5 d-grid m-0 p-0">
-                                <div className={classNames("btn", music ? "btn-success" : "btn-danger")} onClick={() => setMusic(!music) }>{music ? 'Oui' : 'Non'}</div>
+                                <div className={classNames("btn", music ? "btn-success" : "btn-danger")} onClick={() => setMusic(!music)}>{music ? 'Oui' : 'Non'}</div>
                             </div>
                         </div>
                         <div className="row align-items-center my-1 px-0 border border-dark rounded">
@@ -62,21 +62,45 @@ export default function ParameterPage() {
                         </div>
                     </div>
 
-
-
-
-
-                    <div className="accordion mx-0 px-0" id="accordionExample">
-                        <div className="accordion-item">
-                            <h2 className="accordion-header" id="headingOne">
-                                <button className={classNames("accordion-button text-center py-2", styles.accordionButton)} style={{ background: 'orangered', color: '#fff' }} type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    <div className="accordion accordion-flush mx-0 px-0" id="accordionFlushExample">
+                        <div className="accordion-item my-1">
+                            <h2 className="accordion-header" id="flush-headingOne">
+                                <button className={classNames("accordion-button collapsed rounded py-2", styles.accordionButton)} type="button" data-bs-toggle="collapse" data-bs-target="#help" aria-expanded="false" aria-controls="help">
                                     Aide/Assistance
                                 </button>
                             </h2>
-                            <div id="collapseOne" className="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                <div className="accordion-body">
-                                    Contenu
-                                </div>
+                            <div id="help" className="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+                                <div className="accordion-body">Contenu Aide/Assistance</div>
+                            </div>
+                        </div>
+                        <div className="accordion-item my-1">
+                            <h2 className="accordion-header" id="flush-headingTwo">
+                                <button className={classNames("accordion-button collapsed rounded py-2", styles.accordionButton)} type="button" data-bs-toggle="collapse" data-bs-target="#confidentiality" aria-expanded="false" aria-controls="confidentiality">
+                                    Confidentialité
+                                </button>
+                            </h2>
+                            <div id="confidentiality" className="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div className="accordion-body">Contenu Confidentialité</div>
+                            </div>
+                        </div>
+                        <div className="accordion-item my-1">
+                            <h2 className="accordion-header" id="flush-headingTwo">
+                                <button className={classNames("accordion-button collapsed rounded py-2", styles.accordionButton)} type="button" data-bs-toggle="collapse" data-bs-target="#conditions" aria-expanded="false" aria-controls="conditions">
+                                    Conditions d'utilisation
+                                </button>
+                            </h2>
+                            <div id="conditions" className="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div className="accordion-body">Contenu Conditions d'utilisation</div>
+                            </div>
+                        </div>
+                        <div className="accordion-item my-1">
+                            <h2 className="accordion-header" id="flush-headingTwo">
+                                <button className={classNames("accordion-button collapsed rounded py-2", styles.accordionButton)} type="button" data-bs-toggle="collapse" data-bs-target="#credit" aria-expanded="false" aria-controls="credit">
+                                    Crédit
+                                </button>
+                            </h2>
+                            <div id="credit" className="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+                                <div className="accordion-body">Contenu Crédit</div>
                             </div>
                         </div>
                     </div>
