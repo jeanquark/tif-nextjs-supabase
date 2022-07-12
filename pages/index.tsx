@@ -133,7 +133,7 @@ export default function HomePage({ data }) {
 				</div>
 			</div>}
 			<div className="row gx-0" style={{ minHeight: '500px', border: '2px solid white' }}>
-				<p style={{ color: '#fff' }}>events.length: {events.length}</p>
+				{/* <p style={{ color: '#fff' }}>events.length: {events.length}</p> */}
 				{events && events.map((event: any) =>
 					<div className="col col-md-3 my-2" key={event.id}>
 						<Card event={event}>

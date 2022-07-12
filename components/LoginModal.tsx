@@ -41,6 +41,7 @@ export default function LoginModal() {
             setError(error)
         } finally {
             setLoading(false)
+            // Close modal
         }
     }
 
@@ -67,7 +68,7 @@ export default function LoginModal() {
                         <h5 className={classNames("modal-title", styles.textSubTitle)} id="exampleModalLabel">{t('login')}</h5>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div className="modal-body" style={{ backgroundColor: 'whitesmoke' }}>
+                    <div className="modal-body" style={{ backgroundColor: 'Whitesmoke' }}>
                         <div className="row">
                             <div className="col col-md-12">
                                 <main className="form-signin w-100 m-auto text-center">

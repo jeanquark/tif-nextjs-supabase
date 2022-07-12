@@ -207,13 +207,14 @@ export default function Navbar() {
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
                             <div className={classNames("p-1", styles.link, styles.boxShadow)}>
+                                {auth.image &&
                                 <Link href="/avatar">
                                     <a>
                                         {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
                                         {/* <Image src="https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/4.png" width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
-                                        <Image src={auth.image} width="100%" height="100%" style={{ border: '0px solid red' }} />
+                                        <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} />
                                     </a>
-                                </Link>
+                                </Link>}
                             </div>
                         </div>
                         <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>

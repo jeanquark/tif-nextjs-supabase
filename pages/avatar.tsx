@@ -1,11 +1,11 @@
 import { redirect } from 'next/dist/server/api-utils'
-import React, { ReactElement, useState, useRef, useEffect } from 'react';
+import React, { ReactElement, useState, useRef, useEffect } from 'react'
 // import { ReactElement, useState, useRef } from 'react';
-import mergeImages from 'merge-images';
-import classNames from "classnames";
-import Link from 'next/link';
-import Head from 'next/head';
-import Image from 'next/image';
+import mergeImages from 'merge-images'
+import classNames from 'classnames'
+import Link from 'next/link'
+import Head from 'next/head'
+import Image from 'next/image'
 
 import { supabase } from '../utils/supabaseClient'
 import { useAppSelector } from '../app/hooks'
@@ -21,7 +21,6 @@ import BeardImages from '../components/Avatar/Beard'
 import HairImages from '../components/Avatar/Hair'
 import BackgroundImages from '../components/Avatar/Background'
 
-
 type ImagesToMerge = {
     background: string
     skin: string
@@ -32,7 +31,7 @@ type ImagesToMerge = {
 }
 
 export default function AvatarPage() {
-    const ref = useRef(null);
+    const ref = useRef(null)
     const auth = useAppSelector(selectAuth)
     const [arrayOfImagesToMerge, setArrayOfImagesToMerge] = useState<any>([])
     const [objectOfImagesToMerge, setObjectOfImagesToMerge] = useState<ImagesToMerge>({
@@ -49,12 +48,33 @@ export default function AvatarPage() {
     // const [skin, setSkin] = useState<string>('')
 
     useEffect(() => {
-        const el2 = ref.current;
-        console.log('el2: ', el2);
+        const el2 = ref.current
+        console.log('el2: ', el2)
         merge()
 
         // updateUser()
-    }, []);
+    }, [])
+
+    useEffect(() => {
+        console.log('auth.image: ', auth.image)
+        let abc
+        if (auth.image) {
+            abc = JSON.parse(JSON.stringify(auth.image))
+            console.log('auth.image.background: ', abc.background)
+
+            setObjectOfImagesToMerge({
+                ...objectOfImagesToMerge,
+                ...{
+                    ['background']: `/images/avatars/background/${abc['background']}.png`,
+                    ['skin']: `/images/avatars/skin/${abc['skin']}.png`,
+                    ['eyes']: `/images/avatars/eyes/${abc['eyes']}.png`,
+                    ['mouth']: `/images/avatars/mouth/${abc['mouth']}.png`,
+                    ['beard']: `/images/avatars/beard/${abc['beard']}.png`,
+                    ['hair']: `/images/avatars/hair/${abc['hair']}.png`,
+                },
+            })
+        }
+    }, [auth])
 
     useEffect(() => {
         console.log('[useEffect] objectOfImagesToMerge: ', objectOfImagesToMerge)
@@ -70,13 +90,13 @@ export default function AvatarPage() {
     const merge = async () => {
         try {
             const imagesArray = Object.values(objectOfImagesToMerge)
-            console.log('imagesArray: ', imagesArray);
+            console.log('imagesArray: ', imagesArray)
             const b64 = await mergeImages(imagesArray)
-            ref.current.src = b64;
+            ref.current.src = b64
             // const b64 = await mergeImages(['/images/body.png', '/images/eyes.png', '/images/mouth.png'])
             // ref.current.src = b64;
         } catch (error) {
-            console.log('error: ', error);
+            console.log('error: ', error)
         }
     }
 
@@ -85,72 +105,64 @@ export default function AvatarPage() {
         const avatarFile = ref.current.src
         console.log('avatarFile: ', avatarFile)
 
-        const url = avatarFile;
+        const url = avatarFile
         const res = await fetch(url)
         const blob = await res.blob()
-        const file = new File([blob], "File name", { type: "image/png" })
+        const file = new File([blob], 'File name', { type: 'image/png' })
         console.log('file: ', file)
 
-        const { data, error } = await supabase
-            .storage
-            .from('avatars')
-            .upload(`public/${auth.id}.png`, file)
+        const { data, error } = await supabase.storage.from('avatars').upload(`public/${auth.id}.png`, file)
         // .upload(`public/abc.png`, file)
         console.log('data: ', data)
         console.log('error: ', error)
-
     }
 
     const updateImage = async () => {
         try {
             console.log('updateImage')
             const avatarFile = ref.current.src
-            const url = avatarFile;
+            const url = avatarFile
             const res = await fetch(url)
             const blob = await res.blob()
-            const file = new File([blob], "File name", { type: "image/png" })
+            const file = new File([blob], 'File name', { type: 'image/png' })
             console.log('file: ', file)
 
-            const { data, error } = await supabase
-                .storage
-                .from('avatars')
-                .update(`public/${auth.id}.png`, file, {
-                    cacheControl: '3600',
-                    upsert: true
-                })
+            const { data, error } = await supabase.storage.from('avatars').update(`public/${auth.id}.png`, file, {
+                cacheControl: '3600',
+                upsert: true,
+            })
             console.log('data: ', data)
             console.log('error: ', error)
 
-            const { publicURL } = supabase
-                .storage
-                .from('avatars')
-                .getPublicUrl(`public/${auth.id}.png`)
+            const { publicURL } = supabase.storage.from('avatars').getPublicUrl(`public/${auth.id}.png`)
             console.log('publicURL: ', publicURL)
 
-            // const { error: error1 } = await supabase.from('users').upsert({ id: 3, image: publicURL })
-            // const { error: error1 } = await supabase
-            //     .from('users')
-            //     .update({ image: publicURL })
-            //     .match({ id: 3 })
-            // if (error1) {
-            //     console.log('error: ', error);
-            // }
+            // const { data: data2, error: error2 } = await supabase.from('users').update({ image: publicURL }).match({ id: auth.id })
+            // console.log('data2: ', data2)
+            // console.log('error2: ', error2)
 
+            console.log('objectOfImagesToMerge: ', objectOfImagesToMerge)
+            let obj = {}
+            for (let key in objectOfImagesToMerge) {
+                let a = objectOfImagesToMerge[key].substring(0, objectOfImagesToMerge[key].lastIndexOf('.'))
+                obj[key] = a.substring(objectOfImagesToMerge[key].lastIndexOf('/') + 1)
+            }
+            console.log('obj: ', obj)
+            const { data: data3, error: error3 } = await supabase.from('users').update({ image: obj }).match({ id: auth.id })
+            console.log('data3: ', data3)
+            console.log('error3: ', error3)
         } catch (error) {
-            console.log('error: ', error);
+            console.log('error: ', error)
         }
     }
 
     const deleteAvatar = async () => {
         try {
-            const { data, error } = await supabase
-                .storage
-                .from('avatars')
-                .remove([`public/${auth.id}.png`])
-            console.log('error: ', error);
-            console.log('data: ', data);
+            const { data, error } = await supabase.storage.from('avatars').remove([`public/${auth.id}.png`])
+            console.log('error: ', error)
+            console.log('data: ', data)
         } catch (error) {
-            console.log('error: ', error);
+            console.log('error: ', error)
         }
     }
 
@@ -158,9 +170,10 @@ export default function AvatarPage() {
         // console.log('setAvatarImage2: ', value);
         // console.log('value.type: ', value.type)
         setObjectOfImagesToMerge({
-            ...objectOfImagesToMerge, ...{
-                [value.type]: `/images/avatars/${value.type}/${value.image}.png`
-            }
+            ...objectOfImagesToMerge,
+            ...{
+                [value.type]: `/images/avatars/${value.type}/${value.image}.png`,
+            },
         })
 
         // setState({objectOfImagesToMerge: {...objectOfImagesToMerge, ...{
@@ -169,8 +182,7 @@ export default function AvatarPage() {
         //     console.log('objectOfImagesToMerge: ', objectOfImagesToMerge);
         // });
 
-
-        console.log('objectOfImagesToMerge: ', objectOfImagesToMerge);
+        console.log('objectOfImagesToMerge: ', objectOfImagesToMerge)
         // merge()
     }
 
@@ -181,7 +193,7 @@ export default function AvatarPage() {
             </Head>
             <div className="container" style={{ backgroundColor: 'LightSlateGray' }}>
                 <div className="row">
-                    <div className="col col-sm-12" >
+                    <div className="col col-sm-12">
                         <h2 className={classNames('my-0 py-2', styles.title)}>Ton Avatar</h2>
                     </div>
                 </div>
@@ -243,11 +255,11 @@ export default function AvatarPage() {
                         </Link>
                     </div>
                     <div className="col col-sm-6">
-                        <button className={classNames('btn btn-success text-uppercase float-start', styles.text1)} onClick={() => updateImage()}>Allez, valide!</button>
+                        <button className={classNames('btn btn-success text-uppercase float-start', styles.text1)} onClick={() => updateImage()}>
+                            Allez, valide!
+                        </button>
                     </div>
                 </div>
-
-
 
                 {/* <button onClick={() => saveImage()}>Save image</button><br />
             <button onClick={() => updateAvatar()}>Update image</button><br />
@@ -255,8 +267,6 @@ export default function AvatarPage() {
             </div>
         </>
     )
-
-
 }
 
 AvatarPage.getLayout = function getLayout(page: ReactElement) {
