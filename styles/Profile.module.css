@@ -1,0 +1,66 @@
+.title {
+    color: #ffffff;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 2px 2px 1px rgb(255 255 255 / 50%);
+    text-align: center;
+}
+
+.subtitle {
+    background: orangered;
+    background-image: radial-gradient(transparent 30%, rgba(0, 0, 0, 0.2));
+    border: 0 solid rgba(0,0,0,0.2);
+    color: #ffffff;
+    font: normal 150%/1 "bangers", Helvetica, sans-serif;
+    text-shadow: 2px 2px 1px rgb(0 0 0 / 50%);
+}
+
+.levelImageBox {
+    position: relative;
+    text-align: center;
+    z-index: 1
+}
+
+.levelNumberBox {
+    position: absolute;
+    z-index: 2;
+    bottom: 5px;
+    left: 0px;
+    width: 100%;
+    font: normal 250%/1 "bangers", Helvetica, sans-serif;
+    color: orangered;
+    text-align: center;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    text-shadow: 2px 2px 1px rgb(255 69 0 / 50%);
+}
+
+.columnActionText {
+    position: relative;
+    /* padding-top: 6px; */
+    /* padding-left: 10px; */
+    /* width: 70%; */
+    color: #000000;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+}
+
+.columnActionNumber {
+    border-left: 1px solid black;
+    position: relative;
+    border-radius: 0 5px 5px 0;
+    /* padding-top: 6px; */
+    /* width: 30%; */
+    text-align: center;
+    color: white;
+    background-color: darkred;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+}
+
+.columnGameNumber {
+    border-left: 1px solid black;
+    position: relative;
+    border-radius: 0 5px 5px 0;
+    text-align: center;
+    color: white;
+    background-color: darkturquoise;
+    font: normal 120%/1 "bangers", Helvetica, sans-serif;
+}

@@ -5,6 +5,7 @@ import mergeImages from 'merge-images';
 import classNames from "classnames";
 import Link from 'next/link';
 import Head from 'next/head';
+import Image from 'next/image';
 
 import { supabase } from '../utils/supabaseClient'
 import { useAppSelector } from '../app/hooks'
@@ -35,7 +36,7 @@ export default function AvatarPage() {
     const auth = useAppSelector(selectAuth)
     const [arrayOfImagesToMerge, setArrayOfImagesToMerge] = useState<any>([])
     const [objectOfImagesToMerge, setObjectOfImagesToMerge] = useState<ImagesToMerge>({
-        background: '/images/avatars/background/background01001.png',
+        background: '/images/avatars/background/background0101.png',
         // background: 'background01001',
         skin: '/images/avatars/skin/skin0101.png',
         eyes: '/images/avatars/eyes/eyes0101.png',
@@ -51,12 +52,20 @@ export default function AvatarPage() {
         const el2 = ref.current;
         console.log('el2: ', el2);
         merge()
+
+        // updateUser()
     }, []);
 
     useEffect(() => {
         console.log('[useEffect] objectOfImagesToMerge: ', objectOfImagesToMerge)
         merge()
     }, [objectOfImagesToMerge])
+
+    const updateUser = async () => {
+        // const { data, error } = await supabase.from('actions').select()
+        const { data, error } = await supabase.from('users').upsert({ id: 4, image: 'hola.png' })
+        console.log('data fetchUsers: ', data)
+    }
 
     const merge = async () => {
         try {
@@ -86,11 +95,15 @@ export default function AvatarPage() {
             .storage
             .from('avatars')
             .upload(`public/${auth.id}.png`, file)
-            // .upload(`public/abc.png`, file)
+        // .upload(`public/abc.png`, file)
+        console.log('data: ', data)
+        console.log('error: ', error)
+
     }
 
-    const updateAvatar = async () => {
+    const updateImage = async () => {
         try {
+            console.log('updateImage')
             const avatarFile = ref.current.src
             const url = avatarFile;
             const res = await fetch(url)
@@ -105,6 +118,24 @@ export default function AvatarPage() {
                     cacheControl: '3600',
                     upsert: true
                 })
+            console.log('data: ', data)
+            console.log('error: ', error)
+
+            const { publicURL } = supabase
+                .storage
+                .from('avatars')
+                .getPublicUrl(`public/${auth.id}.png`)
+            console.log('publicURL: ', publicURL)
+
+            // const { error: error1 } = await supabase.from('users').upsert({ id: 3, image: publicURL })
+            // const { error: error1 } = await supabase
+            //     .from('users')
+            //     .update({ image: publicURL })
+            //     .match({ id: 3 })
+            // if (error1) {
+            //     console.log('error: ', error);
+            // }
+
         } catch (error) {
             console.log('error: ', error);
         }
@@ -145,82 +176,83 @@ export default function AvatarPage() {
 
     return (
         <>
-        <Head>
+            <Head>
                 <title>TIF - Avatar</title>
             </Head>
-        <div className="container" style={{ backgroundColor: 'LightSlateGray' }}>
-            <div className="row">
-                <div className="col col-sm-12" >
-                    <h2 className={classNames('my-0 py-2', styles.title)}>Ton Avatar</h2>
-                </div>
-            </div>
-            <div className="row justify-content-center rounded mx-1" style={{ backgroundColor: 'whitesmoke' }}>
-                <div className="col col-sm-12">
-                    <h3 className={classNames('mt-2 py-2', styles.subtitle)}>Envie de changer de tête ?</h3>
-                </div>
-                <div className="col col-sm-12 col-md-4">
-                    <img src="" ref={ref} width="100%" style={{ border: '1px solid red' }} />
-                </div>
-                <div className="row justify-content-evenly">
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('skin')}>
-                        <div className={classNames(styles.box, type === 'skin' && styles.active)}>
-                            <span className={styles.boxTitle}>Peau</span>
-                        </div>
-                    </div>
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('eyes')}>
-                        <div className={classNames(styles.box, type === 'eyes' && styles.active)}>
-                            <span className={styles.boxTitle}>Yeux</span>
-                        </div>
-                    </div>
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('mouth')}>
-                        <div className={classNames(styles.box, type === 'mouth' && styles.active)}>
-                            <span className={styles.boxTitle}>Bouche</span>
-                        </div>
-                    </div>
-
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('beard')}>
-                        <div className={classNames(styles.box, type === 'beard' && styles.active)}>
-                            <span className={styles.boxTitle}>Poils</span>
-                        </div>
-                    </div>
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('hair')}>
-                        <div className={classNames(styles.box, type === 'hair' && styles.active)}>
-                            <span className={styles.boxTitle}>Cheveux</span>
-                        </div>
-                    </div>
-                    <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('background')}>
-                        <div className={classNames(styles.box, type === 'background' && styles.active)}>
-                            <span className={styles.boxTitle}>Arrière-fond</span>
-                        </div>
-                    </div>
-                </div>
+            <div className="container" style={{ backgroundColor: 'LightSlateGray' }}>
                 <div className="row">
-                    {type === 'skin' && <SkinImages setAvatarImage={setAvatarImage} />}
-                    {type === 'eyes' && <EyesImages setAvatarImage={setAvatarImage} />}
-                    {type === 'mouth' && <MouthImages setAvatarImage={setAvatarImage} />}
-                    {type === 'beard' && <BeardImages setAvatarImage={setAvatarImage} />}
-                    {type === 'hair' && <HairImages setAvatarImage={setAvatarImage} />}
-                    {type === 'background' && <BackgroundImages setAvatarImage={setAvatarImage} />}
+                    <div className="col col-sm-12" >
+                        <h2 className={classNames('my-0 py-2', styles.title)}>Ton Avatar</h2>
+                    </div>
                 </div>
-            </div>
+                <div className="row justify-content-center rounded mx-1" style={{ backgroundColor: 'whitesmoke' }}>
+                    <div className="col col-sm-12">
+                        <h3 className={classNames('mt-2 py-2', styles.subtitle)}>Envie de changer de tête ?</h3>
+                    </div>
+                    <div className="col col-sm-12 col-md-4">
+                        <img src="" ref={ref} width="100%" style={{ border: '1px solid red' }} />
+                        {/* <Image src="" ref={ref} width="100%" height="100%" style={{ border: '1px solid red' }} /> */}
+                    </div>
+                    <div className="row justify-content-evenly">
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('skin')}>
+                            <div className={classNames(styles.box, type === 'skin' && styles.active)}>
+                                <span className={styles.boxTitle}>Peau</span>
+                            </div>
+                        </div>
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('eyes')}>
+                            <div className={classNames(styles.box, type === 'eyes' && styles.active)}>
+                                <span className={styles.boxTitle}>Yeux</span>
+                            </div>
+                        </div>
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('mouth')}>
+                            <div className={classNames(styles.box, type === 'mouth' && styles.active)}>
+                                <span className={styles.boxTitle}>Bouche</span>
+                            </div>
+                        </div>
 
-            <div className="row align-items-center py-2" style={{}}>
-                <div className="col col-sm-6">
-                    <Link href="/" passHref>
-                        <button className={classNames('btn btn-danger text-uppercase float-end', styles.text1)}>Annule tout!</button>
-                    </Link>
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('beard')}>
+                            <div className={classNames(styles.box, type === 'beard' && styles.active)}>
+                                <span className={styles.boxTitle}>Poils</span>
+                            </div>
+                        </div>
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('hair')}>
+                            <div className={classNames(styles.box, type === 'hair' && styles.active)}>
+                                <span className={styles.boxTitle}>Cheveux</span>
+                            </div>
+                        </div>
+                        <div className={classNames('col col-sm-2 text-center')} onClick={() => setType('background')}>
+                            <div className={classNames(styles.box, type === 'background' && styles.active)}>
+                                <span className={styles.boxTitle}>Arrière-fond</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        {type === 'skin' && <SkinImages setAvatarImage={setAvatarImage} />}
+                        {type === 'eyes' && <EyesImages setAvatarImage={setAvatarImage} />}
+                        {type === 'mouth' && <MouthImages setAvatarImage={setAvatarImage} />}
+                        {type === 'beard' && <BeardImages setAvatarImage={setAvatarImage} />}
+                        {type === 'hair' && <HairImages setAvatarImage={setAvatarImage} />}
+                        {type === 'background' && <BackgroundImages setAvatarImage={setAvatarImage} />}
+                    </div>
                 </div>
-                <div className="col col-sm-6">
-                    <button className={classNames('btn btn-success text-uppercase float-start', styles.text1)} onClick={() => saveImage()}>Allez, valide!</button>
+
+                <div className="row align-items-center py-2" style={{}}>
+                    <div className="col col-sm-6">
+                        <Link href="/" passHref>
+                            <button className={classNames('btn btn-danger text-uppercase float-end', styles.text1)}>Annule tout!</button>
+                        </Link>
+                    </div>
+                    <div className="col col-sm-6">
+                        <button className={classNames('btn btn-success text-uppercase float-start', styles.text1)} onClick={() => updateImage()}>Allez, valide!</button>
+                    </div>
                 </div>
-            </div>
 
 
 
-            {/* <button onClick={() => saveImage()}>Save image</button><br />
+                {/* <button onClick={() => saveImage()}>Save image</button><br />
             <button onClick={() => updateAvatar()}>Update image</button><br />
             <button onClick={() => deleteAvatar()}>Delete image</button><br /> */}
-        </div>
+            </div>
         </>
     )
 

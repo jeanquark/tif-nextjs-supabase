@@ -1,7 +1,7 @@
 import styles from '../../styles/Home.module.css'
 
 export default function Beard(props) {
-    const images = ['0101', '0102', '0103', '0104', '0105', '0106', '0107', '0108', '0109', '0110', '0111', '0112']
+    const images = ['0101', '0201', '0301', '0401']
     return (
         <>
             {images.map((image, index) => (

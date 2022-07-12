@@ -17,7 +17,8 @@ create table users (
   auth_user_id uuid references auth.users not null,
   email text UNIQUE,
   username VARCHAR(60) UNIQUE,
-  points INT DEFAULT 0
+  points INT DEFAULT 0,
+  image VARCHAR(120) UNIQUE
 );
 alter table users enable row level security;
 create policy "Can view own user data." on users for select using (auth.uid() = auth_user_id);

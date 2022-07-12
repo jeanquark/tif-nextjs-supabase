@@ -10,7 +10,8 @@ export interface AuthState {
     email: string
     username: string
     role: string,
-    points: number
+    points: number,
+    image?: string
     // value: {
     //     id: string
     //     email: string
@@ -72,6 +73,7 @@ export const authSlice = createSlice({
             state.username = action.payload.username
             state.role = action.payload.role
             state.points = action.payload.points
+            state.image = action.payload.image
             // state = {
             //     id: action.payload.id,
             //     email: action.payload.email,

@@ -131,12 +131,15 @@ export default function Navbar() {
                 email: authUser.email,
                 username: data.username,
                 role: authUser.role,
-                points: data.points
+                points: data.points,
+                image: data.image
+                // image: 'https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/sign/avatars/public/4.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL3B1YmxpYy80LnBuZyIsImlhdCI6MTY1NzYzNzk5NCwiZXhwIjoxOTcyOTk3OTk0fQ.TfYxgpfle2lW6QKTyBUnhObppoC9gTTd1J_MUXGONHg'
             }))
         }
     }
 
     const handleLogout = async () => {
+        console.log("logout")
         const { error } = await supabase.auth.signOut()
         if (error) {
             return error
@@ -146,7 +149,8 @@ export default function Navbar() {
             email: null,
             username: null,
             role: null,
-            points: 0
+            points: 0,
+            image: null
         }))
     }
 
@@ -202,15 +206,19 @@ export default function Navbar() {
                 {auth?.id ?
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
-                            <div className={classNames(styles.link, styles.boxShadow)}>
+                            <div className={classNames("p-1", styles.link, styles.boxShadow)}>
                                 <Link href="/avatar">
-                                    <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" />
+                                    <a>
+                                        {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
+                                        {/* <Image src="https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/4.png" width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
+                                        <Image src={auth.image} width="100%" height="100%" style={{ border: '0px solid red' }} />
+                                    </a>
                                 </Link>
                             </div>
                         </div>
                         <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
                             <Link href="/profile">
-                                <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '0px dashed pink' }}>
+                                <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '2px dashed pink' }}>
                                     <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
                                         <Image src="/images/163.png" alt="flag icon" width="60px" height="60px" />
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>{auth.username || auth.email}</span>
@@ -219,14 +227,16 @@ export default function Navbar() {
                                         <Image src="/images/cup.png" alt="cup icon" width="60px" height="60px" />
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
                                     </div>
-                                    <span className="text-white" onClick={() => handleLogout()}>{t('logout')}</span>
+                                    <span className="btn btn-sm text-white float-right" style={{ background: "orangered" }} onClick={() => handleLogout()}>{t('logout')}</span>
                                 </div>
                             </Link>
                         </div>
                         <div className="col col-lg-1">
                             <div className={styles.boxShadow} style={{ border: '0px dashed grey' }}>
-                                <Link href="/parameters">
-                                    <Image src="/images/parameters.png" alt="parameters icon" width="100%" height="100%" />
+                                <Link href="/parameters" passHref>
+                                    <a>
+                                        <Image src="/images/parameters.png" alt="parameters icon" width="100%" height="100%" />
+                                    </a>
                                 </Link>
                             </div>
                         </div>
