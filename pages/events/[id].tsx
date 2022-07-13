@@ -290,8 +290,16 @@ export default function EventPage() {
                         </div>
                     </div>
                     <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
-                        <div className={classNames("col col-md-6", styles.matchInfoLeft)}>But : 12e - Buteur no 1<br />
-                            Carton jaune : 25e - Joueur no 12</div>
+                        <div className={classNames("col col-md-6", styles.matchInfoLeft)}>
+                            <ul>{event.events && event.events.sort((a, b) => b.time.elapsed - a.time.elapsed).map((event, index) => {
+                                return <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
+                                    Type: {event.type}<br />
+                                    Time: {event.time?.elapsed}<br />
+                                    Team: {event.team?.name}<br />
+                                    Player: {event.player?.name}<br />
+                                </li>
+                            })}</ul>
+                        </div>
                         <div className={classNames("col col-md-6", styles.matchInfoRight)}>But : 12e - Buteur no 1<br />
                             Carton jaune : 25e - Joueur no 12</div>
                     </div>
@@ -344,9 +352,9 @@ export default function EventPage() {
                         <Image src="/images/actions/vuvuzela.png" width="65" height="65" alt="vuvuzela" className="p-2" />
                         <Image src="/images/actions/clapping.png" width="65" height="65" alt="clapping" className="p-2" />
                     </div> :
-                    <div className="col col-md-12 text-center">
-                        <h5 className={classNames(styles.textPrimary)}>Tu n as pas encore participé au match !</h5>
-                    </div>}
+                        <div className="col col-md-12 text-center">
+                            <h5 className={classNames(styles.textPrimary)}>Tu n as pas encore participé au match !</h5>
+                        </div>}
                 </div>
                 <div className='row gx-0'>
                     <div className={classNames("col col-md-12", styles.banner)}>

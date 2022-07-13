@@ -4,8 +4,12 @@ body {
 	margin: 0;
 	/* background-color: #000; */
 	font: normal 100%/1 "bangers", Helvetica, sans-serif;
+	/* font-family: "bangers", Helvetica, sans-serif;  */
 }
 
+.modal-content {
+	border: none;
+}
 .modal-backdrop
 {
     opacity:0.7 !important;

@@ -21,6 +21,18 @@ export interface Event {
 	timestamp: number,
     elapsed_time: number,
     round: string,
+    events: [{
+        type: string,
+        time?: {
+            elapsed: number
+        },
+        team?: {
+            name: string
+        },
+        player?: {
+            name: string
+        }
+    }],
 	updated_at: Date
 }
 

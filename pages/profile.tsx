@@ -138,12 +138,12 @@ export default function ParameterPage() {
 
                     <div className="row gx-0 justify-content-center">
                         <div className="col col-sm-12 text-center">
-                            <h3 className={classNames('mt-2 py-1', styles.subtitle)}>Statistiques "Actions"</h3>
+                            <h3 className={classNames('mt-2 py-1', styles.subtitle)}>Statistiques Actions</h3>
                         </div>
                         <div className="col col-md-10">
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Nombre de cartes "Action" débloquées</div>
+                                    <div>Nombre de cartes Action débloquées</div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnActionNumber)}>
                                     <div className={classNames("")}>12/50</div>
@@ -151,7 +151,7 @@ export default function ParameterPage() {
                             </div>
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Nombre de cartes "Event" débloquées
+                                    <div>Nombre de cartes Event débloquées
                                     </div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnActionNumber)}>
@@ -160,7 +160,7 @@ export default function ParameterPage() {
                             </div>
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Nombre de cartes "Goodies" achetées
+                                    <div>Nombre de cartes Goodies achetées
                                     </div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnActionNumber)}>
@@ -169,7 +169,7 @@ export default function ParameterPage() {
                             </div>
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Nombre de cartes "Spéciales" achetées</div>
+                                    <div>Nombre de cartes Spéciales achetées</div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnActionNumber)}>
                                     <div className={classNames("")}>12/50</div>
@@ -179,7 +179,7 @@ export default function ParameterPage() {
                     </div>
                     <div className="row gx-0 justify-content-center">
                         <div className="col col-sm-12 text-center">
-                            <h3 className={classNames('mt-2 py-1', styles.subtitle)}>Statistiques "Jeux"</h3>
+                            <h3 className={classNames('mt-2 py-1', styles.subtitle)}>Statistiques Jeux</h3>
                         </div>
                         <div className="col col-md-10">
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
@@ -208,7 +208,7 @@ export default function ParameterPage() {
                             </div>
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Action - Nb d'actions réalisées</div>
+                                    <div>Action - Nb d actions réalisées</div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnGameNumber)}>
                                     <div className={classNames("")}>0</div>
@@ -224,7 +224,7 @@ export default function ParameterPage() {
                             </div>
                             <div className="row gx-0 my-1 align-items-center border border-dark rounded">
                                 <div className={classNames("col col-md-7 p-2", styles.columnActionText)}>
-                                    <div>Action collective - Nb d'actions lancées</div>
+                                    <div>Action collective - Nb d actions lancées</div>
                                 </div>
                                 <div className={classNames("col col-md-5 p-2", styles.columnGameNumber)}>
                                     <div className={classNames("")}>0</div>

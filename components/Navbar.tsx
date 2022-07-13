@@ -45,6 +45,10 @@ export default function Navbar() {
     // const [registerModal, setRegisterModal] = useState(false)
     const [showModal2, setShowModal2] = useState(false)
     const { t } = useTranslation(['home']);
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
 
     const handleLocaleChange = (event) => {
@@ -133,7 +137,6 @@ export default function Navbar() {
                 role: authUser.role,
                 points: data.points,
                 image: data.image
-                // image: 'https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/sign/avatars/public/4.png?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cmwiOiJhdmF0YXJzL3B1YmxpYy80LnBuZyIsImlhdCI6MTY1NzYzNzk5NCwiZXhwIjoxOTcyOTk3OTk0fQ.TfYxgpfle2lW6QKTyBUnhObppoC9gTTd1J_MUXGONHg'
             }))
         }
     }
@@ -207,14 +210,21 @@ export default function Navbar() {
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
                             <div className={classNames("p-1", styles.link, styles.boxShadow)}>
-                                {auth.image &&
-                                <Link href="/avatar">
-                                    <a>
-                                        {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
-                                        {/* <Image src="https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/4.png" width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
-                                        <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} />
-                                    </a>
-                                </Link>}
+                                {auth.image ?
+                                    <Link href="/avatar">
+                                        <a>
+                                            {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
+                                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} />
+                                            {/* <img src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" /> */}
+                                        </a>
+                                    </Link>
+                                    :
+                                    <Link href="/avatar">
+                                        <a>
+                                            <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" />
+                                        </a>
+                                    </Link>
+                                }
                             </div>
                         </div>
                         <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
@@ -223,6 +233,7 @@ export default function Navbar() {
                                     <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
                                         <Image src="/images/163.png" alt="flag icon" width="60px" height="60px" />
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>{auth.username || auth.email}</span>
+
                                     </div>
                                     <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
                                         <Image src="/images/cup.png" alt="cup icon" width="60px" height="60px" />
@@ -246,7 +257,7 @@ export default function Navbar() {
                     <div>
                         <div className="row">
                             <div className="col col-md-6 text-center">
-                                <div className={styles.boxShadow} data-bs-toggle="modal" data-bs-target="#loginModal">
+                                <div className={styles.boxShadow} onClick={handleShow}>
                                     <p className={classNames("my-0 py-2", styles.textSubTitle)} >
                                         Login
                                     </p>
@@ -264,7 +275,7 @@ export default function Navbar() {
                 }
             </header>
 
-            <LoginModal />
+            <LoginModal show={show} handleClose={handleClose} />
             <RegisterModal />
 
         </>

@@ -1,10 +1,11 @@
-import { useTranslation } from "next-i18next"
-import { ReactElement, useState, useEffect } from 'react'
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import classNames from "classnames"
+import { useTranslation } from "next-i18next";
+import { ReactElement, useState, useEffect } from 'react';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import classNames from "classnames";
+import Image from 'next/image';
+
 import Navbar from './Navbar'
 import styles from '../styles/Layout.module.css'
-
 import {
 	faStar,
 	faAngleDoubleUp,
@@ -39,9 +40,12 @@ export default function LayoutFrontend({ children }) {
 										</li>
 										<li className={classNames("list-inline-item", "mx-0", styles.listItem)} style={{ border: '0px solid blue', width: '17%' }}>
 											<Link href="/">
-												<img src="/images/menuHome.png" width="60" />
+												<a>
+													<img src="/images/menuHome.png" width="60" />
+													{/* <Image src="/images/menuHome.png" width="60px" height="60px" alt="Home menu" /> */}
+													<span className={styles.textMenu}>ThisIsFan</span>
+												</a>
 											</Link>
-											<span className={styles.textMenu}>ThisIsFan</span>
 										</li>
 										<li className={classNames("list-inline-item", "mx-0", styles.listItem)} style={{ border: '0px solid blue', width: '17%' }}>
 											<img src="/images/menuSocial.png" width="60" />
