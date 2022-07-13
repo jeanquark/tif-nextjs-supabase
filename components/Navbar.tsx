@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleUp, faCertificate, faDollarSign, faStar } from '@fortawesome/free-solid-svg-icons';
+// import mergeImages from 'merge-images';
 import classNames from 'classnames';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -22,19 +23,20 @@ import { Modal } from '../components/UI/Modal'
 import { Modal2 } from '../components/UI/Modal2'
 import styles from '../styles/Navbar.module.css'
 
-// export async function getServerSideProps({ locale }) {
-//     return {
-//         props: {
-//             ...(await serverSideTranslations(locale, ["common", "home"])),
-//             // Will be passed to the page component as props
-//         },
-//     };
-// }
+type ImagesToMerge = {
+    background: string
+    skin: string
+    eyes: string
+    mouth: string
+    beard: string
+    hair: string
+}
 
 export default function Navbar() {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
-    const router = useRouter();
+    const router = useRouter()
+    // const ref = useRef(null)
     const [modal, setModal] = useState<boolean>(false)
     const [modalType, setModalType] = useState<string>('')
     // const [modal, setModal] = useState<string>('')
@@ -44,12 +46,32 @@ export default function Navbar() {
     const [forgotPasswordModal, setForgotPasswordModal] = useState<boolean>(false)
     // const [registerModal, setRegisterModal] = useState(false)
     const [showModal2, setShowModal2] = useState(false)
-    const { t } = useTranslation(['home']);
+    const { t } = useTranslation(['home'])
     const [showModal, setShowModal] = useState<boolean>(false)
-    const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
+    const [show, setShow] = useState(false)
+    const handleClose = () => setShow(false)
+    const handleShow = () => setShow(true)
+    const [objectOfImagesToMerge, setObjectOfImagesToMerge] = useState<ImagesToMerge>()
 
+    // useEffect(() => {
+    //     console.log('auth.image: ', auth.image)
+    //     console.log('JSON.stringify auth.image: ', JSON.stringify(auth.image))
+    //     let abc
+    //     if (auth.image) {
+    //         abc = JSON.parse(JSON.stringify(auth.image))
+    //         console.log('auth.image.background: ', abc.background)
+
+    //         setObjectOfImagesToMerge({
+    //             ['background']: `/images/avatars/background/${abc['background']}.png`,
+    //             ['skin']: `/images/avatars/skin/${abc['skin']}.png`,
+    //             ['eyes']: `/images/avatars/eyes/${abc['eyes']}.png`,
+    //             ['mouth']: `/images/avatars/mouth/${abc['mouth']}.png`,
+    //             ['beard']: `/images/avatars/beard/${abc['beard']}.png`,
+    //             ['hair']: `/images/avatars/hair/${abc['hair']}.png`
+    //         })
+    //         // merge()
+    //     }
+    // }, [auth])
 
     const handleLocaleChange = (event) => {
         const value = event.target.value;
@@ -141,6 +163,19 @@ export default function Navbar() {
         }
     }
 
+    // const merge = async () => {
+    //     try {
+    //         const imagesArray = Object.values(objectOfImagesToMerge)
+    //         console.log('imagesArray: ', imagesArray)
+    //         const b64 = await mergeImages(imagesArray)
+    //         ref.current.src = b64
+    //         // const b64 = await mergeImages(['/images/body.png', '/images/eyes.png', '/images/mouth.png'])
+    //         // ref.current.src = b64;
+    //     } catch (error) {
+    //         console.log('error: ', error)
+    //     }
+    // }
+
     const handleLogout = async () => {
         console.log("logout")
         const { error } = await supabase.auth.signOut()
@@ -210,12 +245,13 @@ export default function Navbar() {
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
                             <div className={classNames("p-1", styles.link, styles.boxShadow)}>
-                                {auth.image ?
+                                {auth.id ?
                                     <Link href="/avatar">
                                         <a>
                                             {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
-                                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} />
-                                            {/* <img src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" /> */}
+                                            {/* <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
+                                            <img src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" />
+                                            {/* <img src="" ref={ref} width="100%" style={{ border: '0px solid red' }} /> */}
                                         </a>
                                     </Link>
                                     :
@@ -240,6 +276,7 @@ export default function Navbar() {
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
                                     </div>
                                     <span className="btn btn-sm text-white float-right" style={{ background: "orangered" }} onClick={() => handleLogout()}>{t('logout')}</span>
+                                    <span>auth.image: {auth.id}</span>
                                 </div>
                             </Link>
                         </div>

@@ -3,12 +3,14 @@ import React, { ReactElement, useState, useRef, useEffect } from 'react'
 // import { ReactElement, useState, useRef } from 'react';
 import mergeImages from 'merge-images'
 import classNames from 'classnames'
+import { useRouter } from 'next/router'
 import Link from 'next/link'
 import Head from 'next/head'
 import Image from 'next/image'
 
 import { supabase } from '../utils/supabaseClient'
-import { useAppSelector } from '../app/hooks'
+import { useAppSelector, useAppDispatch } from '../app/hooks'
+import { setAuthUser } from '../features/auth/authSlice'
 import { selectAuth } from '../features/auth/authSlice'
 import styles from '../styles/Avatar.module.css'
 
@@ -31,8 +33,10 @@ type ImagesToMerge = {
 }
 
 export default function AvatarPage() {
+    const dispatch = useAppDispatch()
     const ref = useRef(null)
     const auth = useAppSelector(selectAuth)
+    const router = useRouter()
     const [arrayOfImagesToMerge, setArrayOfImagesToMerge] = useState<any>([])
     const [objectOfImagesToMerge, setObjectOfImagesToMerge] = useState<ImagesToMerge>({
         background: '/images/avatars/background/background0101.png',
@@ -100,10 +104,12 @@ export default function AvatarPage() {
 
     const saveImage = async () => {
         if (!auth.image) {
-            createImage()
+            await createImage()
         } else {
-            updateImage()
+            await updateImage()
         }
+        // Reload avatar
+        router.reload()
     }
 
     const createImage = async () => {
