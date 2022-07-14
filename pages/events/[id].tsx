@@ -45,6 +45,8 @@ export default function EventPage() {
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
+    const [userAction, setUserAction] = useState<Action>(null)
+    const [userActionModal, setUserActionModal] = useState<boolean>(false)
 
     const actions = useAppSelector(selectActions)
     const actionsRef = useRef<Action[]>()
@@ -250,17 +252,26 @@ export default function EventPage() {
 
     return (
         <>
-            <Modal show={show} onHide={handleClose}>
+            <Modal show={userActionModal} onHide={() => setUserActionModal(false)}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Action</Modal.Title>
+                    <Modal.Title>Action {userAction?.name}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+                <Modal.Body className="row justify-content-center align-items-center">
+                    <div className="col col-md-6 text-center">
+                        <Image src={`/images/actions/${userAction?.image}`} width="100%" height="100%" alt="action image" className="" />
+
+                    </div>
+                    <div className="col col-md-6">
+                        Coût: 20$<br />
+                        Nb de participants min: 5
+                    </div>
+                    <div className="col col-md-12 text-center mt-2">
+                        <div className="btn btn-md" style={{ background: 'orangered', color: '#fff' }} onClick={() => launchAction(userAction)}>{t('launch')}</div>
+                    </div>
+                </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
+                    <Button variant="secondary" onClick={() => setUserActionModal(false)}>
                         Close
-                    </Button>
-                    <Button variant="primary" onClick={handleClose}>
-                        Save Changes
                     </Button>
                 </Modal.Footer>
             </Modal>
@@ -332,10 +343,6 @@ export default function EventPage() {
                                         })}
                             </ul>
                         </div>
-                        <div className={classNames('col col-md-6', styles.matchInfoRight)}>
-                            But : 12e - Buteur no 1<br />
-                            Carton jaune : 25e - Joueur no 12
-                        </div>
                     </div>
                     <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
                         <div className={classNames('col col-md-4', styles.playerScore)}>
@@ -384,14 +391,13 @@ export default function EventPage() {
                 </div>
                 <div className="row gx-0">
                     <div className={classNames('col col-md-12', styles.banner)}>
-                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions utilisées durant l event</h2>
+                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions à utiliser durant l event</h2>
                     </div>
                     {auth.id ? (
-                        <div className="col col-md-12 text-center">
-                            <Image src="/images/actions/sing.png" width="65" height="65" alt="sing" className={classNames("p-2", styles.actionButton)} onClick={handleShow} />
-                            <Image src="/images/actions/hola.png" width="65" height="65" alt="hola" className={classNames("p-2", styles.actionButton)} onClick={handleShow} />
-                            <Image src="/images/actions/vuvuzela.png" width="65" height="65" alt="vuvuzela" className={classNames("p-2", styles.actionButton)} onClick={handleShow} />
-                            <Image src="/images/actions/clapping.png" width="65" height="65" alt="clapping" className={classNames("p-2", styles.actionButton)} onClick={handleShow} />
+                        <div className="col col-md-12 d-flex justify-content-evenly mt-1 mb-3">
+                            {actions.map((action, index) => {
+                                return <Image src={`/images/actions/${action.image}`} width="65" height="65" alt={action.name} className={classNames("", styles.actionButton)} key={index} onClick={() => (setUserActionModal(true), setUserAction(action))} />
+                            })}
                         </div>
                     ) : (
                         <div className="col col-md-12 text-center">
@@ -404,9 +410,10 @@ export default function EventPage() {
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions collectives réalisées par les fans</h2>
                     </div>
                     <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
-                        {[...Array(12)].map((e, i) => (
+                        {/* {[...Array(12)].map((e, i) => (
                             <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />
-                        ))}
+                        ))} */}
+                        <EventActions />
                     </div>
                     <div className="col col-md-6 my-3 px-5">
                         {[...Array(18)].map((e, i) => (

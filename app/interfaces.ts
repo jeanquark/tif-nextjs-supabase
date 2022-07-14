@@ -39,8 +39,8 @@ export interface Event {
 export interface Action {
     id: number,
     name: string,
-    slug?: string,
-    image?: string
+    slug: string,
+    image: string
 }
 
 export interface EventAction {

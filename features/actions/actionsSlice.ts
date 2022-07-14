@@ -4,7 +4,7 @@ import type { AppState, AppThunk } from '../../app/store'
 import { getActions } from './actionsAPI'
 
 export interface ActionsState {
-    actions: { id: number, name: string, slug?: string, image?: string }[]
+    actions: { id: number, name: string, slug: string, image: string }[]
     status: 'idle' | 'loading' | 'failed'
 }
 

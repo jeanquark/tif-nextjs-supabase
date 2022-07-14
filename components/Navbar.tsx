@@ -158,7 +158,8 @@ export default function Navbar() {
                 username: data.username,
                 role: authUser.role,
                 points: data.points,
-                image: data.image
+                image: data.image,
+                // image_details: data.image_details
             }))
         }
     }
@@ -177,19 +178,25 @@ export default function Navbar() {
     // }
 
     const handleLogout = async () => {
-        console.log("logout")
-        const { error } = await supabase.auth.signOut()
-        if (error) {
-            return error
+        try {
+            console.log("logout")
+            const { error } = await supabase.auth.signOut()
+            if (error) {
+                throw error
+            }
+            dispatch(setAuthUser({
+                id: null,
+                email: null,
+                username: null,
+                role: null,
+                points: 0,
+                image: null
+                // image_details: null
+            }))
+            router.push(`/`);
+        } catch (error) {
+            console.log('error: ', error);
         }
-        dispatch(setAuthUser({
-            id: null,
-            email: null,
-            username: null,
-            role: null,
-            points: 0,
-            image: null
-        }))
     }
 
     useEffect(() => {
@@ -241,20 +248,21 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                {auth?.id ?
+                {auth.id ?
                     <div className="row align-items-center">
                         <div className="col col-lg-1">
                             <div className={classNames("p-1", styles.link, styles.boxShadow)}>
-                                {auth.id ?
-                                    <Link href="/avatar">
-                                        <a>
-                                            {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
-                                            {/* <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
-                                            <img src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" />
-                                            {/* <img src="" ref={ref} width="100%" style={{ border: '0px solid red' }} /> */}
-                                        </a>
-                                    </Link>
-                                    :
+                                {auth.image && Object.keys(auth.image).length > 0 ?
+                                // {(auth.image === true) ? 
+                                <Link href="/avatar">
+                                    <a>
+                                        {/* <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" /> */}
+                                        {/* <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" height="100%" style={{ border: '0px solid red' }} /> */}
+                                        <img src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${auth.id}.png`} width="100%" />
+                                        {/* <img src="" ref={ref} width="100%" style={{ border: '0px solid red' }} /> */}
+                                    </a>
+                                </Link>
+                                :
                                     <Link href="/avatar">
                                         <a>
                                             <Image src="/images/avatar.png" alt="avatar icon" width="100%" height="100%" />
@@ -276,7 +284,9 @@ export default function Navbar() {
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>1863ème</span>
                                     </div>
                                     <span className="btn btn-sm text-white float-right" style={{ background: "orangered" }} onClick={() => handleLogout()}>{t('logout')}</span>
-                                    <span>auth.image: {auth.id}</span>
+                                    {/* {(auth.image && Object.keys(auth.image).length > 0) ? <span>Yes</span> : <span>No</span>} */}
+                                    <span>{auth.image ? 'true' : 'false'}</span>
+                                    <span>{auth.points ? auth.points : 'no point'}</span>
                                 </div>
                             </Link>
                         </div>

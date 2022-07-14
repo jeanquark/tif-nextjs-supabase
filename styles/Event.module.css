@@ -219,3 +219,7 @@
 .actionButton:hover {
     cursor: pointer;
 }
+
+.actionButton:hover {
+    -webkit-transform: scale(1.10);
+}

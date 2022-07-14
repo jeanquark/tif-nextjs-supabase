@@ -11,7 +11,15 @@ export interface AuthState {
     username: string
     role: string,
     points: number,
-    image?: string
+    image?: {
+        background: string,
+        skin: string,
+        eyes: string,
+        mouth: string,
+        beard: string,
+        hair: string,
+    },
+    // image_details: object
     // value: {
     //     id: string
     //     email: string
@@ -30,7 +38,9 @@ const initialState: AuthState = {
     email: undefined,
     username: undefined,
     role: undefined,
-    points: undefined
+    points: undefined,
+    image: undefined,
+    // image_details: undefined
 }
 // const initialState: AuthState = null
 

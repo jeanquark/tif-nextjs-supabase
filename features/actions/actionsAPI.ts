@@ -12,7 +12,7 @@ export async function getActions() {
 
     const { data, error } = await supabase
         .from('actions')
-        .select()
+        .select('*')
     console.log('[REDUX] @actionsAPI data: ', data)
     return data
 }
