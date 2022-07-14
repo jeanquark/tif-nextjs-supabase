@@ -259,7 +259,6 @@ export default function EventPage() {
                 <Modal.Body className="row justify-content-center align-items-center">
                     <div className="col col-md-6 text-center">
                         <Image src={`/images/actions/${userAction?.image}`} width="100%" height="100%" alt="action image" className="" />
-
                     </div>
                     <div className="col col-md-6">
                         Coût: 20$<br />
@@ -394,10 +393,16 @@ export default function EventPage() {
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions à utiliser durant l event</h2>
                     </div>
                     {auth.id ? (
-                        <div className="col col-md-12 d-flex justify-content-evenly mt-1 mb-3">
-                            {actions.map((action, index) => {
-                                return <Image src={`/images/actions/${action.image}`} width="65" height="65" alt={action.name} className={classNames("", styles.actionButton)} key={index} onClick={() => (setUserActionModal(true), setUserAction(action))} />
+                        <div className="col col-md-12 mt-1 mb-3">
+                            <div className="row justify-content-center">
+                                {actions.map((action, index) => {
+                                    return (
+                                        <div className={classNames("col col-md-1", styles.actionButton)}>
+                                            <Image src={`/images/actions/${action.image}`} width="100%" height="100%" alt={action.name} className={classNames("")} onClick={() => (setUserActionModal(true), setUserAction(action))} />
+                                        </div>
+                                    )
                             })}
+                            </div>
                         </div>
                     ) : (
                         <div className="col col-md-12 text-center">

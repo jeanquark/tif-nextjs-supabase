@@ -218,8 +218,10 @@
 
 .actionButton:hover {
     cursor: pointer;
+    -webkit-transform: scale(1.10);
 }
 
-.actionButton:hover {
+.eventButton:hover {
+    cursor: pointer;
     -webkit-transform: scale(1.10);
 }

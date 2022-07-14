@@ -1,8 +1,14 @@
-import { ReactElement, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import moment from 'moment'
+import { ReactElement, useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import ProgressBar from 'react-bootstrap/ProgressBar';
+import Badge from 'react-bootstrap/Badge';
+import moment from 'moment';
 // import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+import Button from 'react-bootstrap/Button'
+import Modal from 'react-bootstrap/Modal'
+import classNames from 'classnames'
 
 import { supabase } from '../utils/supabaseClient'
 import Layout from './Layout'
@@ -78,6 +84,8 @@ export default function EventActions() {
     const [data, setData] = useState(null)
     const [event, setEvent] = useState(null)
     const [updateEvent, handleUpdateEvent] = useState(null)
+    const [eventAction, setEventAction] = useState<any>(null)
+    const [eventActionModal, setEventActionModal] = useState<boolean>(false)
 
     const actions = useAppSelector(selectActions)
     const actionsRef = useRef<Action[]>()
@@ -390,22 +398,56 @@ export default function EventActions() {
     }
 
     return (
-        <div style={{ border: '0px dashed orangered' }}>
-            <h4>{t('list_of_event_actions')}</h4>
-            <ul>{eventActions && eventActions.map((action, index) => {
-                return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                    Id: {action.id}<br />
-                    {t('name')}: {action.action?.name}<br />
-                    {t('launched_by')}: {action.username}<br />
-                    {t('number_participants')}: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
-                    {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                    {action.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <>
-                        <button disabled={disabled(action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
-                    </>}&nbsp;
-                    <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
-                </li>
-            })}</ul>
+        <div className="row">
+            <Modal show={eventActionModal} onHide={() => setEventActionModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Action {eventAction?.action.name}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="row justify-content-center align-items-center">
+                    <div className="col col-md-6">
+                        <Image src={`/images/actions/${eventAction?.action.image}`} width="100%" height="100%" alt="action image" className="" />
+                    </div>
+                    <div className="col col-md-6">
+                        Action initiée par: {eventAction?.username}<br />
+                        Nb de participants: {eventAction?.number_participants}<br />
+                        Créé à: {moment(eventAction?.inserted_at).format('HH:mm')}
+                    </div>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setEventActionModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+            {eventActions && eventActions.map((action, index) => {
+            return (
+                    <div className={classNames("col col-md-2", styles.eventButton)} style={{ position: 'relative' }} onClick={() => (setEventActionModal(true), setEventAction(action))}>
+                        <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
+                        <ProgressBar now={60} style={{ height: '.5rem' }} />
+                        <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
+                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
+                        </Badge>
+                        <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px'}}>9</Badge>
+                    </div>     
+                )
+            })}
         </div>
+        // <div style={{ border: '0px dashed orangered' }}>
+        //     <h4>{t('list_of_event_actions')}</h4>
+        //     <ul>{eventActions && eventActions.map((action, index) => {
+        //         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
+        //             Id: {action.id}<br />
+        //             {t('name')}: {action.action?.name}<br />
+        //             {t('launched_by')}: {action.username}<br />
+        //             {t('number_participants')}: <b>{action.number_participants}</b>/<b>{action.participation_threshold}</b><br />
+        //             {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
+        //             {action.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <>
+        //                 <button disabled={disabled(action.id)} className={styles.btn} onClick={() => joinAction(action)}>{t('join')}</button>
+        //             </>}&nbsp;
+        //             <button className={styles.btn} onClick={() => deleteAction(action)}>{t('delete')}</button>
+        //         </li>
+        //     })}</ul>
+        // </div>
     )
 }
 
