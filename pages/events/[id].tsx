@@ -14,6 +14,7 @@ import NestedLayout from '../../components/LayoutFrontend'
 import { Card } from '../../components/UI/Card'
 import EventActions from '../../components/EventActions'
 import EventUserActions from '../../components/EventUserActions'
+import EventUsers from '../../components/EventUsers'
 import { useAppSelector, useAppDispatch } from '../../app/hooks'
 import { selectAuth, incrementPoints } from '../../features/auth/authSlice'
 import { selectActions, fetchActions } from '../../features/actions/actionsSlice'
@@ -170,6 +171,10 @@ export default function EventPage() {
             }
             // throw 'not_auth'
 
+            // 1) Add user to eventUsers
+            const { data: data1, error: error2 } = await supabase.from('event_users').upsert({ user_id: auth.id, username: auth.username, event_id: event.id, joined_at: new Date() }, { onConflict: 'user_id' })
+
+            // 2) Add action to eventActions
             const { data, error } = await supabase.from('event_actions').insert([
                 {
                     event_id: event.id,
@@ -179,7 +184,7 @@ export default function EventPage() {
                     number_participants: 0,
                     participation_threshold: 2,
                     points: 100,
-                },
+                }
             ])
             console.log('launchAction data: ', data)
             if (error) {
@@ -378,9 +383,10 @@ export default function EventPage() {
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Fans participants à l event</h2>
                     </div>
                     <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
-                        {[...Array(20)].map((e, i) => (
+                        {/* {[...Array(20)].map((e, i) => (
                             <Image src="/images/avatar.png" width="45" height="45" alt="username" key={i} className="" />
-                        ))}
+                        ))} */}
+                        <EventUsers />
                     </div>
                     <div className="col col-md-6 my-3 px-5">
                         {[...Array(15)].map((e, i) => (
@@ -397,7 +403,7 @@ export default function EventPage() {
                             <div className="row justify-content-center">
                                 {actions.map((action, index) => {
                                     return (
-                                        <div className={classNames("col col-md-1", styles.actionButton)}>
+                                        <div key={index} className={classNames("col col-md-1", styles.actionButton)}>
                                             <Image src={`/images/actions/${action.image}`} width="100%" height="100%" alt={action.name} className={classNames("")} onClick={() => (setUserActionModal(true), setUserAction(action))} />
                                         </div>
                                     )
