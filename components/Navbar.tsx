@@ -285,8 +285,8 @@ export default function Navbar() {
                                     </div>
                                     <span className="btn btn-sm text-white float-right" style={{ background: "orangered" }} onClick={() => handleLogout()}>{t('logout')}</span>
                                     {/* {(auth.image && Object.keys(auth.image).length > 0) ? <span>Yes</span> : <span>No</span>} */}
-                                    <span>{auth.image ? 'true' : 'false'}</span>
-                                    <span>{auth.points ? auth.points : 'no point'}</span>
+                                    {/* <span>{auth.image ? 'true' : 'false'}</span> */}
+                                    {/* <span>{auth.points ? auth.points : 'no point'}</span> */}
                                 </div>
                             </Link>
                         </div>

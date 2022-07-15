@@ -12,7 +12,7 @@ export async function getEventActions({ id }) {
 
     const { data, error } = await supabase
             .from('event_actions')
-            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), user_id, username, inserted_at`)
+            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), team_id, user_id, username, inserted_at`)
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })

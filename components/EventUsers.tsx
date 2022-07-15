@@ -1,14 +1,15 @@
-import { ReactElement, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
-import ProgressBar from 'react-bootstrap/ProgressBar'
-import Badge from 'react-bootstrap/Badge'
-import moment from 'moment'
+import { ReactElement, useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
+import moment from 'moment';
 // import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next'
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import classNames from 'classnames'
+import { useTranslation } from 'next-i18next';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import Badge from 'react-bootstrap/Badge';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import classNames from 'classnames';
 
 import { supabase } from '../utils/supabaseClient'
 import Layout from './Layout'
@@ -20,50 +21,24 @@ import { selectAuth, incrementPoints } from '../features/auth/authSlice'
 import { selectActions } from '../features/actions/actionsSlice'
 import { selectEventActions, setEventActions, addEventAction } from '../features/eventActions/eventActionsSlice'
 import { selectEventUserActions, setEventUserActions, addEventUserAction } from '../features/eventUserActions/eventUserActionsSlice'
-
-import { decrement, increment, incrementByAmount, incrementAsync, incrementIfOdd, selectCount } from '../features/counter/counterSlice'
-
-import { Event, Action, EventAction, EventUserAction } from '../app/interfaces'
+import { Event, EventUser, Action, EventAction, EventUserAction } from '../app/interfaces'
 
 type EffectCallback = () => void | (() => void | undefined)
 
-export default function EventUsers() {
+export default function EventUsers({ event }) {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
     const router = useRouter()
     const { id } = router.query
-    const [isLoading, setLoading] = useState<boolean>(false)
-    const [data, setData] = useState(null)
-    const [event, setEvent] = useState(null)
-    const [updateEvent, handleUpdateEvent] = useState(null)
-    const [eventUsers, setEventUsers] = useState<any>(null)
-    const [eventAction, setEventAction] = useState<any>(null)
-    const [eventActionModal, setEventActionModal] = useState<boolean>(false)
-
-    const actions = useAppSelector(selectActions)
-    const actionsRef = useRef<Action[]>()
-    actionsRef.current = actions
-
-    const eventActions = useAppSelector(selectEventActions)
-    // const [eventActions, setEventActions] = useState([])
-    const eventActionsRef = useRef<EventAction[] | null>(null)
-    eventActionsRef.current = eventActions
+    const [eventUsers, setEventUsers] = useState<EventUser[]>(null)
 
     // const [eventUsers, setEventUsers] = useState([])
     // const eventUsersRef = useRef<any>()
     // eventUsersRef.current = eventUsers
 
-    const eventUserActions = useAppSelector(selectEventUserActions)
-    // const [userActions, setUserActions] = useState([])
-    const eventUserActionsRef = useRef<EventUserAction[] | null>(null)
-    eventUserActionsRef.current = eventUserActions
-
-    let subscriptionEvents = null
     let subscriptionEventUsers = null
-    let subscriptionEventActions = null
 
     const { t } = useTranslation(['actions', 'common', 'home'])
-
 
     useEffect((): ReturnType<EffectCallback> => {
         console.log('[useEffect] subscribeToEvents id, auth: ', id)
@@ -77,7 +52,7 @@ export default function EventUsers() {
         console.log('getInitialEventUsers')
         const { data, error } = await supabase
             .from('event_users')
-            .select(`id, event_id, user_id`)
+            .select('*')
             .eq('event_id', id)
             .order('id', { ascending: false })
         if (error) {
@@ -100,29 +75,81 @@ export default function EventUsers() {
                     // setEventUsers([...eventUsers, payload.new])
                     setEventUsers((a) => [payload.new, ...a])
                 })
+                .on('UPDATE', (payload) => {
+                    console.log('[UPDATE] subscriptionEventUsers payload: ', payload.new)
+                })
                 .subscribe()
         } else {
-            console.log('[removeSubscription] getEventActionsAndSubscribe')
-            supabase.removeSubscription(subscriptionEventActions)
+            console.log('[removeSubscription] getEventUsersAndSubscribe')
+            supabase.removeSubscription(subscriptionEventUsers)
         }
     }
 
-
     return (
-        <div className="row">
-            {eventUsers &&
-                eventUsers.map((user, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className={classNames('col col-md-2 mx-2', styles.eventButton)}
-                            style={{ position: 'relative' }}
-                        >
-                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${user.user_id}.png`} width="100%" height="100%" />
-                            {/* user.user_id: {user.user_id} */}
-                        </div>
-                    )
-                })}
+        <div className="col col-sm-12">
+            {/* teamId: {teamId} */}
+            {/*  */}
+            {eventUsers && eventUsers.length < 1
+                ?
+                <h5>Pas de fans pour {event?.home_team_name}</h5>
+                :
+                <div className="row">
+                    <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
+                        {eventUsers && eventUsers.filter((user) => user.team_id == event?.home_team_id).map((user, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className={classNames('col col-md-2 mx-2', styles.eventButton)}
+                                    style={{ position: 'relative' }}
+                                >
+                                    <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                            <Tooltip id="tooltip-right" className="show">
+                                                {user.username}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <div>
+                                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${user.user_id}.png`} width="100%" height="100%" />
+                                            <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
+                                                {user.user_points}
+                                            </Badge>
+                                        </div>
+                                    </OverlayTrigger>
+                                </div>
+                            )
+                        })}
+                    </div>
+                    <div className={classNames('col col-md-6 my-3 px-5')}>
+                        {eventUsers && eventUsers.filter((user) => user.team_id == event?.visitor_team_id).map((user, index) => {
+                            return (
+                                <div
+                                    key={index}
+                                    className={classNames('col col-md-2 mx-2', styles.eventButton)}
+                                    style={{ position: 'relative' }}
+                                >
+                                    <OverlayTrigger
+                                        placement="right"
+                                        overlay={
+                                            <Tooltip id="tooltip-right" className="show">
+                                                {user.username}
+                                            </Tooltip>
+                                        }
+                                    >
+                                        <div>
+                                            <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${user.user_id}.png`} width="100%" height="100%" />
+                                            <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
+                                                {user.user_points}
+                                            </Badge>
+                                        </div>
+                                    </OverlayTrigger>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
+            }
         </div>
     )
 }

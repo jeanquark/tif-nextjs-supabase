@@ -27,7 +27,7 @@ import { Event, Action, EventAction, EventUserAction } from '../app/interfaces'
 
 type EffectCallback = () => void | (() => void | undefined)
 
-export default function EventActions() {
+export default function EventActions({homeTeamId, visitorTeamId}) {
     const dispatch = useAppDispatch()
     const auth = useAppSelector(selectAuth)
     const router = useRouter()
@@ -86,7 +86,7 @@ export default function EventActions() {
         console.log('getInitialEventActions')
         const { data, error } = await supabase
             .from('event_actions')
-            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), user_id, username, inserted_at`)
+            .select(`id, number_participants, participation_threshold, is_completed, action:actions (name, image), event:events (home_team_name, visitor_team_name), team_id, user_id, username, inserted_at`)
             .eq('event_id', id)
             // .gt('expired_at', moment().utc())
             .order('id', { ascending: false })
@@ -231,7 +231,7 @@ export default function EventActions() {
             }
 
             // 1) Add user to eventUsers
-            const { data: data1, error: error2 } = await supabase.from('event_users').upsert({ user_id: auth.id, username: auth.username, event_id: event.id, joined_at: new Date()}, { onConflict: 'user_id' })
+            const { data: data1, error: error2 } = await supabase.from('event_users').upsert({ user_id: auth.id, username: auth.username, user_points: auth.points, event_id: event.id, joined_at: new Date() }, { onConflict: 'user_id' })
 
             // 2) Add user to eventActionsUsers
             const { data, error: errorInsert } = await supabase.from('event_actions_users').insert({
@@ -359,26 +359,52 @@ export default function EventActions() {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            {eventActions &&
-                eventActions.map((action, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className={classNames('col col-md-2 mx-2', styles.eventButton)}
-                            style={{ position: 'relative' }}
-                            onClick={() => (setEventActionModal(true), setEventAction(action))}
-                        >
-                            <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
-                            <ProgressBar now={60} style={{ height: '.5rem' }} />
-                            <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
-                                <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
-                            </Badge>
-                            <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
-                                9
-                            </Badge>
-                        </div>
-                    )
-                })}
+            {/* teamId: {teamId} */}
+            {/*  */}
+            <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
+                {eventActions &&
+                    eventActions.filter((action) => action.team_id === homeTeamId).map((action, index) => {
+                        return (
+                            <div
+                                key={index}
+                                className={classNames('col col-md-2 mx-2', styles.eventButton)}
+                                style={{ position: 'relative' }}
+                                onClick={() => (setEventActionModal(true), setEventAction(action))}
+                            >
+                                <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
+                                <ProgressBar now={60} style={{ height: '.5rem' }} />
+                                <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
+                                    <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
+                                </Badge>
+                                <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
+                                    9
+                                </Badge>
+                            </div>
+                        )
+                    })}
+            </div>
+            <div className={classNames('col col-md-6 my-3 px-5')}>
+                {eventActions &&
+                    eventActions.filter((action) => action.team_id === visitorTeamId).map((action, index) => {
+                        return (
+                            <div
+                                key={index}
+                                className={classNames('col col-md-2 mx-2', styles.eventButton)}
+                                style={{ position: 'relative' }}
+                                onClick={() => (setEventActionModal(true), setEventAction(action))}
+                            >
+                                <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
+                                <ProgressBar now={60} style={{ height: '.5rem' }} />
+                                <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
+                                    <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
+                                </Badge>
+                                <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
+                                    9
+                                </Badge>
+                            </div>
+                        )
+                    })}
+            </div>
         </div>
         // <div style={{ border: '0px dashed orangered' }}>
         //     <h4>{t('list_of_event_actions')}</h4>

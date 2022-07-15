@@ -225,3 +225,13 @@
     cursor: pointer;
     -webkit-transform: scale(1.10);
 }
+
+.teamSelect:hover {
+    cursor: pointer;
+    background: orangered;
+}
+
+.selected {
+    border: 2px solid orangered;
+    border-radius: .5em;
+}

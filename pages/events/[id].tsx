@@ -48,6 +48,7 @@ export default function EventPage() {
     const handleShow = () => setShow(true)
     const [userAction, setUserAction] = useState<Action>(null)
     const [userActionModal, setUserActionModal] = useState<boolean>(false)
+    const [userTeam, setUserTeam] = useState<number>(null)
 
     const actions = useAppSelector(selectActions)
     const actionsRef = useRef<Action[]>()
@@ -132,7 +133,7 @@ export default function EventPage() {
         const { data, error } = await supabase
             .from('events')
             // .select('*')
-            .select(`id, home_team_name, home_team_image, home_team_score, visitor_team_name, visitor_team_image, visitor_team_score, status, date, timestamp, round, league:leagues (id, name, image)`)
+            .select(`id, home_team_id, home_team_name, home_team_image, home_team_score, visitor_team_id, visitor_team_name, visitor_team_image, visitor_team_score, status, date, timestamp, round, league:leagues (id, name, image)`)
             .eq('id', id)
         if (error) {
             console.log('error: ', error)
@@ -172,7 +173,11 @@ export default function EventPage() {
             // throw 'not_auth'
 
             // 1) Add user to eventUsers
-            const { data: data1, error: error2 } = await supabase.from('event_users').upsert({ user_id: auth.id, username: auth.username, event_id: event.id, joined_at: new Date() }, { onConflict: 'user_id' })
+            const { data: data1, error: error1 } = await supabase.from('event_users').upsert({ event_id: event.id, team_id: userTeam, user_id: auth.id, username: auth.username, user_points: auth.points, inserted_at: new Date() }, { onConflict: 'event_id,user_id' })
+            console.log('data1: ', data1);
+            if (error1) {
+                throw error1
+            }
 
             // 2) Add action to eventActions
             const { data, error } = await supabase.from('event_actions').insert([
@@ -180,6 +185,7 @@ export default function EventPage() {
                     event_id: event.id,
                     action_id: action.id,
                     user_id: auth.id,
+                    team_id: userTeam,
                     username: auth.username ? auth.username : auth.id,
                     number_participants: 0,
                     participation_threshold: 2,
@@ -196,7 +202,8 @@ export default function EventPage() {
             //     name: action.name,
             //     image: action.image,
             // }, user: { id: auth.id, username: auth.username }, ...data[0] }])
-            joinAction(data[0])
+            await joinAction(data[0])
+            setUserActionModal(false)
         } catch (error) {
             console.log('error: ', error)
         }
@@ -255,6 +262,21 @@ export default function EventPage() {
         return eventStatus == '1H' || eventStatus == '2H' || eventStatus == 'HT' || eventStatus == 'ET' || eventStatus == 'P'
     }
 
+    const selectTeam = async (eventId: number, teamId: number) => {
+        try {
+            const { data, error } = await supabase
+            .from('event_users')
+            .update({ team_id: teamId })
+            .match({ event_id: eventId, user_id: auth.id })
+            console.log('data: ', data);
+            if (error) {
+                throw error
+            }
+        } catch (error) {
+            console.log('error: ', error);
+        }
+    }
+
     return (
         <>
             <Modal show={userActionModal} onHide={() => setUserActionModal(false)}>
@@ -267,10 +289,26 @@ export default function EventPage() {
                     </div>
                     <div className="col col-md-6">
                         Coût: 20$<br />
-                        Nb de participants min: 5
+                        Nb de participants min: 2<br />
+                        userTeam: {userTeam}
                     </div>
                     <div className="col col-md-12 text-center mt-2">
-                        <div className="btn btn-md" style={{ background: 'orangered', color: '#fff' }} onClick={() => launchAction(userAction)}>{t('launch')}</div>
+                        <h5>Choisis ton camp!</h5>
+                        <div className="row justify-content-center align-items-center">
+                            <div className={classNames("col col-md-6", styles.teamSelect, userTeam === event?.home_team_id && styles.selected)} onClick={() => setUserTeam(event?.home_team_id)}>
+                                <Image src={`/images/teams/${event?.home_team_image}`} alt="home team flag" width="50px" height="50px" />
+                                <h6>{event?.home_team_name}</h6>
+                                {/* <h6>{event?.home_team_id}</h6> */}
+                            </div>
+                            <div className={classNames("col col-md-6", styles.teamSelect, userTeam === event?.visitor_team_id && styles.selected)} onClick={() => setUserTeam(event?.visitor_team_id)}>
+                                <Image src={`/images/teams/${event?.visitor_team_image}`} alt="visitor team flag" width="50px" height="50px" />
+                                <h6>{event?.visitor_team_name}</h6>
+                                {/* <h6>{event?.visitor_team_id}</h6> */}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col col-md-12 text-center mt-2">
+                        <div className={classNames("btn btn-md", !userTeam && "disabled")} style={{ background: 'orangered', color: '#fff' }} onClick={() => launchAction(userAction)}>{t('launch')}</div>
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
@@ -280,91 +318,93 @@ export default function EventPage() {
                 </Modal.Footer>
             </Modal>
 
-            {event && (
-                <div className={classNames('row', styles.backgroundImage)}>
-                    <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '2px solid white' }}>
-                        <div className={classNames('col col-4 text-start', styles.textShadow)}>{event.league.name}</div>
-                        <div className={classNames('col col-4 text-center', styles.textShadow)}>
-                            {moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}
+            {
+                event && (
+                    <div className={classNames('row', styles.backgroundImage)}>
+                        <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '2px solid white' }}>
+                            <div className={classNames('col col-4 text-start', styles.textShadow)}>{event.league.name}</div>
+                            <div className={classNames('col col-4 text-center', styles.textShadow)}>
+                                {moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}
+                            </div>
+                            <div className={classNames('col col-4 text-end', styles.textShadow)}>{event.round} Round</div>
                         </div>
-                        <div className={classNames('col col-4 text-end', styles.textShadow)}>{event.round} Round</div>
-                    </div>
-                    <div className={classNames('row gx-0 my-2 align-items-center py-3')} style={{ border: '2px solid orange' }}>
-                        <div className={classNames('col col-md-1', styles.teamFlag)}>
-                            <Image src={`/images/teams/${event.home_team_image}`} alt="home team flag" width="100%" height="100%" />
+                        <div className={classNames('row gx-0 my-2 align-items-center py-3')} style={{ border: '2px solid orange' }}>
+                            <div className={classNames('col col-md-1', styles.teamFlag)}>
+                                <Image src={`/images/teams/${event.home_team_image}`} alt="home team flag" width="100%" height="100%" />
+                            </div>
+                            <div className={classNames('col col-md-3')}>
+                                <div className={classNames('mx-3 py-2', styles.scorePF)}>1234.99 PF</div>
+                            </div>
+                            <div className={classNames('col col-md-4')}>
+                                <div className={classNames('mx-5', styles.matchStatus)}>
+                                    {event.status}
+                                    <br />
+                                    {event.elapsed_time}min
+                                </div>
+                            </div>
+                            <div className={classNames('col col-md-3')}>
+                                <div className={classNames('mx-3 py-2', styles.scorePF)}>1369.74 PF</div>
+                            </div>
+                            <div className={classNames('col col-md-1', styles.teamFlag)}>
+                                <Image src={`/images/teams/${event.visitor_team_image}`} alt="visitor team flag" width="100%" height="100%" />
+                            </div>
                         </div>
-                        <div className={classNames('col col-md-3')}>
-                            <div className={classNames('mx-3 py-2', styles.scorePF)}>1234.99 PF</div>
+                        <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '2px solid blue' }}>
+                            <div className={classNames('col col-md-5')}>
+                                <div className={classNames('mx-2', styles.team)}>{event.home_team_name}</div>
+                            </div>
+                            <div className={classNames('col col-md-2')}>
+                                <div className={classNames('mx-2', styles.scoreRealtime)}>
+                                    Score réel
+                                    <br />
+                                    {event.home_team_score}-{event.visitor_team_score}
+                                </div>
+                            </div>
+                            <div className={classNames('col col-md-5')}>
+                                <div className={classNames('mx-2', styles.team)}>{event.visitor_team_name}</div>
+                            </div>
                         </div>
-                        <div className={classNames('col col-md-4')}>
-                            <div className={classNames('mx-5', styles.matchStatus)}>
-                                {event.status}
+                        <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
+                            <div className={classNames('col col-md-6', styles.matchInfoLeft)}>
+                                <ul>
+                                    {event.events &&
+                                        event.events
+                                            .sort((a, b) => b.time.elapsed - a.time.elapsed)
+                                            .map((event, index) => {
+                                                return (
+                                                    <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
+                                                        Type: {event.type}
+                                                        <br />
+                                                        Time: {event.time?.elapsed}
+                                                        <br />
+                                                        Team: {event.team?.name}
+                                                        <br />
+                                                        Player: {event.player?.name}
+                                                        <br />
+                                                    </li>
+                                                )
+                                            })}
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
+                            <div className={classNames('col col-md-4', styles.playerScore)}>
+                                Ton score
                                 <br />
-                                {event.elapsed_time}min
+                                <span style={{ color: 'orangered' }}>0.00 PF</span>
                             </div>
                         </div>
-                        <div className={classNames('col col-md-3')}>
-                            <div className={classNames('mx-3 py-2', styles.scorePF)}>1369.74 PF</div>
-                        </div>
-                        <div className={classNames('col col-md-1', styles.teamFlag)}>
-                            <Image src={`/images/teams/${event.visitor_team_image}`} alt="visitor team flag" width="100%" height="100%" />
-                        </div>
-                    </div>
-                    <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '2px solid blue' }}>
-                        <div className={classNames('col col-md-5')}>
-                            <div className={classNames('mx-2', styles.team)}>{event.home_team_name}</div>
-                        </div>
-                        <div className={classNames('col col-md-2')}>
-                            <div className={classNames('mx-2', styles.scoreRealtime)}>
-                                Score réel
-                                <br />
-                                {event.home_team_score}-{event.visitor_team_score}
-                            </div>
-                        </div>
-                        <div className={classNames('col col-md-5')}>
-                            <div className={classNames('mx-2', styles.team)}>{event.visitor_team_name}</div>
-                        </div>
-                    </div>
-                    <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
-                        <div className={classNames('col col-md-6', styles.matchInfoLeft)}>
-                            <ul>
-                                {event.events &&
-                                    event.events
-                                        .sort((a, b) => b.time.elapsed - a.time.elapsed)
-                                        .map((event, index) => {
-                                            return (
-                                                <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                                                    Type: {event.type}
-                                                    <br />
-                                                    Time: {event.time?.elapsed}
-                                                    <br />
-                                                    Team: {event.team?.name}
-                                                    <br />
-                                                    Player: {event.player?.name}
-                                                    <br />
-                                                </li>
-                                            )
-                                        })}
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
-                        <div className={classNames('col col-md-4', styles.playerScore)}>
-                            Ton score
-                            <br />
-                            <span style={{ color: 'orangered' }}>0.00 PF</span>
-                        </div>
-                    </div>
-                    <div className="row gx-0 my-3" style={{ border: '2px solid grey' }}>
-                        <div className={classNames('col col-md-12', styles.gameScoreProgression, styles.textShadow)}>
-                            <div className="mb-2">Barre de progression du score</div>
-                            <div className="progress" style={{ height: '20px', backgroundColor: 'red' }}>
-                                <div className="progress-bar w-50" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100}></div>
+                        <div className="row gx-0 my-3" style={{ border: '2px solid grey' }}>
+                            <div className={classNames('col col-md-12', styles.gameScoreProgression, styles.textShadow)}>
+                                <div className="mb-2">Barre de progression du score</div>
+                                <div className="progress" style={{ height: '20px', backgroundColor: 'red' }}>
+                                    <div className="progress-bar w-50" role="progressbar" aria-valuenow={50} aria-valuemin={0} aria-valuemax={100}></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            )}
+                )
+            }
             <div className={classNames('row gx-0', styles.actions)}>
                 <div className="row gx-0 py-2">
                     <div className="col col-md-6">
@@ -382,17 +422,7 @@ export default function EventPage() {
                     <div className={classNames('col col-md-12', styles.banner)}>
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Fans participants à l event</h2>
                     </div>
-                    <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
-                        {/* {[...Array(20)].map((e, i) => (
-                            <Image src="/images/avatar.png" width="45" height="45" alt="username" key={i} className="" />
-                        ))} */}
-                        <EventUsers />
-                    </div>
-                    <div className="col col-md-6 my-3 px-5">
-                        {[...Array(15)].map((e, i) => (
-                            <Image src="/images/avatar.png" width="45" height="45" alt="username" key={i} />
-                        ))}
-                    </div>
+                    <EventUsers event={event} />
                 </div>
                 <div className="row gx-0">
                     <div className={classNames('col col-md-12', styles.banner)}>
@@ -407,7 +437,7 @@ export default function EventPage() {
                                             <Image src={`/images/actions/${action.image}`} width="100%" height="100%" alt={action.name} className={classNames("")} onClick={() => (setUserActionModal(true), setUserAction(action))} />
                                         </div>
                                     )
-                            })}
+                                })}
                             </div>
                         </div>
                     ) : (
@@ -420,21 +450,25 @@ export default function EventPage() {
                     <div className={classNames('col col-md-12', styles.banner)}>
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions collectives réalisées par les fans</h2>
                     </div>
-                    <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
+                    <EventActions homeTeamId={event?.home_team_id} visitorTeamId={event?.visitor_team_id} />
+                    {/* <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}> */}
                         {/* {[...Array(12)].map((e, i) => (
                             <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />
                         ))} */}
-                        <EventActions />
-                    </div>
-                    <div className="col col-md-6 my-3 px-5">
-                        {[...Array(18)].map((e, i) => (
+                        {/* <EventActions teamId={event?.home_team_id} /> */}
+                        {/* <EventActions /> */}
+                    {/* </div> */}
+                    {/* <div className="col col-md-6 my-3 px-5"> */}
+                        {/* {[...Array(18)].map((e, i) => (
                             <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />
-                        ))}
-                    </div>
+                        ))} */}
+                        {/* <EventActions teamId={event?.visitor_team_id} /> */}
+                        {/* <EventActions /> */}
+                    {/* </div> */}
                 </div>
                 <div className="row gx-0">
                     <div className={classNames('col col-md-12', styles.banner)}>
-                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions collectives en cours</h2>
+                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Tes actions</h2>
                     </div>
                     <div className="col col-md-12 text-center">
                         <h5 className={classNames(styles.textPrimary)}>Il faut que tu aies participés au match pour pouvoir prendre part aux actions collectives!</h5>

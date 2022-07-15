@@ -6,9 +6,11 @@
 
 export interface Event {
 	id: number,
+    home_team_id: number,
 	home_team_name: string,
 	home_team_score: number,
     home_team_image: string,
+    visitor_team_id: number,
 	visitor_team_name: string,
 	visitor_team_score: number,
 	visitor_team_image: string,
@@ -36,6 +38,17 @@ export interface Event {
 	updated_at: Date
 }
 
+export interface EventUser {
+    id: number,
+    event_id: number,
+    team_id: number,
+    user_id: number,
+    username?: string,
+    user_points?: number,
+    inserted_at?: Date,
+    updated_at?: Date
+}
+
 export interface Action {
     id: number,
     name: string,
@@ -48,6 +61,7 @@ export interface EventAction {
     action_id: number
     event_id: number
     user_id: number
+    team_id: number
     username: string
     action: {
         name: string
