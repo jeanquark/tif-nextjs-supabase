@@ -1,7 +1,8 @@
-import { ReactElement, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
+import { ReactElement, useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import moment from 'moment'
 import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
 
 import { supabase } from '../utils/supabaseClient'
 import Layout from '../components/Layout'
@@ -103,7 +104,8 @@ export default function EventUserActions() {
                     id,
                     is_completed,
                     action:actions(
-                        name
+                        name,
+                        image
                     ),
                     event:events(
                         id
@@ -166,17 +168,29 @@ export default function EventUserActions() {
     }
 
     return (
-        <div style={{ border: '0px dashed darkblue' }}>
-            <h4>{t('list_of_user_actions')}</h4>
-            <ul>{eventUserActions && eventUserActions.map(action => {
-                return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
-                    Id: {action.id}<br />
-                    {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
-                    {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
-                    {action.event_action?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
-                </li>
-            })}</ul>
+        <div className="row">
+            {eventUserActions && eventUserActions.map(action => {
+                return (
+                    <div className="col col-md-2" key={action.id}>
+                        <Image src={`/images/actions/${action.event_action.action.image}`} width="100%" height="100%" alt={action.event_action.action.name} />
+                        {/* action.event_action.action.name: {action.event_action.action.name}<br /> */}
+                        {/* action.event_action.action.image: {action.event_action.action.image}<br /> */}
+                    </div>
+                )
+            })}
         </div>
+
+        // <div style={{ border: '0px dashed darkblue' }}>
+        //     <h4>{t('list_of_user_actions')}</h4>
+        //     <ul>{eventUserActions && eventUserActions.map(action => {
+        //         return <li key={action.id} style={{ border: '1px solid black', marginBottom: '10px' }}>
+        //             Id: {action.id}<br />
+        //             {t('name')}: {action.name ? action.name : action.event_action?.action?.name}<br />
+        //             {t('created_at')}: {moment(action.inserted_at).format('HH:mm')}&nbsp;
+        //             {action.event_action?.is_completed ? <span style={{ color: 'lightgreen' }}>{t('action_completed')}</span> : <button className={styles.btn} onClick={() => unjoinAction(action)}>{t('unjoin')}</button>}
+        //         </li>
+        //     })}</ul>
+        // </div>
     )
 }
 

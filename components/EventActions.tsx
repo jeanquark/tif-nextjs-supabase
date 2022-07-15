@@ -1,14 +1,14 @@
-import { ReactElement, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/router'
-import Image from 'next/image'
-import ProgressBar from 'react-bootstrap/ProgressBar'
-import Badge from 'react-bootstrap/Badge'
-import moment from 'moment'
+import { ReactElement, useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
+import ProgressBar from 'react-bootstrap/ProgressBar';
+import moment from 'moment';
 // import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
+import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import classNames from 'classnames'
+import Modal from 'react-bootstrap/Modal';
+import classNames from 'classnames';
 
 import { supabase } from '../utils/supabaseClient'
 import Layout from './Layout'
@@ -326,6 +326,8 @@ export default function EventActions({homeTeamId, visitorTeamId}) {
 
     const disabled = (actionId: number) => {
         const index = eventUserActions.findIndex((a) => a.event_action.id == actionId)
+        // console.log('disabled index: ', index);
+        // console.log('eventUserActions.length: ', eventUserActions.length);
         if (index > -1) {
             return true
         }
@@ -345,22 +347,15 @@ export default function EventActions({homeTeamId, visitorTeamId}) {
                     <div className="col col-md-6">
                         Action initiée par: {eventAction?.username}
                         <br />
-                        Nb de participants: {eventAction?.number_participants}
+                        Nb de participants: {eventAction?.number_participants}/{eventAction?.participation_threshold}
                         <br />
                         Créé à: {moment(eventAction?.inserted_at).format('HH:mm')}
                     </div>
                     <div className="col col-md-12 text-center mt-2">
-                        <div className="btn btn-md" style={{ background: 'orangered', color: '#fff' }} onClick={() => joinAction(eventAction)}>{t('join')}</div>
+                        <div className={classNames("btn btn-md", disabled(eventAction?.id) && "disabled")} style={{ background: 'orangered', color: '#fff' }} onClick={() => joinAction(eventAction)}>{t('join')}</div>
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setEventActionModal(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
             </Modal>
-            {/* teamId: {teamId} */}
-            {/*  */}
             <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}>
                 {eventActions &&
                     eventActions.filter((action) => action.team_id === homeTeamId).map((action, index) => {
@@ -372,12 +367,12 @@ export default function EventActions({homeTeamId, visitorTeamId}) {
                                 onClick={() => (setEventActionModal(true), setEventAction(action))}
                             >
                                 <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
-                                <ProgressBar now={60} style={{ height: '.5rem' }} />
+                                <ProgressBar now={Math.floor((action.number_participants/action.participation_threshold) * 100)} style={{ height: '.5rem' }} />
                                 <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
                                     <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
                                 </Badge>
                                 <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
-                                    9
+                                    $9
                                 </Badge>
                             </div>
                         )
@@ -394,12 +389,12 @@ export default function EventActions({homeTeamId, visitorTeamId}) {
                                 onClick={() => (setEventActionModal(true), setEventAction(action))}
                             >
                                 <Image src={`/images/actions/${action.action.image}`} width="100%" height="100%" alt={action.action.name} />
-                                <ProgressBar now={60} style={{ height: '.5rem' }} />
+                                <ProgressBar now={Math.floor((action.number_participants/action.participation_threshold) * 100)} style={{ height: '.5rem' }} />
                                 <Badge pill bg="light" style={{ position: 'absolute', top: '0px', left: '0px', padding: '0px' }}>
                                     <Image src={`https://buzgvkhmtkqhimaziafs.supabase.co/storage/v1/object/public/avatars/public/${action.user_id}.png`} width="20px" height="20px" />
                                 </Badge>
                                 <Badge bg="primary" style={{ position: 'absolute', top: '0px', right: '0px' }}>
-                                    9
+                                    $9
                                 </Badge>
                             </div>
                         )

@@ -87,6 +87,7 @@ export interface EventUserAction {
         is_completed?: boolean
         action?: {
             name: string
+            image: string
         }
     }
     inserted_at: Date

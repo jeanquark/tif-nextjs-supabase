@@ -311,11 +311,6 @@ export default function EventPage() {
                         <div className={classNames("btn btn-md", !userTeam && "disabled")} style={{ background: 'orangered', color: '#fff' }} onClick={() => launchAction(userAction)}>{t('launch')}</div>
                     </div>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setUserActionModal(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
             </Modal>
 
             {
@@ -451,27 +446,14 @@ export default function EventPage() {
                         <h2 className={classNames('text-center py-1', styles.textShadow)}>Actions collectives réalisées par les fans</h2>
                     </div>
                     <EventActions homeTeamId={event?.home_team_id} visitorTeamId={event?.visitor_team_id} />
-                    {/* <div className={classNames('col col-md-6 my-3 px-5', styles.borderRight)}> */}
-                        {/* {[...Array(12)].map((e, i) => (
-                            <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />
-                        ))} */}
-                        {/* <EventActions teamId={event?.home_team_id} /> */}
-                        {/* <EventActions /> */}
-                    {/* </div> */}
-                    {/* <div className="col col-md-6 my-3 px-5"> */}
-                        {/* {[...Array(18)].map((e, i) => (
-                            <Image src="/images/actions/chanter.png" width="45" height="45" alt="username" key={i} className="p-1" />
-                        ))} */}
-                        {/* <EventActions teamId={event?.visitor_team_id} /> */}
-                        {/* <EventActions /> */}
-                    {/* </div> */}
                 </div>
                 <div className="row gx-0">
                     <div className={classNames('col col-md-12', styles.banner)}>
-                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Tes actions</h2>
+                        <h2 className={classNames('text-center py-1', styles.textShadow)}>Liste de tes actions</h2>
                     </div>
                     <div className="col col-md-12 text-center">
-                        <h5 className={classNames(styles.textPrimary)}>Il faut que tu aies participés au match pour pouvoir prendre part aux actions collectives!</h5>
+                        {/* <h5 className={classNames(styles.textPrimary)}>Il faut que tu aies participés au match pour pouvoir prendre part aux actions collectives!</h5> */}
+                        <EventUserActions />
                     </div>
                 </div>
             </div>

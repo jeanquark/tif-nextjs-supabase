@@ -330,9 +330,9 @@ export default function EventPage() {
                             </Card>
                         })}
                     </div>
-                    <EventActions />
+                    {/* <EventActions /> */}
 
-                    <EventUserActions />
+                    {/* <EventUserActions /> */}
                 </div>}
             </div>
         </>
