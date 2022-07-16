@@ -315,15 +315,15 @@ export default function EventPage() {
 
             {
                 event && (
-                    <div className={classNames('row', styles.backgroundImage)}>
-                        <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '2px solid white' }}>
+                    <div className={classNames('row gx-0', styles.backgroundImage)}>
+                        <div className={classNames('row gx-0 mb-2 px-2 py-3', styles.header)} style={{ border: '0px solid white' }}>
                             <div className={classNames('col col-4 text-start', styles.textShadow)}>{event.league.name}</div>
                             <div className={classNames('col col-4 text-center', styles.textShadow)}>
                                 {moment(event.date).format('ll')}&nbsp;{moment(event.date).format('HH:mm')}
                             </div>
                             <div className={classNames('col col-4 text-end', styles.textShadow)}>{event.round} Round</div>
                         </div>
-                        <div className={classNames('row gx-0 my-2 align-items-center py-3')} style={{ border: '2px solid orange' }}>
+                        <div className={classNames('row gx-0 my-2 align-items-center py-3')} style={{ border: '0px solid orange' }}>
                             <div className={classNames('col col-md-1', styles.teamFlag)}>
                                 <Image src={`/images/teams/${event.home_team_image}`} alt="home team flag" width="100%" height="100%" />
                             </div>
@@ -344,7 +344,7 @@ export default function EventPage() {
                                 <Image src={`/images/teams/${event.visitor_team_image}`} alt="visitor team flag" width="100%" height="100%" />
                             </div>
                         </div>
-                        <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '2px solid blue' }}>
+                        <div className="row gx-0 my-3 px-0 align-items-center" style={{ border: '0px solid blue' }}>
                             <div className={classNames('col col-md-5')}>
                                 <div className={classNames('mx-2', styles.team)}>{event.home_team_name}</div>
                             </div>
@@ -359,7 +359,7 @@ export default function EventPage() {
                                 <div className={classNames('mx-2', styles.team)}>{event.visitor_team_name}</div>
                             </div>
                         </div>
-                        <div className="row gx-0 my-3" style={{ border: '2px solid purple' }}>
+                        <div className="row gx-0 my-3" style={{ border: '0px solid purple' }}>
                             <div className={classNames('col col-md-6', styles.matchInfoLeft)}>
                                 <ul>
                                     {event.events &&
@@ -367,7 +367,7 @@ export default function EventPage() {
                                             .sort((a, b) => b.time.elapsed - a.time.elapsed)
                                             .map((event, index) => {
                                                 return (
-                                                    <li key={index} style={{ border: '1px solid black', marginBottom: '10px' }}>
+                                                    <li key={index} style={{ border: '0px solid black', marginBottom: '10px' }}>
                                                         Type: {event.type}
                                                         <br />
                                                         Time: {event.time?.elapsed}
@@ -382,14 +382,14 @@ export default function EventPage() {
                                 </ul>
                             </div>
                         </div>
-                        <div className="row justify-content-center gx-0 my-3" style={{ border: '2px solid green' }}>
+                        <div className="row justify-content-center gx-0 my-3" style={{ border: '0px solid green' }}>
                             <div className={classNames('col col-md-4', styles.playerScore)}>
                                 Ton score
                                 <br />
                                 <span style={{ color: 'orangered' }}>0.00 PF</span>
                             </div>
                         </div>
-                        <div className="row gx-0 my-3" style={{ border: '2px solid grey' }}>
+                        <div className="row gx-0 my-3" style={{ border: '0px solid grey' }}>
                             <div className={classNames('col col-md-12', styles.gameScoreProgression, styles.textShadow)}>
                                 <div className="mb-2">Barre de progression du score</div>
                                 <div className="progress" style={{ height: '20px', backgroundColor: 'red' }}>
