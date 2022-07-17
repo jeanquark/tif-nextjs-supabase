@@ -273,7 +273,7 @@ export default function Navbar() {
                         </div>
                         <div className={classNames("col col-lg-10 align-self-stretch", styles.boxShadow)} style={{ border: '0px dashed grey' }}>
                             <Link href="/profile">
-                                <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '2px dashed pink' }}>
+                                <div className="d-flex flex-row justify-content-center align-items-center h-100" style={{ border: '0px dashed pink' }}>
                                     <div className="d-flex align-items-center px-2" style={{ border: '0px dashed grey' }}>
                                         <Image src="/images/163.png" alt="flag icon" width="60px" height="60px" />
                                         <span className={classNames(styles.textSubTitle)} style={{ border: '0px dashed purple' }}>{auth.username || auth.email}</span>
