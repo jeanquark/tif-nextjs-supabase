@@ -132,7 +132,7 @@ export default function HomePage({ data }) {
 					<p className={classNames("text-center", "text-uppercase", "py-4", styles.box, styles.textTitle)}>Ton inventaire</p>
 				</div>
 			</div>}
-			<div className="row gx-0" style={{ minHeight: '500px', border: '2px solid white' }}>
+			<div className="row gx-0" style={{ minHeight: '500px', border: '0px solid white' }}>
 				{/* <p style={{ color: '#fff' }}>events.length: {events.length}</p> */}
 				{events && events.map((event: any) =>
 					<div className="col col-md-3 my-2" key={event.id}>
