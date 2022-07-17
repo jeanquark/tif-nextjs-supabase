@@ -172,7 +172,7 @@ export default function EventUserActions() {
             {eventUserActions && eventUserActions.map(action => {
                 return (
                     <div className="col col-md-2" key={action.id}>
-                        <Image src={`/images/actions/${action.event_action.action.image}`} width="100%" height="100%" alt={action.event_action.action.name} />
+                        <Image src={`/images/actions/${action.event_action?.action?.image}`} width="100%" height="100%" alt="image of action" />
                         {/* action.event_action.action.name: {action.event_action.action.name}<br /> */}
                         {/* action.event_action.action.image: {action.event_action.action.image}<br /> */}
                     </div>
