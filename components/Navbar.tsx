@@ -313,7 +313,7 @@ export default function Navbar() {
                             <div className="col col-md-6 text-center">
                                 <div className={styles.boxShadow}>
                                     <p className={classNames("my-0 py-2", styles.textSubTitle)} >
-                                        Senregistrer
+                                        Senregistrer2
                                     </p>
                                 </div>
                             </div>
